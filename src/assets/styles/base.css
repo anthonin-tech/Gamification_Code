@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 :root {
   --bg: #0b1020;
   --surface: rgba(255, 255, 255, 0.06);
@@ -5,6 +7,8 @@
   --muted: rgba(255, 255, 255, 0.68);
   --primary: #7c3aed;
   --radius: 14px;
+  --font-pixel: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
 }
 
 *,

@@ -1,0 +1,211 @@
+.page-title {
+    color: rgb(201, 121, 16);
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 90px;
+    font-family: var(--font-pixel);
+    font-size: clamp(20px, 6vw, 47px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 4;
+    position: relative;
+
+    background: linear-gradient(
+        110deg,
+        color-mix(in srgb, rgb(201, 121, 16) 85%, #000) 0%,
+        color-mix(in srgb, rgb(201, 121, 16) 65%, #fff) 35%,
+        #fff 50%,
+        color-mix(in srgb, rgb(201, 121, 16) 65%, #fff) 65%,
+        color-mix(in srgb, rgb(201, 121, 16) 85%, #000) 100%
+    );
+    background-size: 240% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 18px color-mix(in srgb, rgb(201, 121, 16) 50%, transparent);
+    animation: title-shimmer 2.6s linear infinite;
+}
+
+@keyframes title-shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.carousel-wrapper {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 24px;
+}
+
+.carousel-wrapper::before,
+.carousel-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 56px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.carousel-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg), transparent);
+}
+
+.carousel-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg), transparent);
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    padding: 22px 0;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    animation: slides 20s linear infinite;
+    padding: 14px 0;
+    will-change: transform;
+}
+
+.carousel-track.paused {
+    animation-play-state: paused;
+}
+
+@keyframes slides {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+        animation: none;
+        transform: none;
+    }
+
+    .page-title {
+        animation: none;
+        background-position: 50% 50%;
+    }
+}
+
+.card {
+    transition: transform 0.3s ease;
+    width: 320px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(20, 20, 24, 0.72);
+    color: rgba(255, 255, 255, 0.92);
+
+    --accent: #ffffff;
+    --accent2: #ffffff;
+    border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.10));
+    background:
+        radial-gradient(700px 200px at 10% 10%,
+            color-mix(in srgb, var(--accent) 25%, transparent),
+            transparent 60%),
+        radial-gradient(700px 200px at 90% 10%,
+            color-mix(in srgb, var(--accent2) 18%, transparent),
+            transparent 55%),
+        rgba(20, 20, 24, 0.72);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+}
+
+.card:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.45),
+        0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.card--javascript {
+    --accent: #f7df1e;
+    --accent2: #000000;
+}
+
+.card--python {
+    --accent: #3776ab;
+    --accent2: #ffd43b;
+}
+
+.card--angular {
+    --accent: #dd0031;
+    --accent2: #c3002f;
+}
+
+.card--cpp {
+    --accent: #00599c;
+    --accent2: #004482;
+}
+
+.card--php {
+    --accent: #777bb4;
+    --accent2: #4f5b93;
+}
+
+.card--vue {
+    --accent: #42b883;
+    --accent2: #35495e;
+}
+
+.card--react {
+    --accent: #61dafb;
+    --accent2: #0b1f2a;
+}
+
+
+.icon {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+.icon-img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    margin: 0;
+    color: color-mix(in srgb, var(--accent) 80%, rgba(255, 255, 255, 0.92));
+    font-family: var(--font-pixel);
+}
+
+.sub {
+    font-size: 14px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+}
