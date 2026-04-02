@@ -23,7 +23,7 @@ const router = createRouter({
       component: ProgressionPage,
     },
     {
-      path: '/languagege',
+      path: '/language',
       name: 'language',
       component: LanguagePage,
     },
