@@ -224,16 +224,22 @@
     width: 56px;
     pointer-events: none;
     z-index: 2;
+    background: var(--bg-effects), var(--bg);
+    background-attachment: fixed;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 
 .carousel-wrapper::before {
     left: 0;
-    background: linear-gradient(to right, var(--bg), transparent);
+    -webkit-mask-image: linear-gradient(to right, #000, transparent);
+    mask-image: linear-gradient(to right, #000, transparent);
 }
 
 .carousel-wrapper::after {
     right: 0;
-    background: linear-gradient(to left, var(--bg), transparent);
+    -webkit-mask-image: linear-gradient(to left, #000, transparent);
+    mask-image: linear-gradient(to left, #000, transparent);
 }
 
 .carousel-viewport {

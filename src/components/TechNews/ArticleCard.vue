@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { Article } from '../../types/article'
+  import { Article } from '../../../types/article'
 
   const props = defineProps<{
     article: Article
@@ -87,4 +87,4 @@
   </a>
 </template>
 
-<style scoped src="../assets/styles/articlecard.css"></style>
+<style scoped src="../../assets/styles/articlecard.css"></style>

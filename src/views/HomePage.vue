@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
-import CategoryFilter from '../components/CategoryFilter.vue'
-import ArticleCard from '../components/ArticleCard.vue'
-import CodeTypingAnimation from '../components/CodeTypingAnimation.vue'
+import CategoryFilter from '../components/TechNews/CategoryFilter.vue'
+import ArticleCard from '../components/TechNews/ArticleCard.vue'
+import CodeTypingAnimation from '../components/Code_Home/CodeTypingAnimation.vue'
 import type { ArticlesResponse } from '../../types/article'
 
 

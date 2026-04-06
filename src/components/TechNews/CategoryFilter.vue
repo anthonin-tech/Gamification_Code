@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CATEGORIES } from '../../types/article';
+import { CATEGORIES } from '../../../types/article';
 
 defineProps<{
     modelValue: string
@@ -25,4 +25,4 @@ const categories = CATEGORIES
     </div>
 </template>
 
-<style scoped src="../assets/styles/categoryfilter.css"></style>
+<style scoped src="../../assets/styles/categoryfilter.css"></style>
