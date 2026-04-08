@@ -7,3 +7,5 @@
     </section>
   </main>
 </template>
+
+<style scoped src="../assets/styles/pages/progression.css"></style>

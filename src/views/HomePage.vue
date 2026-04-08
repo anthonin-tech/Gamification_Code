@@ -13,7 +13,7 @@ import type { ArticlesResponse } from '../../types/article'
       { id: 4, type: 'cpp', iconSrc: '/icons/cpp.webp', title: 'C++', sub: 'Compilé, orienté objet et performant.' },
       { id: 5, type: 'php', iconSrc: '/icons/php.webp', title: 'PHP', sub: 'Langage de script côté serveur, conçu pour créer des pages web dynamiques.' },
       { id: 6, type: 'vue', iconSrc: '/icons/vue.webp', title: 'Vue', sub: 'Framework JavaScript progressif, léger et réactif.' },
-      { id: 7, type: 'react', iconSrc: '/icons/react.webp', title: 'React', sub: 'Bibliothèque, JavaScript, composables.' },
+      { id: 7, type: 'react', iconSrc: '/icons/react.webp', title: 'React', sub: 'Bibliothèque, JavaScript, composables.' },  
   ]
 
   const isPaused = ref(false)

@@ -12,4 +12,4 @@
   </nav>
 </template>
 
-<style scoped src="../assets/styles/navbar.css"></style>
+<style scoped src="../assets/styles/components/navbar.css"></style>

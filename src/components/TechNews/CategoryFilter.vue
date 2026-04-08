@@ -25,4 +25,3 @@ const categories = CATEGORIES
     </div>
 </template>
 
-<style scoped src="../../assets/styles/categoryfilter.css"></style>

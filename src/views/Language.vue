@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
-import LangagePanel from "../components/galaxie/LangagePanel.vue"
+import LangagePanel from "../components/Galaxie_Langage/LangagePanel.vue"
 import { useGalaxie } from "../composables/useGalaxie"
 import { TOUS_LES_LANGAGES } from "../data/langages"
 
@@ -78,4 +78,4 @@ watch(rechercheActive, (active) => {
   </div>
 </template>
 
-<style>@import "../assets/styles/pages/langage.css"</style>
+<style src="../assets/styles/pages/langage.css"></style>

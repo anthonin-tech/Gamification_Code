@@ -1,0 +1,37 @@
+.language-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+}
+
+.language-badge:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+}
+
+.language-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+
+}
+
+.language-name {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+
+}
+
+.language-proficiency {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  
+}

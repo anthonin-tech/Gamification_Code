@@ -87,4 +87,3 @@
   </a>
 </template>
 
-<style scoped src="../../assets/styles/articlecard.css"></style>
