@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
-import CategoryFilter from '../components/TechNews/CategoryFilter.vue'
-import ArticleCard from '../components/TechNews/ArticleCard.vue'
-import CodeTypingAnimation from '../components/Code_Home/CodeTypingAnimation.vue'
-import type { ArticlesResponse } from '../../types/article'
+import CategoryFilter from '@/components/news/CategoryFilter.vue'
+import ArticleCard from '@/components/news/ArticleCard.vue'
+import CodeTypingAnimation from '@/components/home/CodeTypingAnimation.vue'
+import type { ArticlesResponse } from '@/types'
+import { API_BASE_URL } from '@/utils/constants'
 
 
   const cards = [
@@ -39,7 +40,7 @@ import type { ArticlesResponse } from '../../types/article'
     void fetchArticles()
   }, 400)
 
-  watch([selectedCategory, searchQuery], () => {
+  watch(selectedCategory, () => {
     currentPage.value = 1
     void fetchArticles()
   })
@@ -48,7 +49,7 @@ import type { ArticlesResponse } from '../../types/article'
   const pending = ref(false)
   const error = ref<unknown>(null)
 
-  const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL ?? ''
+  const apiBaseUrl = API_BASE_URL
 
   const fetchArticles = async () => {
     pending.value = true
@@ -208,4 +209,6 @@ import type { ArticlesResponse } from '../../types/article'
   </main>
 </template>
 
-<style scoped src="../assets/styles/pages/home.css"></style>
+<style scoped src="@/assets/styles/pages/home.css"></style>
+
+

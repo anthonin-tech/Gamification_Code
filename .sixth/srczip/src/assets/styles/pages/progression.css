@@ -1,0 +1,21 @@
+.page-title {
+  color: rgb(201, 121, 16);
+  text-align: center;
+  padding-top: 44px;
+  padding-bottom: 22px;
+  font-family: var(--font-pixel);
+  font-size: clamp(20px, 6vw, 47px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.25;
+}
+
+.progression-card {
+  margin: 0 auto;
+  max-width: 780px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(20, 20, 24, 0.55);
+  color: rgba(255, 255, 255, 0.86);
+}
