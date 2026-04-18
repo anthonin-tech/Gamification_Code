@@ -3,6 +3,7 @@ export interface Framework {
   sym: string
   couleur: string
   description: string
+  cours?: string
   site?: string
   vitesse?: number
   _angle?: number
@@ -22,6 +23,7 @@ export interface Langage {
   popularite: number
   difficulte: number
   frameworks: Framework[]
+  cours?: string
   _posX?: number
   _posY?: number
   _anglesFrameworks?: number[]

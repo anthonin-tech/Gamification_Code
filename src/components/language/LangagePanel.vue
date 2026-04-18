@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { Framework, Langage } from "@/types/langage"
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+function allerAuCours(langage: Langage) {
+  router.push(`/cours/${langage.nom.toLowerCase()}`)
+}
 const props = defineProps<{
   language: Langage | null
   framework: Framework | null
@@ -83,6 +89,11 @@ defineEmits<{
           <p class="lang-panel__stat">{{ language.popularite }}% des devs l'utilisent</p>
         </div>
 
+        <div class="lang-panel__cours">
+          <button @click="allerAuCours(language)">
+            Accéder au cours
+          </button>
+        </div>
         <div v-if="language.frameworks.length" class="lang-panel__section">
           <span class="lang-panel__label">Frameworks ({{ language.frameworks.length }})</span>
           <div class="lang-panel__frameworks">

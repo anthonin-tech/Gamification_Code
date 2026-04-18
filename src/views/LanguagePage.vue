@@ -136,14 +136,13 @@ watch(rechercheActive, (active) => {
 
       <Transition name="fade">
         <p v-if="scene === 'galaxie'" class="galaxie-hint">
-          🌌 Cliquez sur la galaxie pour explorer les langages
+          Cliquez sur la galaxie pour explorer les langages
         </p>
       </Transition>
 
-      <!-- Hint scène systèmes -->
       <Transition name="fade">
         <p v-if="scene === 'systemes'" class="galaxie-hint">
-          ☀️ Cliquez sur un langage pour voir son système solaire
+          Cliquez sur un langage pour voir son système solaire
         </p>
       </Transition>
     </div>

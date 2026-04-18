@@ -5,7 +5,7 @@ import type { Framework, Langage, SceneGalaxie } from "@/types/langage"
 
 const REL_POSITIONS: [number, number][] = [
   [0.18, 0.32],
-  [0.50, 0.20],
+  [0.50, 0.29],
   [0.82, 0.32],
   [0.22, 0.72],
   [0.50, 0.68],

@@ -1,11 +1,6 @@
 import { ref, computed } from 'vue'
 import type { ProgressData, Streak } from '@/types'
 
-/**
- * Composable pour gérer la progression de l'utilisateur
- * 
- * Gère l'historique, les statistiques et les streaks
- */
 export function useProgression() {
   const progressHistory = ref<ProgressData[]>([])
   const streak = ref<Streak>({
@@ -15,9 +10,6 @@ export function useProgression() {
   })
   const loading = ref(false)
 
-  /**
-   * Charge l'historique de progression
-   */
   async function loadProgressHistory(days: number = 30) {
     loading.value = true
     try {
@@ -33,9 +25,6 @@ export function useProgression() {
     }
   }
 
-  /**
-   * Génère des données de test
-   */
   function generateMockData(days: number): ProgressData[] {
     const data: ProgressData[] = []
     const today = new Date()
@@ -55,9 +44,6 @@ export function useProgression() {
     return data
   }
 
-  /**
-   * Met à jour le streak
-   */
   function updateStreak() {
     let currentStreak = 0
     let longestStreak = 0
@@ -65,8 +51,7 @@ export function useProgression() {
     
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
-    // Parcourir l'historique pour calculer les streaks
+
     for (let i = progressHistory.value.length - 1; i >= 0; i--) {
       const dataDate = new Date(progressHistory.value[i].date)
       dataDate.setHours(0, 0, 0, 0)
@@ -91,9 +76,6 @@ export function useProgression() {
     }
   }
 
-  /**
-   * Statistiques totales
-   */
   const totalStats = computed(() => {
     const totals = progressHistory.value.reduce(
       (acc, day) => ({
@@ -111,16 +93,10 @@ export function useProgression() {
     }
   })
 
-  /**
-   * Données pour le graphique (7 derniers jours)
-   */
   const weekData = computed(() => {
     return progressHistory.value.slice(-7)
   })
 
-  /**
-   * Ajouter de l'XP aujourd'hui
-   */
   function addXP(amount: number) {
     const today = new Date().toISOString().split('T')[0]
     const todayData = progressHistory.value.find(d => d.date === today)
@@ -139,9 +115,6 @@ export function useProgression() {
     updateStreak()
   }
 
-  /**
-   * Compléter une leçon
-   */
   function completeLesson(xpEarned: number = 50) {
     const today = new Date().toISOString().split('T')[0]
     const todayData = progressHistory.value.find(d => d.date === today)

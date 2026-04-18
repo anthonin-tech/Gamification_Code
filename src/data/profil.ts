@@ -9,18 +9,14 @@ export const USER_PROFILE: UserProfile = {
   energy: '47.8K',
 
   skills: [
-    // Ring 1 — distance 130
     { name: 'TypeScript', level: 92, angle: 0,   distance: 130, color: '#a855f7', size: 40 },
     { name: 'Python',     level: 85, angle: 180,  distance: 130, color: '#f97316', size: 36 },
-    // Ring 2 — distance 180
     { name: 'Vue.js',     level: 88, angle: 0,   distance: 180, color: '#06b6d4', size: 48 },
     { name: 'Node.js',    level: 79, angle: 120,  distance: 180, color: '#4ade80', size: 42 },
     { name: 'Rust',       level: 61, angle: 240,  distance: 180, color: '#f43f5e', size: 38 },
-    // Ring 3 — distance 240
     { name: 'React',      level: 94, angle: 0,   distance: 240, color: '#60a5fa', size: 52 },
     { name: 'GraphQL',    level: 74, angle: 120,  distance: 240, color: '#facc15', size: 44 },
     { name: 'Docker',     level: 82, angle: 240,  distance: 240, color: '#ec4899', size: 46 },
-    // Ring 4 — distance 300
     { name: 'Go',         level: 55, angle: 0,   distance: 300, color: '#34d399', size: 38 },
     { name: 'K8s',        level: 67, angle: 180,  distance: 300, color: '#c084fc', size: 40 },
   ],

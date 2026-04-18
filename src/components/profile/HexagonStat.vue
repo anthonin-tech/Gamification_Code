@@ -25,9 +25,7 @@ const icon  = ICON_MAP[props.stat.icon] ?? '✦'
 
 <template>
   <div class="hex-card group">
-    <!-- Outer hex = colored "border" via gradient bg -->
     <div class="hex-outer" :style="{ background: gradient }">
-      <!-- Inner hex = dark content area -->
       <div class="hex-inner group-hover:bg-[#0d0120]">
         <div class="hex-content">
           <span class="hex-icon" :style="{ color: iconColor }">{{ icon }}</span>
@@ -37,67 +35,8 @@ const icon  = ICON_MAP[props.stat.icon] ?? '✦'
       </div>
     </div>
 
-    <!-- Glow on hover -->
     <div class="hex-glow group-hover:opacity-30" :style="{ background: gradient }" />
   </div>
 </template>
 
-<style scoped>
-/* Hexagon clip-path */
-.hex-outer,
-.hex-inner,
-.hex-glow {
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
-.hex-card {
-  position: relative;
-  aspect-ratio: 1;
-  transition: transform 0.4s;
-}
-.hex-card:hover { transform: scale(1.08); }
-
-/* Outer = colored border (3px = padding equivalent) */
-.hex-outer {
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Inner = dark fill */
-.hex-inner {
-  width: calc(100% - 4px);
-  height: calc(100% - 4px);
-  background: rgba(5, 0, 20, 0.9);
-  transition: background 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hex-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 1rem;
-}
-
-.hex-icon   { font-size: 2rem; line-height: 1; }
-.stat-value { font-size: 2.25rem; line-height: 1.1; }
-.stat-label { font-size: 0.8rem; text-align: center; }
-
-/* Blur glow behind card */
-.hex-glow {
-  position: absolute;
-  inset: -8px;
-  opacity: 0;
-  filter: blur(20px);
-  transition: opacity 0.4s;
-  z-index: -1;
-}
-</style>
+<style src="@/assets/styles/components/Galaxie_Profil/HexagonStat.css"></style>

@@ -69,6 +69,7 @@ export const LANGAGES: Langage[] = [
     usage: "Data science, IA/ML, back-end web, automatisation, scripting",
     description:
       "Python est célèbre pour sa syntaxe lisible et expressive. Du script d'automatisation aux modèles d'intelligence artificielle, c'est le langage de prédilection des data scientists et l'un des plus populaires au monde.",
+    cours: "/cours",
     popularite: 97,
     difficulte: 25,
     frameworks: [

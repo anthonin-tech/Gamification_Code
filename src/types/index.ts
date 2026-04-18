@@ -1,11 +1,3 @@
-// ============================================
-// TYPES CENTRALISÉS - CodeQuest
-// ============================================
-// Ce fichier exporte tous les types TypeScript
-// Avantage : Import simplifié depuis n'importe où
-// Usage : import type { UserProfile, Achievement } from '@/types'
-
-// Types pour le profil utilisateur
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary'
 
 export interface Achievement {
@@ -54,7 +46,6 @@ export interface UserProfile {
   achievements: Achievement[]
 }
 
-// Types pour les langages de programmation
 export interface Language {
   id: string
   name: string
@@ -67,7 +58,6 @@ export interface Language {
   completedLessons: number
 }
 
-// Types pour les articles/news
 export interface Article {
   _id: string
   title: string
@@ -92,7 +82,6 @@ export interface ArticlesResponse {
   pagination: ArticlePagination
 }
 
-// Catégories disponibles pour les filtres
 export const CATEGORIES = [
   'Tous',
   'JavaScript',
@@ -109,7 +98,6 @@ export const CATEGORIES = [
   'Général',
 ] as const
 
-// Types pour la progression
 export interface ProgressData {
   date: string
   xp: number

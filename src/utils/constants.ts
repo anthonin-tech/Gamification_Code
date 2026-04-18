@@ -1,8 +1,3 @@
-/**
- * Constantes globales de l'application
- */
-
-// XP et niveaux
 export const XP_PER_LEVEL = 1000
 export const MAX_LEVEL = 100
 
@@ -16,7 +11,6 @@ export const XP_REWARDS = {
   ACHIEVEMENT_LEGENDARY: 1000
 } as const
 
-// Raretés
 export const RARITY_COLORS = {
   common: '#6b7280',
   rare: '#3b82f6',
@@ -31,7 +25,6 @@ export const RARITY_LABELS = {
   legendary: 'Légendaire'
 } as const
 
-// Difficultés des langages
 export const DIFFICULTY_COLORS = {
   beginner: '#10b981',
   intermediate: '#f59e0b',
@@ -44,7 +37,6 @@ export const DIFFICULTY_LABELS = {
   advanced: 'Avancé'
 } as const
 
-// API URLs (à adapter selon votre backend)
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export const API_ENDPOINTS = {
@@ -54,7 +46,6 @@ export const API_ENDPOINTS = {
   ACHIEVEMENTS: '/api/achievements'
 } as const
 
-// LocalStorage keys
 export const STORAGE_KEYS = {
   PROFILE: 'codequest_profile',
   PREFERENCES: 'codequest_preferences',

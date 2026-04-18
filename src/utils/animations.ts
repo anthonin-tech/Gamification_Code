@@ -1,16 +1,5 @@
-/**
- * Utilitaires pour les animations
- */
-
 import { ANIMATION_DURATIONS } from './constants'
 
-/**
- * Anime une valeur numérique
- * @param start Valeur de départ
- * @param end Valeur finale
- * @param duration Durée en ms
- * @param callback Fonction appelée à chaque frame avec la valeur
- */
 export function animateValue(
   start: number,
   end: number,
@@ -37,22 +26,10 @@ export function animateValue(
   requestAnimationFrame(update)
 }
 
-/**
- * Crée une animation de confettis pour célébrer un achievement
- */
 export function celebrateAchievement() {
-  // Cette fonction nécessiterait une bibliothèque comme canvas-confetti
-  // Pour l'instant, on simule avec un simple effet
   console.log('🎉 Achievement débloqué !')
-  
-  // En production, utiliser:
-  // import confetti from 'canvas-confetti'
-  // confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } })
 }
 
-/**
- * Fait vibrer l'élément (si supporté)
- */
 export function vibrateElement(element: HTMLElement, duration: number = 200) {
   if (!element) return
   
@@ -62,9 +39,6 @@ export function vibrateElement(element: HTMLElement, duration: number = 200) {
   }, duration)
 }
 
-/**
- * Fait pulser un élément
- */
 export function pulseElement(element: HTMLElement, times: number = 3) {
   if (!element) return
   
@@ -80,9 +54,6 @@ export function pulseElement(element: HTMLElement, times: number = 3) {
   }, 300)
 }
 
-/**
- * Crée un effet de glow progressif
- */
 export function glowEffect(element: HTMLElement, color: string = '#7c3aed') {
   if (!element) return
   
@@ -94,9 +65,6 @@ export function glowEffect(element: HTMLElement, color: string = '#7c3aed') {
   }, 1000)
 }
 
-/**
- * Fait apparaître un élément avec un effet de fondu
- */
 export function fadeIn(element: HTMLElement, duration: number = ANIMATION_DURATIONS.BASE) {
   if (!element) return
   
@@ -109,9 +77,6 @@ export function fadeIn(element: HTMLElement, duration: number = ANIMATION_DURATI
   })
 }
 
-/**
- * Fait disparaître un élément avec un effet de fondu
- */
 export function fadeOut(
   element: HTMLElement, 
   duration: number = ANIMATION_DURATIONS.BASE,
@@ -128,9 +93,6 @@ export function fadeOut(
   }, duration)
 }
 
-/**
- * Fait glisser un élément depuis le haut
- */
 export function slideDown(element: HTMLElement, duration: number = ANIMATION_DURATIONS.BASE) {
   if (!element) return
   
@@ -149,9 +111,6 @@ export function slideDown(element: HTMLElement, duration: number = ANIMATION_DUR
   }, duration)
 }
 
-/**
- * Crée un compteur animé
- */
 export function animateCounter(
   element: HTMLElement,
   end: number,
@@ -168,9 +127,6 @@ export function animateCounter(
   })
 }
 
-/**
- * Effet de shake (secousse)
- */
 export function shake(element: HTMLElement) {
   if (!element) return
   
@@ -179,30 +135,3 @@ export function shake(element: HTMLElement) {
     element.classList.remove('shake')
   }, 500)
 }
-
-// CSS requis pour certaines animations (à ajouter dans components.css):
-/*
-@keyframes vibrate {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
-}
-
-.vibrate {
-  animation: vibrate 0.2s ease;
-}
-
-.pulse-once {
-  animation: pulse 0.3s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-.shake {
-  animation: shake 0.5s ease;
-}
-*/

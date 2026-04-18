@@ -1,0 +1,54 @@
+.hex-outer,
+.hex-inner,
+.hex-glow {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.hex-card {
+  position: relative;
+  aspect-ratio: 1;
+  transition: transform 0.4s;
+}
+.hex-card:hover { transform: scale(1.08); }
+
+.hex-outer {
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hex-inner {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  background: rgba(5, 0, 20, 0.9);
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hex-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 1rem;
+}
+
+.hex-icon   { font-size: 2rem; line-height: 1; }
+.stat-value { font-size: 2.25rem; line-height: 1.1; }
+.stat-label { font-size: 0.8rem; text-align: center; }
+
+.hex-glow {
+  position: absolute;
+  inset: -8px;
+  opacity: 0;
+  filter: blur(20px);
+  transition: opacity 0.4s;
+  z-index: -1;
+}
+
