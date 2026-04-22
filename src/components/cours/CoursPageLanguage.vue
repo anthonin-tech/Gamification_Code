@@ -29,6 +29,10 @@ function badgeClass(d: Difficulte) {
     'DIFFICILE': 'badge--difficile',
   }[d]
 }
+
+function startLesson() {
+  router.push(`/cours/${props.langage.nom.toLowerCase()}/learn`)
+}
 </script>
 
 <template>
@@ -55,7 +59,7 @@ function badgeClass(d: Difficulte) {
         </h1>
         <p class="hero-desc">{{ langage.description }}</p>
         <div class="hero-btns">
-          <button class="btn btn--primary">Démarrer la mission #001</button>
+          <button class="btn btn--primary" @click="startLesson">Démarrer la mission #001</button>
           <a href="/language"><button class="btn btn--ghost">Voir la carte</button></a>
         </div>
         <p class="hero-meta">

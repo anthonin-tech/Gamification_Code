@@ -21,4 +21,5 @@ if (!langage.value) router.replace('/cours/javascript')
     :langage="langage"
     :cours="cours"
   />
+
 </template>
