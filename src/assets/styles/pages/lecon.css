@@ -292,13 +292,6 @@
   overflow-x: auto;
 }
 
-.kw { color: #ff79c6; font-weight: 600; }
-.fn { color: #50fa7b; }
-.cl { color: #8be9fd; }
-.st { color: #f1fa8c; }
-.nm { color: #bd93f9; }
-.cm { color: #6272a4; font-style: italic; }
-
 .quiz-q {
   font-size: 15px;
   font-weight: 700;

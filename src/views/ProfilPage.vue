@@ -16,7 +16,6 @@ import { USER_PROFILE }   from '@/data/profil'
 
     <main class="profil-shell">
 
-      <!-- HERO -->
       <section class="profil-hero">
         <OrbitStage :skills="USER_PROFILE.skills">
           <BlackHoleAvatar :avatar-url="USER_PROFILE.avatarUrl" />
@@ -29,7 +28,6 @@ import { USER_PROFILE }   from '@/data/profil'
         </div>
       </section>
 
-      <!-- HEX STATS -->
       <div class="profil-stats" aria-label="Statistiques du profil">
         <HexagonStat
           v-for="stat in USER_PROFILE.stats"
@@ -38,7 +36,6 @@ import { USER_PROFILE }   from '@/data/profil'
         />
       </div>
 
-      <!-- ACTIVITIES -->
       <SectionCard title="Interdimensional Activities" icon-color="#08d8ff">
         <template #icon>
           <svg viewBox="0 0 24 24">
@@ -58,7 +55,6 @@ import { USER_PROFILE }   from '@/data/profil'
         </div>
       </SectionCard>
 
-      <!-- ACHIEVEMENTS -->
       <SectionCard title="Achievement Constellation" icon-color="#ffcd1e" class="profil-section--last">
         <template #icon>
           <svg viewBox="0 0 24 24">

@@ -4,6 +4,7 @@
       <router-link to="/" class="navbar-brand">CodeQuest</router-link>
 
       <div class="navbar-links">
+        <router-link to="/cours" class="navbar-link">Cours</router-link>
         <router-link to="/language" class="navbar-link">Language</router-link>
         <router-link to="/progression" class="navbar-link">Progression</router-link>
         <router-link to="/profile" class="navbar-link">Profil</router-link>

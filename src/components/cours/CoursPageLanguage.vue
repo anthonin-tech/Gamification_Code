@@ -142,13 +142,6 @@ function startLesson() {
         </article>
       </div>
     </section>
-
-    <section class="cta">
-      <h2 class="cta-title">Prêt pour le décollage ?</h2>
-      <p class="cta-sub">Rejoins l'académie spatiale et écris ta première ligne de code en moins de 60 secondes.</p>
-      <button class="btn btn--primary">Commencer gratuitement</button>
-    </section>
-
   </div>
 </template>
 

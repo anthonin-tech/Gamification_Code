@@ -1,15 +1,93 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { CURRICULUM_PYTHON } from '@/data/curriculum'
 import { XP_PER_LEVEL }      from '@/utils/constants'
 import type { CourseModule }  from '@/types/cours'
 import '@/assets/styles/pages/lecon.css'
 
-const route = useRoute()
+const LS_KEY = 'codequest_python_progress'
+const LESSON_STATUS_BADGES = {
+  inProgress: '↩ Reprise en cours',
+  completed: '✓ Terminée',
+} as const
+
+type LessonSnapshot = {
+  quizAnswered: Record<number, boolean>
+  quizSelected: Record<number, number>
+  codeInputs: Record<number, string>
+  fillAnswers: Record<string, string>
+  fillResults: Record<number, boolean | null>
+  challengeResults: Record<number, boolean | null>
+  challengeOutputs: Record<number, string>
+  currentStep: number
+}
+
+type PersistedProgress = {
+  totalXP?: number
+  streak?: number
+  completedLessons?: string[]
+  currentModule?: number
+  currentLesson?: number
+  currentStep?: number
+  activeModule?: number
+  savedLessonData?: Record<string, LessonSnapshot>
+}
+
+type InteractiveStore = Record<string, unknown>
+type LessonStep = any
+
+const curriculum: CourseModule[] = CURRICULUM_PYTHON
 
 const starCanvas = ref<HTMLCanvasElement | null>(null)
 let animFrame = 0
+
+const totalXP = ref(0)
+const streak = ref(3)
+const completedLessons = ref<Set<string>>(new Set())
+const sidebarOpen = ref(false)
+const activeModule = ref(0)
+const currentModule = ref(0)
+const currentLesson = ref(0)
+const currentStep = ref(0)
+const copied = ref(false)
+
+const savedLessonData = ref<Record<string, LessonSnapshot>>({})
+
+const quizAnswered = reactive<Record<number, boolean>>({})
+const quizSelected = reactive<Record<number, number>>({})
+const codeInputs = reactive<Record<number, string>>({})
+const challengeOutputs = reactive<Record<number, string>>({})
+const challengeResults = reactive<Record<number, boolean | null>>({})
+const fillAnswers = reactive<Record<string, string>>({})
+const fillResults = reactive<Record<number, boolean | null>>({})
+
+const playerLevel = computed(() => Math.floor(totalXP.value / XP_PER_LEVEL) + 1)
+const levelPercent = computed(() => (totalXP.value % XP_PER_LEVEL) / (XP_PER_LEVEL / 100))
+const activeLesson = computed(() => curriculum[currentModule.value]?.lessons[currentLesson.value])
+const lessonKey = computed(() => getLessonKey(currentModule.value, currentLesson.value))
+const hasSavedLesson = computed(() => !!savedLessonData.value[lessonKey.value])
+const isCurrentLessonCompleted = computed(() => completedLessons.value.has(lessonKey.value))
+const currentLessonStatus = computed(() => {
+  if (isCurrentLessonCompleted.value) return LESSON_STATUS_BADGES.completed
+  if (hasSavedLesson.value) return LESSON_STATUS_BADGES.inProgress
+  return ''
+})
+
+function getLessonKey(moduleIndex: number, lessonIndex: number) {
+  return `${moduleIndex}-${lessonIndex}`
+}
+
+function isLessonCompleted(moduleIndex: number, lessonIndex: number) {
+  return completedLessons.value.has(getLessonKey(moduleIndex, lessonIndex))
+}
+
+function hasSavedProgress(moduleIndex: number, lessonIndex: number) {
+  return !!savedLessonData.value[getLessonKey(moduleIndex, lessonIndex)]
+}
+
+function clearStore(store: InteractiveStore) {
+  Object.keys(store).forEach(key => delete store[key])
+}
 
 function initStars() {
   const c = starCanvas.value
@@ -42,32 +120,79 @@ function initStars() {
   draw()
 }
 
-onMounted(() => { initStars(); window.addEventListener('resize', initStars) })
-onUnmounted(() => { cancelAnimationFrame(animFrame); window.removeEventListener('resize', initStars) })
+function saveProgress() {
+  snapshotCurrentLesson()
 
-const curriculum: CourseModule[] = CURRICULUM_PYTHON
+  const data = {
+    totalXP: totalXP.value,
+    streak: streak.value,
+    completedLessons: [...completedLessons.value],
+    currentModule: currentModule.value,
+    currentLesson: currentLesson.value,
+    currentStep: currentStep.value,
+    activeModule: activeModule.value,
+    savedLessonData: savedLessonData.value,
+  }
+  localStorage.setItem(LS_KEY, JSON.stringify(data))
+}
 
-const totalXP          = ref(0)
-const streak           = ref(3)
-const completedLessons = ref<Set<string>>(new Set())
-const sidebarOpen      = ref(false)
-const activeModule     = ref(0)
-const currentModule    = ref(0)
-const currentLesson    = ref(0)
-const currentStep      = ref(0)
-const copied           = ref(false)
+function loadProgress() {
+  const raw = localStorage.getItem(LS_KEY)
+  if (!raw) return
 
-const playerLevel  = computed(() => Math.floor(totalXP.value / XP_PER_LEVEL) + 1)
-const levelPercent = computed(() => (totalXP.value % XP_PER_LEVEL) / (XP_PER_LEVEL / 100))
-const activeLesson = computed(() => curriculum[currentModule.value]?.lessons[currentLesson.value])
+  try {
+    const data: PersistedProgress = JSON.parse(raw)
+    totalXP.value = data.totalXP ?? 0
+    streak.value = data.streak ?? 3
+    completedLessons.value = new Set(data.completedLessons ?? [])
+    currentModule.value = data.currentModule ?? 0
+    currentLesson.value = data.currentLesson ?? 0
+    currentStep.value = data.currentStep ?? 0
+    activeModule.value = data.activeModule ?? 0
+    savedLessonData.value = data.savedLessonData ?? {}
 
-const quizAnswered     = reactive<Record<number, boolean>>({})
-const quizSelected     = reactive<Record<number, number>>({})
-const codeInputs       = reactive<Record<number, string>>({})
-const challengeOutputs = reactive<Record<number, string>>({})
-const challengeResults = reactive<Record<number, boolean | null>>({})
-const fillAnswers      = reactive<Record<string, string>>({})
-const fillResults      = reactive<Record<number, boolean | null>>({})
+    restoreLessonData(data.currentModule ?? 0, data.currentLesson ?? 0)
+  } catch {
+    localStorage.removeItem(LS_KEY)
+  }
+}
+
+function snapshotCurrentLesson() {
+  savedLessonData.value[lessonKey.value] = {
+    quizAnswered: { ...quizAnswered },
+    quizSelected: { ...quizSelected },
+    codeInputs: { ...codeInputs },
+    fillAnswers: { ...fillAnswers },
+    fillResults: { ...fillResults },
+    challengeResults: { ...challengeResults },
+    challengeOutputs: { ...challengeOutputs },
+    currentStep: currentStep.value,
+  }
+}
+
+function restoreLessonData(mi: number, li: number) {
+  const key = getLessonKey(mi, li)
+  clearInteractiveState()
+  const snap = savedLessonData.value[key]
+  if (!snap) return
+  Object.assign(quizAnswered, snap.quizAnswered ?? {})
+  Object.assign(quizSelected, snap.quizSelected ?? {})
+  Object.assign(codeInputs, snap.codeInputs ?? {})
+  Object.assign(fillAnswers, snap.fillAnswers ?? {})
+  Object.assign(fillResults, snap.fillResults ?? {})
+  Object.assign(challengeResults, snap.challengeResults ?? {})
+  Object.assign(challengeOutputs, snap.challengeOutputs ?? {})
+}
+
+function clearInteractiveState() {
+  ;[quizAnswered, quizSelected, codeInputs, challengeOutputs, challengeResults, fillAnswers, fillResults]
+    .forEach(clearStore)
+}
+
+watch([totalXP, currentStep, completedLessons], saveProgress, { deep: true })
+
+watch([() => ({ ...quizAnswered }), () => ({ ...codeInputs }), () => ({ ...fillAnswers })],
+  saveProgress, { deep: true })
 
 function lessonTypeIcon(type: string) {
   return ({ theory: '📖', quiz: '⚡', project: '🚀', challenge: '💻' } as Record<string, string>)[type] ?? '📄'
@@ -76,7 +201,7 @@ function lessonTypeLabel(type: string) {
   return ({ theory: 'Cours', quiz: 'Quiz', project: 'Projet', challenge: 'Défi' } as Record<string, string>)[type] ?? 'Leçon'
 }
 function isModuleComplete(mi: number) {
-  return curriculum[mi].lessons.every((_, li) => completedLessons.value.has(`${mi}-${li}`))
+  return curriculum[mi].lessons.every((_, li) => isLessonCompleted(mi, li))
 }
 function isModuleLocked(mi: number) {
   if (mi === 0) return false
@@ -85,102 +210,106 @@ function isModuleLocked(mi: number) {
 function isLessonLocked(mi: number, li: number) {
   if (isModuleLocked(mi)) return true
   if (li === 0) return false
-  return !completedLessons.value.has(`${mi}-${li - 1}`)
+  return !isLessonCompleted(mi, li - 1)
 }
 function modProgress(mi: number) {
-  return curriculum[mi].lessons.filter((_, li) => completedLessons.value.has(`${mi}-${li}`)).length
+  return curriculum[mi].lessons.filter((_, li) => isLessonCompleted(mi, li)).length
 }
 function toggleModule(mi: number) {
   activeModule.value = activeModule.value === mi ? -1 : mi
 }
 
 function goLesson(mi: number, li: number) {
-    if (isLessonLocked(mi, li)) return
-    currentModule.value = mi
-    currentLesson.value = li
-    currentStep.value = 0
-    sidebarOpen.value = false
+  if (isLessonLocked(mi, li)) return
 
-    ;[quizAnswered, quizSelected, codeInputs, challengeOutputs, challengeResults].forEach(obj => {
-        Object.keys(obj).forEach(k => delete (obj as Record<string, unknown>)[k])
-    })
-    Object.keys(fillAnswers).forEach(k => delete (fillAnswers as Record<string, unknown>)[k])
-    Object.keys(fillResults).forEach(k => delete (fillResults as Record<string, unknown>)[k])
+  snapshotCurrentLesson()
+
+  currentModule.value = mi
+  currentLesson.value = li
+  sidebarOpen.value   = false
+
+  const key = getLessonKey(mi, li)
+  const snap = savedLessonData.value[key]
+  if (snap) {
+    restoreLessonData(mi, li)
+    currentStep.value = snap.currentStep ?? 0
+  } else {
+    clearInteractiveState()
+    currentStep.value = 0
+  }
+
+  saveProgress()
 }
 
 function nextStep(si: number) {
-    if (!activeLesson.value) return
-    if (si + 1 >= activeLesson.value.steps.length) {
-        completeLesson()
-    } else {
-        currentStep.value = si + 1
-    }
+  if (!activeLesson.value) return
+  if (si + 1 >= activeLesson.value.steps.length) {
+    completeLesson()
+  } else {
+    currentStep.value = si + 1
+  }
 }
 
 function completeLesson() {
-    const key = `${currentModule.value}-${currentLesson.value}`
-    if (!completedLessons.value.has(key)) {
-        completedLessons.value.add(key)
-        totalXP.value += activeLesson.value?.xp ?? 0
-    }
-    currentStep.value = activeLesson.value?.steps.length ?? 99
+  const key = lessonKey.value
+  if (!completedLessons.value.has(key)) {
+    completedLessons.value.add(key)
+    totalXP.value += activeLesson.value?.xp ?? 0
+  }
+  currentStep.value = activeLesson.value?.steps.length ?? 99
 }
 
 function goNextLesson() {
-    const mod = curriculum[currentModule.value]
-    if (currentLesson.value < mod.lessons.length - 1) {
-        goLesson(currentModule.value, currentLesson.value + 1)
-    } else if (currentModule.value < curriculum.length - 1) {
-        goLesson(currentModule.value + 1, 0)
-        activeModule.value = currentModule.value
-    }
+  const mod = curriculum[currentModule.value]
+  if (currentLesson.value < mod.lessons.length - 1) {
+    goLesson(currentModule.value, currentLesson.value + 1)
+  } else if (currentModule.value < curriculum.length - 1) {
+    goLesson(currentModule.value + 1, 0)
+    activeModule.value = currentModule.value
+  }
 }
 
-function answerQuiz(si: number, oi: number, step: any) {
-    if (quizAnswered[si]) return
-    quizSelected[si] = oi
-    quizAnswered[si] = true
-    if (oi === step.correct) totalXP.value += step.xp ?? 0
+function answerQuiz(si: number, oi: number, step: LessonStep) {
+  if (quizAnswered[si]) return
+  quizSelected[si] = oi
+  quizAnswered[si] = true
+  if (oi === step.correct) totalXP.value += step.xp ?? 0
+  saveProgress()
 }
 
-function runChallenge(si: number, step: any) {
-    const code = codeInputs[si] ?? step.starter ?? ''
-    let output = '$ python main.py\n'
-    const prints = [...code.matchAll(/print\s*\(([^)]+)\)/g)]
-    for (const m of prints) {
-        const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
-        output += raw + '\n'
-    }
-    if (!prints.length) output += '(aucune sortie)'
-    challengeOutputs[si] = output
-    const passed = step.validator ? step.validator(code) : prints.length > 0
-    challengeResults[si] = passed
-    if (passed) totalXP.value += step.xp ?? 0
+function runChallenge(si: number, step: LessonStep) {
+  const code = codeInputs[si] ?? step.starter ?? ''
+  let output = '$ python main.py\n'
+  const prints = [...code.matchAll(/print\s*\(([^)]+)\)/g)]
+  for (const m of prints) {
+    const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
+    output += raw + '\n'
+  }
+  if (!prints.length) output += '(aucune sortie)'
+  challengeOutputs[si] = output
+  const passed = step.validator ? step.validator(code) : prints.length > 0
+  challengeResults[si] = passed
+  if (passed) totalXP.value += step.xp ?? 0
+  saveProgress()
 }
 
-function checkFill(si: number, step: any) {
-   let allCorrect = true
-   step.parts.forEach((part: any, pi: number) => {
+function checkFill(si: number, step: LessonStep) {
+  let allCorrect = true
+  step.parts.forEach((part: any, pi: number) => {
     if (part.type === 'blank') {
-        const ans = (fillAnswers[`${si}-${pi}`] ?? '').trim()
-        if (ans !== part.correct) allCorrect = false
+      const ans = (fillAnswers[`${si}-${pi}`] ?? '').trim()
+      if (ans !== part.correct) allCorrect = false
     }
-   })
-   fillResults[si] = allCorrect
-   if (allCorrect) totalXP.value += step.xp ?? 0
+  })
+  fillResults[si] = allCorrect
+  if (allCorrect) totalXP.value += step.xp ?? 0
+  saveProgress()
 }
 
-function highlight(code: string): string {
+function formatCode(code: string): string {
   if (!code) return ''
   return code
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/(#.*)$/gm,  '<span class="cm">$1</span>')
-    .replace(/\b(def|class|if|elif|else|for|while|return|import|from|in|not|and|or|is|True|False|None|with|as|try|except|finally|pass|break|continue|lambda|super|self)\b/g, '<span class="kw">$1</span>')
-    .replace(/\b([A-Z][a-zA-Z0-9_]*)\s*(?=\(|:)/g, '<span class="cl">$1</span>')
-    .replace(/\b([a-z_][a-zA-Z0-9_]*)\s*(?=\()/g,  '<span class="fn">$1</span>')
-    .replace(/"([^"]*)"/g, '<span class="st">"$1"</span>')
-    .replace(/'([^']*)'/g, "<span class='st'>'$1'</span>")
-    .replace(/\b(\d+\.?\d*)\b/g, '<span class="nm">$1</span>')
 }
 
 async function copyCode(src: string) {
@@ -190,6 +319,23 @@ async function copyCode(src: string) {
     setTimeout(() => copied.value = false, 2000)
   } catch {}
 }
+
+function resetAllProgress() {
+  if (!confirm('Réinitialiser toute ta progression Python ?')) return
+  localStorage.removeItem(LS_KEY)
+  location.reload()
+}
+
+onMounted(() => {
+  initStars()
+  window.addEventListener('resize', initStars)
+  loadProgress()
+})
+
+onUnmounted(() => {
+  cancelAnimationFrame(animFrame)
+  window.removeEventListener('resize', initStars)
+})
 </script>
 
 <template>
@@ -241,18 +387,26 @@ async function copyCode(src: string) {
               class="lesson-btn"
               :class="{
                 'lesson-active': currentModule === mi && currentLesson === li,
-                'lesson-done':   completedLessons.has(`${mi}-${li}`),
+                'lesson-done':   isLessonCompleted(mi, li),
                 'lesson-locked': isLessonLocked(mi, li)
               }"
               @click="goLesson(mi, li)"
             >
               <span class="lesson-dot"></span>
               <span>{{ lesson.title }}</span>
-              <span>{{ lessonTypeIcon(lesson.type) }}</span>
+              <span v-if="hasSavedProgress(mi, li) && !isLessonCompleted(mi, li)">↩</span>
+              <span v-else>{{ lessonTypeIcon(lesson.type) }}</span>
             </button>
           </div>
         </div>
       </nav>
+
+      <div style="padding: 12px 18px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: auto;">
+        <button
+          @click="resetAllProgress"
+          style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:11px;cursor:pointer;font-family:inherit;"
+        >↺ Réinitialiser la progression</button>
+      </div>
     </aside>
 
     <div class="lecon-main">
@@ -264,6 +418,10 @@ async function copyCode(src: string) {
           <span class="bc-sep">›</span>
           <span class="bc-lesson">{{ curriculum[currentModule]?.lessons[currentLesson]?.title }}</span>
         </div>
+        <span
+          v-if="hasSavedLesson && !isCurrentLessonCompleted"
+          style="font-size:11px;color:rgba(251,191,36,0.8);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);padding:3px 10px;border-radius:99px;"
+        >{{ currentLessonStatus }}</span>
         <div class="topbar-xp">⚡ {{ totalXP }}</div>
       </div>
 
@@ -276,6 +434,10 @@ async function copyCode(src: string) {
             </span>
             <span class="hero-xp-badge">+{{ activeLesson.xp }} XP</span>
             <span class="hero-time">⏱ {{ activeLesson.time }}</span>
+            <span
+              v-if="isCurrentLessonCompleted"
+              style="font-size:11px;color:#06d6a0;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.3);padding:3px 10px;border-radius:99px;"
+            >{{ currentLessonStatus }}</span>
           </div>
           <h1 class="lesson-title-big">{{ activeLesson.title }}</h1>
           <p class="lesson-subtitle">{{ activeLesson.subtitle }}</p>
@@ -295,7 +457,6 @@ async function copyCode(src: string) {
             :class="{ 'step-visible': si <= currentStep, 'step-current': si === currentStep }"
           >
 
-            <!-- THEORY -->
             <div v-if="step.type === 'theory'" class="step-theory">
               <div class="step-tag">📖 Concept</div>
               <h3>{{ step.title }}</h3>
@@ -310,12 +471,11 @@ async function copyCode(src: string) {
                   <span class="code-fn">{{ step.code.filename }}</span>
                   <button class="copy-btn" @click="copyCode(step.code.src)">{{ copied ? '✓' : '⎘' }}</button>
                 </div>
-                <pre class="code-body" v-html="highlight(step.code.src)"></pre>
+                <pre class="code-body" v-html="formatCode(step.code.src)"></pre>
               </div>
               <button class="btn-next" @click="nextStep(si)">Suivant →</button>
             </div>
 
-            <!-- QUIZ -->
             <div v-if="step.type === 'quiz'" class="step-quiz">
               <div class="step-tag">⚡ Quiz</div>
               <p class="quiz-q">{{ step.question }}</p>
@@ -369,8 +529,7 @@ async function copyCode(src: string) {
                 🔄 Pas tout à fait… Relis la consigne et réessaie !
               </div>
             </div>
-
-            <!-- FILL-BLANK -->
+            
             <div v-if="step.type === 'fill-blank'" class="step-fill">
               <div class="step-tag">✏️ Complète le code</div>
               <p>{{ step.instructions }}</p>
