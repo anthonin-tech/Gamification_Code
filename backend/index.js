@@ -37,7 +37,6 @@ async function tryConnectWithAltDns({ mongodbUri, serverSelectionTimeoutMS, dnsS
     try {
       dns.setServers(previousServers)
     } catch {
-      // ignore restore failures (rare); worst case Node keeps custom resolvers
     }
   }
 }

@@ -1,57 +1,51 @@
 <script setup lang="ts">
-const STAR_COUNT   = 150
-const METEOR_COUNT = 3
 
-const stars = Array.from({ length: STAR_COUNT }, () => ({
-  top:      Math.random() * 100,
-  left:     Math.random() * 100,
-  size:     Math.random() * 2.5 + 0.5,
-  delay:    Math.random() * 6,
-  duration: Math.random() * 3 + 2,
-  opacity:  Math.random() * 0.7 + 0.3,
-}))
+import { ref, onMounted } from 'vue'
+interface Star {
+  x:        number
+  y:        number
+  r:        number
+  opacity:  number
+  duration: number
+}
+const stars = ref<Star[]>([])
 
-const meteors = Array.from({ length: METEOR_COUNT }, (_, i) => ({
-  top:   Math.random() * 40,
-  left:  Math.random() * 80,
-  delay: i * 9 + Math.random() * 6,
-}))
+onMounted(() => {
+  stars.value = Array.from({ length: 160 }, () => ({
+    x:        Math.random() * 100,
+    y:        Math.random() * 100,
+    r:        Math.random() * 1.6 + 0.3,
+    opacity:  Math.random() * 0.7 + 0.15,
+    duration: Math.random() * 4 + 3,
+  }))
+})
 </script>
 
 <template>
-  <div class="space-bg">
-    <div class="space-base" />
+  
+  <div class="space-bg" aria-hidden="true">
 
-    <div class="star-field">
-      <div
-        v-for="(star, i) in stars"
-        :key="`s${i}`"
-        class="star"
-        :style="{
-          top:               `${star.top}%`,
-          left:              `${star.left}%`,
-          width:             `${star.size}px`,
-          height:            `${star.size}px`,
-          opacity:           star.opacity,
-          animationDelay:    `${star.delay}s`,
-          animationDuration: `${star.duration}s`,
-        }"
-      />
-    </div>
-
+    
     <div
-      v-for="(m, i) in meteors"
-      :key="`m${i}`"
-      class="meteor"
-      :style="{ top: `${m.top}%`, left: `${m.left}%`, animationDelay: `${m.delay}s` }"
+      v-for="(star, i) in stars"
+      :key="i"
+      class="space-bg__star"
+      :style="{
+        left:              star.x + '%',
+        top:               star.y + '%',
+        width:             star.r * 2 + 'px',
+        height:            star.r * 2 + 'px',
+        opacity:           star.opacity,
+        animationDuration: star.duration + 's',
+      }"
     />
 
-    <div class="nebula nebula-purple" />
-    <div class="nebula nebula-blue"   style="animation-delay:2s;animation-duration:28s" />
-    <div class="nebula nebula-pink"   style="animation-delay:4s;animation-duration:33s" />
-    <div class="nebula nebula-cyan"   style="animation-delay:7s;animation-duration:38s" />
+    
+    <div class="space-bg__nebula space-bg__nebula--left"  />
+    <div class="space-bg__nebula space-bg__nebula--right" />
+    <div class="space-bg__nebula space-bg__nebula--top"   />
+
   </div>
 </template>
 
-<style src="@/assets/styles/components/Galaxie_Profil/SpaceBackground.css"></style>
-
+<style scoped src="@/assets/styles/components/Galaxie_Profil/SpaceBackground.css" />

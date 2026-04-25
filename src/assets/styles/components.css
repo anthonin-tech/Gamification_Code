@@ -1,8 +1,5 @@
-/* ============================================
-   COMPONENTS.CSS - Composants réutilisables
-   ============================================ */
 
-/* ===== Cards (Cartes) ===== */
+
 .card {
   background: var(--surface);
   border-radius: var(--radius-md);
@@ -30,7 +27,6 @@
   font-size: 0.875rem;
 }
 
-/* ===== Buttons (Boutons) ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -81,7 +77,6 @@
   background: var(--surface);
 }
 
-/* ===== Badges ===== */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -113,7 +108,6 @@
   color: white;
 }
 
-/* Rareté des achievements */
 .badge-common {
   background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
   color: white;
@@ -138,7 +132,6 @@
   animation: pulse 2s infinite;
 }
 
-/* ===== Progress Bars (Barres de progression) ===== */
 .progress-bar {
   width: 100%;
   height: 8px;
@@ -182,7 +175,6 @@
   }
 }
 
-/* ===== Inputs (Champs de saisie) ===== */
 .input {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
@@ -204,7 +196,6 @@
   color: var(--text-dim);
 }
 
-/* ===== Stats Grid ===== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -241,7 +232,6 @@
   letter-spacing: 0.05em;
 }
 
-/* ===== Skeleton Loader ===== */
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -278,7 +268,6 @@
   height: 200px;
 }
 
-/* ===== Tooltips ===== */
 .tooltip {
   position: relative;
 }
@@ -305,7 +294,6 @@
   opacity: 1;
 }
 
-/* ===== Divider (Séparateur) ===== */
 .divider {
   height: 1px;
   background: linear-gradient(
@@ -317,7 +305,6 @@
   margin: var(--spacing-lg) 0;
 }
 
-/* ===== Empty State (État vide) ===== */
 .empty-state {
   text-align: center;
   padding: var(--spacing-2xl);
@@ -343,7 +330,6 @@
   margin: 0 auto;
 }
 
-/* ===== Loading Spinner ===== */
 .spinner {
   width: 40px;
   height: 40px;
@@ -359,7 +345,6 @@
   border-width: 2px;
 }
 
-/* ===== Navbar specifics ===== */
 .navbar {
   background: rgba(11, 16, 32, 0.8);
   backdrop-filter: blur(10px);
@@ -411,7 +396,6 @@
   border-radius: var(--radius-full);
 }
 
-/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;

@@ -11,8 +11,6 @@ export function animateValue(
   function update(currentTime: number) {
     const elapsed = currentTime - startTime
     const progress = Math.min(elapsed / duration, 1)
-    
-    // Easing: easeOutCubic
     const easedProgress = 1 - Math.pow(1 - progress, 3)
     const current = start + (end - start) * easedProgress
     

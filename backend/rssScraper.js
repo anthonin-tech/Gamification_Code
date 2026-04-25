@@ -13,7 +13,6 @@ const parser = new Parser({
 })
 
 export const RSS_SOURCES = [
-  // --- JavaScript & Web ---
   { name: 'CSS-Tricks', url: 'https://css-tricks.com/feed/', category: 'CSS / Web' },
   { name: 'Dev.to JavaScript', url: 'https://dev.to/feed/tag/javascript', category: 'JavaScript' },
   { name: 'Dev.to TypeScript', url: 'https://dev.to/feed/tag/typescript', category: 'TypeScript' },
@@ -22,19 +21,15 @@ export const RSS_SOURCES = [
   { name: 'TypeScript Blog', url: 'https://devblogs.microsoft.com/typescript/feed/', category: 'TypeScript' },
   { name: 'web.dev', url: 'https://web.dev/feed.xml', category: 'CSS / Web' },
   { name: 'Mozilla Hacks', url: 'https://hacks.mozilla.org/feed/', category: 'CSS / Web' },
-  // --- Python ---
   { name: 'Dev.to Python', url: 'https://dev.to/feed/tag/python', category: 'Python' },
   { name: 'Real Python', url: 'https://realpython.com/atom.xml', category: 'Python' },
   { name: 'Python Insider', url: 'https://blog.python.org/feeds/posts/default', category: 'Python' },
   { name: 'Planet Python', url: 'https://planetpython.org/rss20.xml', category: 'Python' },
-  // --- Rust ---
   { name: 'Dev.to Rust', url: 'https://dev.to/feed/tag/rust', category: 'Rust' },
   { name: 'This Week in Rust', url: 'https://this-week-in-rust.org/rss.xml', category: 'Rust' },
   { name: 'Rust Blog officiel', url: 'https://blog.rust-lang.org/feed.xml', category: 'Rust' },
-  // --- Go ---
   { name: 'Go Blog officiel', url: 'https://go.dev/blog/feed.atom', category: 'Go' },
   { name: 'Golang Weekly', url: 'https://golangweekly.com/rss/1a1513b4', category: 'Go' },
-  // --- Général ---
   { name: 'Hacker News', url: 'https://hnrss.org/frontpage', category: 'Général' },
   { name: 'The Changelog', url: 'https://changelog.com/feed', category: 'Open Source' },
   { name: 'InfoQ', url: 'https://feed.infoq.com/', category: 'Général' },

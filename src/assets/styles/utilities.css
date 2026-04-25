@@ -1,8 +1,5 @@
-/* ============================================
-   UTILITIES.CSS - Classes utilitaires
-   ============================================ */
 
-/* ===== Flexbox ===== */
+
 .flex {
   display: flex;
 }
@@ -52,7 +49,6 @@
 .flex-1 { flex: 1; }
 .flex-wrap { flex-wrap: wrap; }
 
-/* ===== Grid ===== */
 .grid {
   display: grid;
 }
@@ -69,7 +65,6 @@
 .col-span-2 { grid-column: span 2 / span 2; }
 .col-span-3 { grid-column: span 3 / span 3; }
 
-/* ===== Spacing ===== */
 .m-0 { margin: 0; }
 .mt-xs { margin-top: var(--spacing-xs); }
 .mt-sm { margin-top: var(--spacing-sm); }
@@ -94,7 +89,6 @@
 .px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
 .py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
 
-/* ===== Text ===== */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
@@ -117,7 +111,6 @@
 .lowercase { text-transform: lowercase; }
 .capitalize { text-transform: capitalize; }
 
-/* ===== Colors ===== */
 .text-muted { color: var(--text-muted); }
 .text-dim { color: var(--text-dim); }
 .text-primary { color: var(--primary); }
@@ -128,19 +121,16 @@
 .bg-surface { background: var(--surface); }
 .bg-primary { background: var(--primary); }
 
-/* ===== Display ===== */
 .block { display: block; }
 .inline-block { display: inline-block; }
 .inline { display: inline; }
 .hidden { display: none; }
 
-/* ===== Position ===== */
 .relative { position: relative; }
 .absolute { position: absolute; }
 .fixed { position: fixed; }
 .sticky { position: sticky; }
 
-/* ===== Width & Height ===== */
 .w-full { width: 100%; }
 .w-auto { width: auto; }
 .w-fit { width: fit-content; }
@@ -157,40 +147,33 @@
 .max-w-2xl { max-width: 42rem; }
 .max-w-screen { max-width: 1100px; }
 
-/* ===== Overflow ===== */
 .overflow-hidden { overflow: hidden; }
 .overflow-auto { overflow: auto; }
 .overflow-x-auto { overflow-x: auto; }
 .overflow-y-auto { overflow-y: auto; }
 
-/* ===== Border Radius ===== */
 .rounded-sm { border-radius: var(--radius-sm); }
 .rounded-md { border-radius: var(--radius-md); }
 .rounded-lg { border-radius: var(--radius-lg); }
 .rounded-full { border-radius: var(--radius-full); }
 
-/* ===== Shadow ===== */
 .shadow-sm { box-shadow: var(--shadow-sm); }
 .shadow-md { box-shadow: var(--shadow-md); }
 .shadow-lg { box-shadow: var(--shadow-lg); }
 .shadow-glow { box-shadow: var(--shadow-glow); }
 
-/* ===== Cursor ===== */
 .cursor-pointer { cursor: pointer; }
 .cursor-not-allowed { cursor: not-allowed; }
 
-/* ===== Opacity ===== */
 .opacity-0 { opacity: 0; }
 .opacity-50 { opacity: 0.5; }
 .opacity-75 { opacity: 0.75; }
 .opacity-100 { opacity: 1; }
 
-/* ===== Transitions ===== */
 .transition-fast { transition: all var(--transition-fast); }
 .transition-base { transition: all var(--transition-base); }
 .transition-slow { transition: all var(--transition-slow); }
 
-/* ===== Animations ===== */
 .animate-fade-in {
   animation: fadeIn var(--transition-base) ease-out;
 }
@@ -203,7 +186,6 @@
   animation: spin 1s linear infinite;
 }
 
-/* ===== Hover Effects ===== */
 .hover-lift {
   transition: transform var(--transition-fast);
 }
@@ -220,7 +202,6 @@
   transform: scale(1.05);
 }
 
-/* ===== Responsive Utilities ===== */
 @media (max-width: 768px) {
   .md\:hidden {
     display: none;

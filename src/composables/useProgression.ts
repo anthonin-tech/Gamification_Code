@@ -13,8 +13,6 @@ export function useProgression() {
   async function loadProgressHistory(days: number = 30) {
     loading.value = true
     try {
-      // Simulation de données
-      // En production: await fetch(`/api/progress?days=${days}`)
       const mockData: ProgressData[] = generateMockData(days)
       progressHistory.value = mockData
       updateStreak()

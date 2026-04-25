@@ -2,7 +2,6 @@ import { ref, computed } from 'vue'
 import type { UserProfile } from '@/types'
 
 export function useProfile() {
-  // État réactif
   const profile = ref<UserProfile | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -17,7 +16,6 @@ export function useProfile() {
       if (savedProfile) {
         profile.value = JSON.parse(savedProfile)
       } else {
-        // Charger le profil par défaut
         profile.value = await import('@/data/profil').then(m => m.USER_PROFILE)
       }
     } catch (e) {
@@ -38,7 +36,7 @@ export function useProfile() {
     if (!profile.value) return 0
     
     const currentLevel = profile.value.level
-    const xpForNextLevel = currentLevel * 1000 // Exemple : 1000 XP par niveau
+    const xpForNextLevel = currentLevel * 1000
     const currentXP = parseInt(profile.value.energy.replace('K', '')) * 1000
     
     return Math.min(100, (currentXP % xpForNextLevel) / xpForNextLevel * 100)

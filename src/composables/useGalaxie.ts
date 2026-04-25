@@ -537,9 +537,7 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       } else if (scene.value === "systemes") {
         allerA("solaire", hit as Langage)
       } else if (scene.value === "solaire") {
-        const fw = hit as Framework
-        // Toggle : re-cliquer sur la même planète désélectionne
-        frameworkActif.value = frameworkActif.value === fw ? null : fw
+        const fw = hit as Framework        frameworkActif.value = frameworkActif.value === fw ? null : fw
       }
     })
   }
