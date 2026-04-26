@@ -1,27 +1,44 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import CategoryFilter from '@/components/news/CategoryFilter.vue'
 import ArticleCard from '@/components/news/ArticleCard.vue'
-import CodeTypingAnimation from '@/components/home/CodeTypingAnimation.vue'
+import GalaxyBackground from '@/components/home/GalaxyBackground.vue'
 import type { ArticlesResponse } from '@/types'
 import { API_BASE_URL } from '@/utils/constants'
 
-
   const cards = [
-      { id: 1, type: 'python', iconSrc: '/icons/python.webp', title: 'Python', sub: 'Langage interprété, orienté objet et syntaxe épurée.' },
-      { id: 2, type: 'javascript', iconSrc: '/icons/javascript.svg', title: 'JavaScript', sub: 'Langage, script, dynamique.' },
-      { id: 3, type: 'angular', iconSrc: '/icons/angular.webp', title: 'Angular', sub: 'Framework JavaScript Google Open Source.' },
-      { id: 4, type: 'cpp', iconSrc: '/icons/cpp.webp', title: 'C++', sub: 'Compilé, orienté objet et performant.' },
-      { id: 5, type: 'php', iconSrc: '/icons/php.webp', title: 'PHP', sub: 'Langage de script côté serveur, conçu pour créer des pages web dynamiques.' },
-      { id: 6, type: 'vue', iconSrc: '/icons/vue.webp', title: 'Vue', sub: 'Framework JavaScript progressif, léger et réactif.' },
-      { id: 7, type: 'react', iconSrc: '/icons/react.webp', title: 'React', sub: 'Bibliothèque, JavaScript, composables.' },  
+      { id: 1, type: 'python',     iconSrc: '/icons/python.webp',     title: 'Python',     sub: 'Langage interprété, orienté objet et syntaxe épurée.' },
+      { id: 2, type: 'javascript', iconSrc: '/icons/javascript.svg',   title: 'JavaScript', sub: 'Langage de script dynamique pour le web.' },
+      { id: 3, type: 'angular',    iconSrc: '/icons/angular.webp',     title: 'Angular',    sub: 'Framework JavaScript Google Open Source.' },
+      { id: 4, type: 'cpp',        iconSrc: '/icons/cpp.webp',         title: 'C++',        sub: 'Compilé, orienté objet et performant.' },
+      { id: 5, type: 'php',        iconSrc: '/icons/php.webp',         title: 'PHP',        sub: 'Langage de script côté serveur pour le web dynamique.' },
+      { id: 6, type: 'vue',        iconSrc: '/icons/vue.webp',         title: 'Vue',        sub: 'Framework JavaScript progressif, léger et réactif.' },
+      { id: 7, type: 'react',      iconSrc: '/icons/react.webp',       title: 'React',      sub: 'Bibliothèque JavaScript pour les interfaces composables.' },
   ]
 
-  const isPaused = ref(false)
+  const currentIndex = ref(0)
+  let autoTimer: ReturnType<typeof setInterval> | null = null
 
-  const displayedCards = computed(() => 
-    [...cards, ...cards.map(c => ({ ...c, id: c.id + '_clone' }))]
-  )
+  function prevPlanet() {
+    currentIndex.value = (currentIndex.value - 1 + cards.length) % cards.length
+    resetTimer()
+  }
+  function nextPlanet() {
+    currentIndex.value = (currentIndex.value + 1) % cards.length
+    resetTimer()
+  }
+
+  function resetTimer() {
+    if (autoTimer) clearInterval(autoTimer)
+    autoTimer = setInterval(() => {
+      currentIndex.value = (currentIndex.value + 1) % cards.length
+    }, 3000)
+  }
+
+  onMounted(() => { resetTimer() })
+  onBeforeUnmount(() => { if (autoTimer) clearInterval(autoTimer) })
+
+  const currentCard = computed(() => cards[currentIndex.value])
 
   const selectedCategory = ref('Tous')
   const searchQuery      = ref('')
@@ -82,66 +99,93 @@ import { API_BASE_URL } from '@/utils/constants'
 </script>
 
 <template>
+  <GalaxyBackground />
+
+  <div class="deco-planet-wrapper" aria-hidden="true">
+    <div class="deco-planet" />
+  </div>
+
   <main class="page">
     <section class="home-intro" aria-label="Intro">
+
       <div class="intro-hero">
         <div class="intro-copy">
+
+          <!-- Badge eyebrow -->
+          <div class="hero-badge">
+            <span class="hero-badge-pulse"></span>
+            Gamification du développement
+          </div>
+
+          <!-- Titre principal -->
           <h1 class="page-title">CodeQuest</h1>
-          <p class="intro-subtitle">
-            Monte de niveau en dev : découvre les technos, lis les news, et progresse chaque jour.
+
+          <!-- Accroche courte -->
+          <p class="hero-tagline">
+            Explore. Apprends. <span class="hero-tagline-accent">Level&nbsp;up.</span>
           </p>
 
-          <div class="intro-actions" role="navigation" aria-label="Actions rapides">
-            <a class="btn btn--primary" href="#news">Voir les news</a>
+          <!-- Description -->
+          <p class="intro-subtitle">
+            Découvre les technologies, suis les actus dev en temps réel<br class="br-desktop" />
+            et progresse chaque jour grâce à la gamification.
+          </p>
+
+          <!-- CTA -->
+          <div class="intro-actions">
+            <a class="btn btn--primary" href="#carousel">Explorer les technos</a>
+            <a class="btn btn--ghost" href="#news">Voir les news</a>
           </div>
 
-          <div class="intro-features" aria-label="Points forts">
-            <div class="feature">
-              <div class="feature-title">Apprendre</div>
-              <div class="feature-sub">Des repères clairs, des technos, des sujets.</div>
-            </div>
-            <div class="feature">
-              <div class="feature-title">Suivre</div>
-              <div class="feature-sub">Les actus filtrées par catégories.</div>
-            </div>
-            <div class="feature">
-              <div class="feature-title">Progresser</div>
-              <div class="feature-sub">XP, quêtes, objectifs (bientôt).</div>
-            </div>
+          <!-- Strip de stats minimaliste -->
+          <div class="hero-strip">
+            <span class="hero-strip-item">
+              <span class="hero-strip-value">7</span> technologies
+            </span>
+            <span class="hero-strip-sep">·</span>
+            <span class="hero-strip-item">Actus en temps réel</span>
+            <span class="hero-strip-sep">·</span>
+            <span class="hero-strip-item">XP &amp; quêtes <span class="hero-strip-soon">bientôt</span></span>
           </div>
+
         </div>
-
-        <section class="home-section home-section--code" aria-label="Animation de code">
-          <CodeTypingAnimation />
-        </section>
       </div>
 
+      <!-- Carrousel : une planète à la fois -->
       <section id="carousel" class="home-section home-section--carousel" aria-label="Technologies">
-        <div class="carousel-wrapper">
-          <div class="carousel-viewport">
-            <div 
-              class="carousel-track"
-              :class="{ paused: isPaused }"
-              @mouseover="isPaused = true"
-              @mouseout="isPaused = false"
-            >
-              <div 
-                v-for="card in displayedCards"
-                :key="card.id"
-                :class="['card', `card--${card.type}`]"
-              >
-                <div class="icon">
-                  <img class="icon-img" :src="card.iconSrc" :alt="`${card.title} icon`" />
+        <div class="planet-carousel">
+          <button class="planet-nav planet-nav--prev" @click="prevPlanet" aria-label="Planète précédente">‹</button>
+
+          <div class="planet-stage">
+            <Transition name="planet-fade" mode="out-in">
+              <div class="planet-single" :key="currentCard.type">
+                <div class="planet-orbit">
+                  <div :class="['planet-sphere', `planet--${currentCard.type}`]">
+                    <img class="planet-icon" :src="currentCard.iconSrc" :alt="currentCard.title" />
+                  </div>
                 </div>
-                <div class="content">
-                  <div class="title">{{ card.title }}</div>
-                  <div class="sub">{{ card.sub }}</div>
-                </div>
+                <div class="planet-label">{{ currentCard.title }}</div>
+                <div class="planet-desc">{{ currentCard.sub }}</div>
               </div>
-            </div>
+            </Transition>
           </div>
+
+          <button class="planet-nav planet-nav--next" @click="nextPlanet" aria-label="Planète suivante">›</button>
+        </div>
+
+        <!-- Points de navigation -->
+        <div class="planet-dots" role="tablist" aria-label="Navigation planètes">
+          <button
+            v-for="(card, i) in cards"
+            :key="card.id"
+            class="planet-dot"
+            :class="{ 'planet-dot--active': i === currentIndex }"
+            @click="currentIndex = i"
+            :aria-label="`Aller à ${card.title}`"
+          />
         </div>
       </section>
+
     </section>
 
     <section id="news" class="home-section home-section--news" aria-label="Actualités">
@@ -210,5 +254,7 @@ import { API_BASE_URL } from '@/utils/constants'
 </template>
 
 <style scoped src="@/assets/styles/pages/home.css"></style>
+
+
 
 

@@ -1,5 +1,3 @@
-
-
 .char-panel {
   position: relative;
   border: 1px solid rgba(120, 60, 220, 0.35);
@@ -128,4 +126,75 @@
   font-size: 0.55rem;
   color: #fbbf24;
   opacity: 0.65;
+}
+
+/* ─── Avatar SVG ────────────────────────────────────────── */
+
+.char-panel__svg {
+  width: 90%;
+  height: 90%;
+  overflow: visible;
+  filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.45));
+}
+
+/* Flottement vertical du corps entier */
+.avatar-float {
+  animation: avatar-float 3.2s ease-in-out infinite;
+}
+
+@keyframes avatar-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-13px); }
+}
+
+/* Cape gauche — ondule */
+.avatar-cape-left {
+  transform-origin: 82px 148px;
+  animation: cape-left 2.8s ease-in-out infinite;
+}
+
+@keyframes cape-left {
+  0%, 100% { transform: skewX(0deg) scaleX(1); }
+  50%       { transform: skewX(4deg) scaleX(1.02); }
+}
+
+/* Cape droite — ondule en opposition */
+.avatar-cape-right {
+  transform-origin: 158px 148px;
+  animation: cape-right 2.8s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes cape-right {
+  0%, 100% { transform: skewX(0deg) scaleX(1); }
+  50%       { transform: skewX(-4deg) scaleX(1.02); }
+}
+
+/* Clignement des yeux */
+.avatar-eyes {
+  transform-origin: 120px 86px;
+  animation: eye-blink 5s ease-in-out infinite;
+}
+
+@keyframes eye-blink {
+  0%, 88%, 100% { transform: scaleY(1); }
+  92%            { transform: scaleY(0.06); }
+}
+
+/* Légère respiration des mains */
+.hand-left {
+  transform-origin: 74px 200px;
+  animation: hand-idle 3.2s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+
+.hand-right {
+  transform-origin: 166px 200px;
+  animation: hand-idle 3.2s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+@keyframes hand-idle {
+  0%, 100% { transform: rotate(0deg); }
+  50%       { transform: rotate(3deg); }
 }
