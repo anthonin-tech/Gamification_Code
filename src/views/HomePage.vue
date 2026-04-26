@@ -7,13 +7,16 @@ import type { ArticlesResponse } from '@/types'
 import { API_BASE_URL } from '@/utils/constants'
 
   const cards = [
-      { id: 1, type: 'python',     iconSrc: '/icons/python.webp',     title: 'Python',     sub: 'Langage interprété, orienté objet et syntaxe épurée.' },
-      { id: 2, type: 'javascript', iconSrc: '/icons/javascript.svg',   title: 'JavaScript', sub: 'Langage de script dynamique pour le web.' },
-      { id: 3, type: 'angular',    iconSrc: '/icons/angular.webp',     title: 'Angular',    sub: 'Framework JavaScript Google Open Source.' },
-      { id: 4, type: 'cpp',        iconSrc: '/icons/cpp.webp',         title: 'C++',        sub: 'Compilé, orienté objet et performant.' },
-      { id: 5, type: 'php',        iconSrc: '/icons/php.webp',         title: 'PHP',        sub: 'Langage de script côté serveur pour le web dynamique.' },
-      { id: 6, type: 'vue',        iconSrc: '/icons/vue.webp',         title: 'Vue',        sub: 'Framework JavaScript progressif, léger et réactif.' },
-      { id: 7, type: 'react',      iconSrc: '/icons/react.webp',       title: 'React',      sub: 'Bibliothèque JavaScript pour les interfaces composables.' },
+      { id: 1, type: 'python', iconSrc: '/icons/python.webp', title: 'Python', sub: 'Langage interprété, orienté objet et syntaxe épurée.' },
+      { id: 2, type: 'javascript', iconSrc: '/icons/javascript.svg', title: 'JavaScript', sub: 'Langage de script dynamique pour le web.' },
+      { id: 3, type: 'java', iconSrc: '/icons/java.png', title: 'Java', sub: 'Langage orienté objet, robuste et portable.' },
+      { id: 4, type: 'csharp', iconSrc: '/icons/csharp.png', title: 'C#', sub: 'Langage moderne pour le développement .NET.' },
+      { id: 5, type: 'php', iconSrc: '/icons/php.webp', title: 'PHP', sub: 'Langage de script côté serveur pour le web dynamique.' },
+      { id: 6, type: 'rust', iconSrc: '/icons/rust.png', title: 'Rust', sub: 'Langage système performant et sécurisé.' },
+      { id: 7, type: 'go', iconSrc: '/icons/go.png', title: 'Go', sub: 'Langage de programmation simple et efficace pour les systèmes distribués.' },
+      { id: 8, type: 'typescript', iconSrc: '/icons/typescript.png', title: 'TypeScript', sub: 'Superset de JavaScript avec typage statique.' },
+      { id: 9, type: 'cpp', iconSrc: '/icons/cpp.webp', title: 'C++', sub: 'Langage de programmation puissant pour les applications performantes.' },
+
   ]
 
   const currentIndex = ref(0)

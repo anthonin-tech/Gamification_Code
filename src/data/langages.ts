@@ -3,6 +3,7 @@ import type { Langage } from "@/types/langage"
 export const LANGAGES: Langage[] = [
   {
     nom: "JavaScript",
+    slug: "javascript",
     sym: "JS",
     couleur: "#F7DC6F",
     annee: 1995,
@@ -62,6 +63,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "Python",
+    slug: "python",
     sym: "Py",
     couleur: "#3776AB",
     annee: 1991,
@@ -113,6 +115,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "TypeScript",
+    slug: "typescript",
     sym: "TS",
     couleur: "#3178C6",
     annee: 2012,
@@ -163,6 +166,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "Java",
+    slug: "java",
     sym: "Jv",
     couleur: "#b07219",
     annee: 1995,
@@ -213,6 +217,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "PHP",
+    slug: "php",
     sym: "PHP",
     couleur: "#787CB5",
     annee: 1994,
@@ -254,6 +259,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "Go",
+    slug: "go",
     sym: "Go",
     couleur: "#00ADD8",
     annee: 2009,
@@ -304,6 +310,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "C++",
+    slug: "cpp",
     sym: "C++",
     couleur: "#093eef",
     annee: 1983,
@@ -354,6 +361,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "Rust",
+    slug: "rust",
     sym: "Rs",
     couleur: "#fbd491",
     annee: 2015,
@@ -404,6 +412,7 @@ export const LANGAGES: Langage[] = [
   },
   {
     nom: "C#",
+    slug: "csharp",
     sym: "C#",
     couleur: "#15eb0e",
     annee: 2000,

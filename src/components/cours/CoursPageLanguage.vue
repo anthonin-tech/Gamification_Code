@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router'
 import { LANGAGES } from '@/data/langages'
 import type { Langage } from '@/types/langage'
 import type { PlaneteCoursData, Difficulte } from '@/types/cours'
-import "@/assets/styles/components/Cours/CoursPageLanguage.css"
 
 const props = defineProps<{
   langage: Langage
@@ -12,14 +11,14 @@ const props = defineProps<{
 
 const router = useRouter()
 
-const SLUGS = ['javascript', 'python', 'typescript', 'go', 'rust', 'C++', 'C#', 'Java', 'PHP']
+const SLUGS = ['javascript', 'python', 'typescript', 'go', 'rust', 'cpp', 'csharp', 'java', 'php']
 
 function goTo(slug: string) {
   router.push(`/cours/${slug}`)
 }
 
 function labelFor(slug: string) {
-  return LANGAGES.find(l => l.nom.toLowerCase() === slug)?.nom ?? slug
+  return LANGAGES.find(l => l.slug === slug)?.nom ?? slug
 }
 
 function badgeClass(d: Difficulte) {
@@ -31,7 +30,7 @@ function badgeClass(d: Difficulte) {
 }
 
 function startLesson() {
-  router.push(`/cours/${props.langage.nom.toLowerCase()}/learn`)
+  router.push(`/cours/${props.langage.slug}/learn`)
 }
 </script>
 
@@ -43,7 +42,7 @@ function startLesson() {
         v-for="slug in SLUGS"
         :key="slug"
         class="sw-btn"
-        :class="{ 'sw-btn--active': langage.nom.toLowerCase() === slug }"
+        :class="{ 'sw-btn--active': langage.slug === slug }"
         @click="goTo(slug)"
       >
         {{ labelFor(slug) }}
@@ -59,7 +58,7 @@ function startLesson() {
         </h1>
         <p class="hero-desc">{{ langage.description }}</p>
         <div class="hero-btns">
-          <button class="btn btn--primary" @click="startLesson">Démarrer la mission #001</button>
+          <button class="btn btn--primary" @click="startLesson">Démarrer le cours</button>
           <a href="/language"><button class="btn btn--ghost">Voir la carte</button></a>
         </div>
         <p class="hero-meta">
@@ -75,12 +74,13 @@ function startLesson() {
         <div class="planet-scene">
           <div class="orbit orbit--1"></div>
           <div class="orbit orbit--2"></div>
+          <div class="orbit orbit--3"></div>
           <div class="planet">{{ langage.sym }}</div>
           <div
-            v-for="(fw, i) in langage.frameworks.slice(0, 3)"
+            v-for="(fw, i) in langage.frameworks"
             :key="fw.nom"
             class="fw-orbit"
-            :style="{ '--delay': `${i * -3}s`, '--radius': `${58 + i * 22}px`, '--speed': `${8 + i * 3}s` }"
+            :style="{ '--delay': `${i * -3}s`, '--radius': `${52 + i * 22}px`, '--speed': `${8 + i * 3}s` }"
           >
             <div
               class="fw-dot"
@@ -145,3 +145,4 @@ function startLesson() {
   </div>
 </template>
 
+<style scoped src="@/assets/styles/components/Cours/CoursPageLanguage.css"></style>

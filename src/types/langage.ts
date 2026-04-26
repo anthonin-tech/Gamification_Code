@@ -14,6 +14,7 @@ export interface Framework {
 
 export interface Langage {
   nom: string
+  slug: string
   sym: string
   couleur: string
   annee: number

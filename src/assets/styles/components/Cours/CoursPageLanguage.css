@@ -145,8 +145,8 @@
 
 .planet-scene {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,8 +161,9 @@
   transform: translate(-50%, -50%);
 }
 
-.orbit--1 { width: 136px; height: 136px; }
-.orbit--2 { width: 180px; height: 180px; border-color: rgba(255,255,255,.05); }
+.orbit--1 { width: 148px; height: 148px; }
+.orbit--2 { width: 192px; height: 192px; border-color: rgba(255,255,255,.07); }
+.orbit--3 { width: 244px; height: 244px; border-color: rgba(255,255,255,.04); }
 
 .planet {
   width: 94px;

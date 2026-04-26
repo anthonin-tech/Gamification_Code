@@ -927,6 +927,41 @@
         radial-gradient(circle at 50% 50%, #61dafb 0%, #0b8fad 50%, #041a22 100%);
 }
 
+.planet--java {
+    --planet-glow: rgba(248, 152, 32, 0.55);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(255, 220, 130, 0.55) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #f89820 0%, #a05a00 50%, #3a1c00 100%);
+}
+
+.planet--csharp {
+    --planet-glow: rgba(104, 33, 122, 0.55);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(210, 160, 255, 0.45) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #9b4dca 0%, #5a1e82 50%, #200930 100%);
+}
+
+.planet--rust {
+    --planet-glow: rgba(206, 66, 25, 0.55);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(255, 170, 110, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #ce4219 0%, #7a2208 50%, #2a0900 100%);
+}
+
+.planet--go {
+    --planet-glow: rgba(0, 173, 216, 0.55);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(170, 240, 255, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #00add8 0%, #005f80 50%, #001a26 100%);
+}
+
+.planet--typescript {
+    --planet-glow: rgba(49, 120, 198, 0.55);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(150, 200, 255, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, #3178c6 0%, #174a8a 50%, #071830 100%);
+}
+
 /* ============================================================
    CARROUSEL UNE PLANÈTE À LA FOIS
    ============================================================ */

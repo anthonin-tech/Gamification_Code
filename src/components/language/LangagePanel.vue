@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 function allerAuCours(langage: Langage) {
-  router.push(`/cours/${langage.nom.toLowerCase()}`)
+  router.push(`/cours/${langage.slug}`)
 }
 const props = defineProps<{
   language: Langage | null
@@ -21,7 +21,7 @@ defineEmits<{
 
 <template>
   <Transition name="panneau">
-    <aside v-if="language" class="lang-panel">
+    <aside v-if="language" class="lang-panel" :style="{ '--lc': language.couleur }">
 
       <template v-if="framework">
         <button class="lang-panel__back-fw" @click="$emit('fermerFramework')">
@@ -114,3 +114,253 @@ defineEmits<{
     </aside>
   </Transition>
 </template>
+
+<style scoped>
+/* ── Fermer / Retour ───────────────────────────────── */
+.lang-panel__close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.lang-panel__close:hover {
+  background: rgba(255, 255, 255, 0.11);
+  transform: scale(1.06);
+}
+
+.lang-panel__back-fw {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.15s, color 0.15s;
+}
+.lang-panel__back-fw:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ── Symbole ───────────────────────────────────────── */
+.lang-panel__sym {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  margin: 10px 0 14px;
+  font-family: var(--font-pixel);
+  font-size: 17px;
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.4),
+    0 0 22px color-mix(in srgb, var(--lc, #7c3aed) 22%, transparent);
+}
+
+/* ── Nom ───────────────────────────────────────────── */
+.lang-panel__name {
+  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+/* ── Méta ──────────────────────────────────────────── */
+.lang-panel__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.44);
+  font-size: 12px;
+}
+.lang-panel__meta--badge { margin-bottom: 12px; }
+
+.lang-panel__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--lc, #7c3aed) 45%, transparent);
+}
+
+/* ── Description ───────────────────────────────────── */
+.lang-panel__desc {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 3px solid var(--lc, rgba(255, 255, 255, 0.25));
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+/* ── Sections ──────────────────────────────────────── */
+.lang-panel__section {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.lang-panel__label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--lc, rgba(255, 255, 255, 0.5));
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+.lang-panel__label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lc, rgba(255, 255, 255, 0.4));
+  flex-shrink: 0;
+  box-shadow: 0 0 7px var(--lc, rgba(255, 255, 255, 0.3));
+}
+
+.lang-panel__value {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* ── Barre popularité ──────────────────────────────── */
+.lang-panel__bar {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.lang-panel__bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 10px var(--lc, rgba(255, 255, 255, 0.3));
+}
+.lang-panel__stat {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11.5px;
+}
+
+/* ── CTA cours ─────────────────────────────────────── */
+.lang-panel__cours { margin: 12px 0 0; }
+.lang-panel__cours button {
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    var(--lc, #7c3aed) 0%,
+    color-mix(in srgb, var(--lc, #7c3aed) 60%, #3b82f6) 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 8px 28px color-mix(in srgb, var(--lc, #7c3aed) 35%, transparent);
+  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+}
+.lang-panel__cours button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.10) inset,
+    0 14px 40px color-mix(in srgb, var(--lc, #7c3aed) 50%, transparent);
+}
+
+/* ── Chips frameworks ──────────────────────────────── */
+.lang-panel__frameworks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.lang-panel__fw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: default;
+  transition: transform 0.15s, filter 0.15s;
+}
+.lang-panel__fw-chip:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.25);
+}
+.lang-panel__fw-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.lang-panel__hint {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.28);
+  font-style: italic;
+}
+
+/* ── Lien site officiel ────────────────────────────── */
+.lang-panel__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.lang-panel__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.lang-panel__link:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+</style>

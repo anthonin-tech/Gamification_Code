@@ -197,7 +197,7 @@ export const COURS_DATA: PlaneteCoursData[] = [
     ]
   },
   {
-    slug: 'c++',
+    slug: 'cpp',
     statut: 'EN COURS',
     totalMissions: 12,
     missionsTerminees: 7,

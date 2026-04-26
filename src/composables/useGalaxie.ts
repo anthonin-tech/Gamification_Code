@@ -260,7 +260,7 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       const lx = lang._posX ?? W / 2
       const ly = lang._posY ?? H / 2
       const estSurvol = hovElement === lang
-      const sunR = 20
+      const sunR = 28
 
       if (!lang._anglesFrameworks) {
         lang._anglesFrameworks = lang.frameworks.map((_, fi) =>
@@ -271,12 +271,13 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
         a + 0.005 + fi * 0.0008
       )
 
+      // Orbites des frameworks
       lang.frameworks.forEach((fw, fi) => {
-        const miniR = 38 + fi * 11
-        ctx!.globalAlpha = (estSurvol ? 0.12 : 0.06) * opacite.value
+        const miniR = 50 + fi * 14
+        ctx!.globalAlpha = (estSurvol ? 0.18 : 0.09) * opacite.value
         ctx!.strokeStyle = fw.couleur
-        ctx!.lineWidth = 0.5
-        ctx!.setLineDash([2, 6])
+        ctx!.lineWidth = estSurvol ? 0.8 : 0.5
+        ctx!.setLineDash([3, 7])
         ctx!.beginPath()
         ctx!.arc(lx, ly, miniR, 0, Math.PI * 2)
         ctx!.stroke()
@@ -284,53 +285,72 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       })
       ctx!.globalAlpha = opacite.value
 
+      // Halo principal
       const rgb = hexVersRgb(lang.couleur)
-      const halo = ctx!.createRadialGradient(lx, ly, 0, lx, ly, sunR * (estSurvol ? 3.5 : 2.8))
-      halo.addColorStop(0, `rgba(${rgb},${estSurvol ? 0.3 : 0.2})`)
-      halo.addColorStop(1, "transparent")
+      const haloR = sunR * (estSurvol ? 4 : 3.2)
+      const halo = ctx!.createRadialGradient(lx, ly, 0, lx, ly, haloR)
+      halo.addColorStop(0,   `rgba(${rgb},${estSurvol ? 0.35 : 0.22})`)
+      halo.addColorStop(0.5, `rgba(${rgb},0.06)`)
+      halo.addColorStop(1,   "transparent")
       ctx!.fillStyle = halo
       ctx!.beginPath()
-      ctx!.arc(lx, ly, sunR * (estSurvol ? 3.5 : 2.8), 0, Math.PI * 2)
+      ctx!.arc(lx, ly, haloR, 0, Math.PI * 2)
       ctx!.fill()
 
       dessinerCercleDegrade(lx, ly, sunR, lang.couleur)
 
-      ctx!.globalAlpha = 0.9 * opacite.value
+      // Symbole
+      ctx!.globalAlpha = 0.92 * opacite.value
       ctx!.fillStyle = "#ffffff"
       ctx!.textAlign = "center"
       ctx!.textBaseline = "middle"
-      ctx!.font = `700 ${lang.sym.length > 2 ? 7 : 9}px system-ui`
+      ctx!.shadowColor = "rgba(0,0,0,0.8)"
+      ctx!.shadowBlur = 4
+      ctx!.font = `700 ${lang.sym.length > 2 ? 8 : 10}px system-ui`
       ctx!.fillText(lang.sym, lx, ly)
+      ctx!.shadowBlur = 0
       ctx!.textBaseline = "alphabetic"
       ctx!.globalAlpha = opacite.value
 
+      // Dots frameworks
       lang.frameworks.forEach((fw, fi) => {
-        const miniR = 38 + fi * 11
+        const miniR = 50 + fi * 14
         const angle = lang._anglesFrameworks![fi]
         const fx = lx + Math.cos(angle) * miniR
         const fy = ly + Math.sin(angle) * miniR
-        dessinerCercleDegrade(fx, fy, 4.5, fw.couleur)
+        dessinerCercleDegrade(fx, fy, 6, fw.couleur)
       })
 
+      // Anneau pulsant au survol
       if (estSurvol) {
-        const pulse = 0.2 + 0.2 * Math.sin(temps * 3.5)
+        const pulse = 0.28 + 0.28 * Math.sin(temps * 3.5)
         ctx!.globalAlpha = pulse * opacite.value
         ctx!.strokeStyle = lang.couleur
-        ctx!.lineWidth = 1.5
+        ctx!.lineWidth = 2
         ctx!.beginPath()
-        ctx!.arc(lx, ly, sunR + 12, 0, Math.PI * 2)
+        ctx!.arc(lx, ly, sunR + 14, 0, Math.PI * 2)
+        ctx!.stroke()
+        // Second anneau plus large
+        ctx!.globalAlpha = pulse * 0.4 * opacite.value
+        ctx!.lineWidth = 1
+        ctx!.beginPath()
+        ctx!.arc(lx, ly, sunR + 26, 0, Math.PI * 2)
         ctx!.stroke()
         ctx!.globalAlpha = opacite.value
       }
 
-      ctx!.globalAlpha = (estSurvol ? 1 : 0.72) * opacite.value
+      // Nom du langage
+      ctx!.shadowColor = estSurvol ? `rgba(${rgb},0.7)` : "rgba(0,0,0,0.85)"
+      ctx!.shadowBlur = estSurvol ? 12 : 6
+      ctx!.globalAlpha = (estSurvol ? 1 : 0.82) * opacite.value
       ctx!.fillStyle = estSurvol ? lang.couleur : "#ffffff"
       ctx!.textAlign = "center"
-      ctx!.font = `${estSurvol ? "600" : "400"} ${estSurvol ? 13 : 11}px system-ui`
-      ctx!.fillText(lang.nom, lx, ly + sunR + 20)
-      ctx!.globalAlpha = 0.4 * opacite.value
-      ctx!.font = "9px system-ui"
-      ctx!.fillText(`${lang.frameworks.length} frameworks`, lx, ly + sunR + 33)
+      ctx!.font = `${estSurvol ? "700" : "500"} ${estSurvol ? 14 : 12}px system-ui`
+      ctx!.fillText(lang.nom, lx, ly + sunR + 22)
+      ctx!.shadowBlur = 0
+      ctx!.globalAlpha = 0.45 * opacite.value
+      ctx!.font = "10px system-ui"
+      ctx!.fillText(`${lang.frameworks.length} fw`, lx, ly + sunR + 36)
       ctx!.globalAlpha = opacite.value
     })
   }
@@ -351,49 +371,74 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       a + (lang.frameworks[i].vitesse ?? (0.007 - i * 0.0008))
     )
 
-    const sunR = 42
+    const sunR = 54
     const rgb = hexVersRgb(lang.couleur)
 
-    const halo = ctx!.createRadialGradient(CX, CY, 0, CX, CY, sunR * 4.5)
-    halo.addColorStop(0, `rgba(${rgb},0.25)`)
-    halo.addColorStop(0.5, `rgba(${rgb},0.06)`)
-    halo.addColorStop(1, "transparent")
+    // Halo diffus large
+    const halo = ctx!.createRadialGradient(CX, CY, 0, CX, CY, sunR * 5.5)
+    halo.addColorStop(0,   `rgba(${rgb},0.28)`)
+    halo.addColorStop(0.4, `rgba(${rgb},0.08)`)
+    halo.addColorStop(1,   "transparent")
     ctx!.fillStyle = halo
     ctx!.beginPath()
-    ctx!.arc(CX, CY, sunR * 4.5, 0, Math.PI * 2)
+    ctx!.arc(CX, CY, sunR * 5.5, 0, Math.PI * 2)
     ctx!.fill()
+
+    // Anneau atmosphérique pulsant
+    const pulsAtmos = 0.12 + 0.08 * Math.sin(temps * 1.8)
+    ctx!.globalAlpha = pulsAtmos * opacite.value
+    ctx!.strokeStyle = lang.couleur
+    ctx!.lineWidth = 3
+    ctx!.beginPath()
+    ctx!.arc(CX, CY, sunR + 10, 0, Math.PI * 2)
+    ctx!.stroke()
+    ctx!.globalAlpha = pulsAtmos * 0.4 * opacite.value
+    ctx!.lineWidth = 1.5
+    ctx!.beginPath()
+    ctx!.arc(CX, CY, sunR + 22, 0, Math.PI * 2)
+    ctx!.stroke()
+    ctx!.globalAlpha = opacite.value
 
     dessinerCercleDegrade(CX, CY, sunR, lang.couleur)
 
-    ctx!.globalAlpha = 0.85 * opacite.value
-    ctx!.fillStyle = "#ffffff"
-    ctx!.textAlign = "center"
-    ctx!.font = "700 14px system-ui"
-    ctx!.fillText(lang.nom, CX, CY + sunR + 22)
-    ctx!.globalAlpha = 0.45 * opacite.value
-    ctx!.font = "10px system-ui"
-    ctx!.fillText(`${lang.annee} • ${lang.createur.split(" ")[0]}`, CX, CY + sunR + 36)
-    ctx!.globalAlpha = opacite.value
-
+    // Symbole centré
     ctx!.globalAlpha = 0.92 * opacite.value
     ctx!.fillStyle = "#ffffff"
     ctx!.textAlign = "center"
     ctx!.textBaseline = "middle"
-    ctx!.font = `700 ${lang.sym.length > 2 ? 12 : 16}px system-ui`
+    ctx!.shadowColor = "rgba(0,0,0,0.9)"
+    ctx!.shadowBlur = 6
+    ctx!.font = `700 ${lang.sym.length > 2 ? 14 : 20}px system-ui`
     ctx!.fillText(lang.sym, CX, CY)
+    ctx!.shadowBlur = 0
     ctx!.textBaseline = "alphabetic"
     ctx!.globalAlpha = opacite.value
 
+    // Nom + créateur sous la planète
+    ctx!.shadowColor = `rgba(${rgb},0.6)`
+    ctx!.shadowBlur = 10
+    ctx!.globalAlpha = 0.9 * opacite.value
+    ctx!.fillStyle = lang.couleur
+    ctx!.textAlign = "center"
+    ctx!.font = "700 15px system-ui"
+    ctx!.fillText(lang.nom, CX, CY + sunR + 26)
+    ctx!.shadowBlur = 0
+    ctx!.globalAlpha = 0.5 * opacite.value
+    ctx!.fillStyle = "#ffffff"
+    ctx!.font = "11px system-ui"
+    ctx!.fillText(`${lang.annee} · ${lang.createur.split(" ")[0]}`, CX, CY + sunR + 42)
+    ctx!.globalAlpha = opacite.value
+
     const espaceMini = Math.min(CX, CY) * 0.88
-    const rayonBase = Math.min(espaceMini * 0.42, 120)
-    const pas = Math.min(espaceMini * 0.14, 38)
+    const rayonBase = Math.min(espaceMini * 0.44, 130)
+    const pas = Math.min(espaceMini * 0.15, 42)
 
     lang.frameworks.forEach((fw, i) => {
       const rayonOrbite = rayonBase + i * pas
       const angle = lang._anglesFrameworks![i]
       const fx = CX + Math.cos(angle) * rayonOrbite
       const fy = CY + Math.sin(angle) * rayonOrbite
-      const fr = 13
+      const fr = 16
       const estSurvol = hovElement === fw
       const estActif = frameworkActif.value === fw
 
@@ -401,53 +446,74 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       fw._posY = fy
       fw._rayon = fr
 
-      ctx!.globalAlpha = (estActif ? 0.16 : 0.07) * opacite.value
+      // Orbite en tirets
+      ctx!.globalAlpha = (estActif ? 0.22 : 0.09) * opacite.value
       ctx!.strokeStyle = fw.couleur
-      ctx!.lineWidth = 0.5
-      ctx!.setLineDash([3, 8])
+      ctx!.lineWidth = estActif ? 0.8 : 0.5
+      ctx!.setLineDash([4, 9])
       ctx!.beginPath()
       ctx!.arc(CX, CY, rayonOrbite, 0, Math.PI * 2)
       ctx!.stroke()
       ctx!.setLineDash([])
       ctx!.globalAlpha = opacite.value
 
+      // Aura autour du framework
       const rgb2 = hexVersRgb(fw.couleur)
-      const aura = ctx!.createRadialGradient(fx, fy, 0, fx, fy, fr * 3.2)
-      aura.addColorStop(0, `rgba(${rgb2},${estActif ? 0.4 : 0.22})`)
+      const auraR = fr * (estActif ? 4 : 3)
+      const aura = ctx!.createRadialGradient(fx, fy, 0, fx, fy, auraR)
+      aura.addColorStop(0, `rgba(${rgb2},${estActif ? 0.45 : 0.25})`)
       aura.addColorStop(1, "transparent")
       ctx!.fillStyle = aura
       ctx!.beginPath()
-      ctx!.arc(fx, fy, fr * 3.2, 0, Math.PI * 2)
+      ctx!.arc(fx, fy, auraR, 0, Math.PI * 2)
       ctx!.fill()
 
       dessinerCercleDegrade(fx, fy, fr, fw.couleur)
 
+      // Anneau actif / survol
       if (estSurvol || estActif) {
-        const intensite = estActif ? 0.6 + 0.25 * Math.sin(temps * 4) : 0.22 + 0.22 * Math.sin(temps * 4)
+        const intensite = estActif
+          ? 0.65 + 0.28 * Math.sin(temps * 4)
+          : 0.25 + 0.22 * Math.sin(temps * 4)
         ctx!.globalAlpha = intensite * opacite.value
         ctx!.strokeStyle = fw.couleur
-        ctx!.lineWidth = estActif ? 2 : 1.5
+        ctx!.lineWidth = estActif ? 2.5 : 1.8
         ctx!.beginPath()
-        ctx!.arc(fx, fy, fr + 9, 0, Math.PI * 2)
+        ctx!.arc(fx, fy, fr + 10, 0, Math.PI * 2)
         ctx!.stroke()
+        if (estActif) {
+          ctx!.globalAlpha = intensite * 0.35 * opacite.value
+          ctx!.lineWidth = 1
+          ctx!.beginPath()
+          ctx!.arc(fx, fy, fr + 20, 0, Math.PI * 2)
+          ctx!.stroke()
+        }
         ctx!.globalAlpha = opacite.value
       }
 
+      // Symbole
       ctx!.globalAlpha = 0.95 * opacite.value
       ctx!.fillStyle = "#ffffff"
       ctx!.textAlign = "center"
       ctx!.textBaseline = "middle"
-      ctx!.font = `700 ${fw.sym.length > 2 ? 7 : 9}px system-ui`
+      ctx!.shadowColor = "rgba(0,0,0,0.8)"
+      ctx!.shadowBlur = 4
+      ctx!.font = `700 ${fw.sym.length > 2 ? 8 : 10}px system-ui`
       ctx!.fillText(fw.sym, fx, fy)
+      ctx!.shadowBlur = 0
       ctx!.textBaseline = "alphabetic"
       ctx!.globalAlpha = opacite.value
 
-      const labelAlpha = (estSurvol || estActif ? 1 : 0.65) * opacite.value
+      // Label du framework
+      const labelAlpha = (estSurvol || estActif ? 1 : 0.72) * opacite.value
       ctx!.globalAlpha = labelAlpha
       ctx!.fillStyle = estActif ? fw.couleur : "#ffffff"
       ctx!.textAlign = "center"
-      ctx!.font = `${estSurvol || estActif ? "600" : "400"} ${estSurvol || estActif ? 12 : 10}px system-ui`
-      ctx!.fillText(fw.nom, fx, fy + fr + 16)
+      ctx!.shadowColor = estActif ? `rgba(${rgb2},0.7)` : "rgba(0,0,0,0.85)"
+      ctx!.shadowBlur = estActif ? 10 : 5
+      ctx!.font = `${estSurvol || estActif ? "600" : "400"} ${estSurvol || estActif ? 13 : 11}px system-ui`
+      ctx!.fillText(fw.nom, fx, fy + fr + 18)
+      ctx!.shadowBlur = 0
       ctx!.globalAlpha = opacite.value
     })
   }
@@ -469,13 +535,42 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
   }
 
   function dessinerCercleDegrade(x: number, y: number, rayon: number, couleur: string) {
-    const lumX = x - rayon * 0.32
-    const lumY = y - rayon * 0.32
+    const rgb = hexVersRgb(couleur)
+
+    // Halo atmosphérique extérieur
+    const haloR = rayon * 2.6
+    const halo = ctx!.createRadialGradient(x, y, rayon * 0.85, x, y, haloR)
+    halo.addColorStop(0,   `rgba(${rgb}, 0.22)`)
+    halo.addColorStop(0.5, `rgba(${rgb}, 0.07)`)
+    halo.addColorStop(1,   "transparent")
+    ctx!.fillStyle = halo
+    ctx!.beginPath()
+    ctx!.arc(x, y, haloR, 0, Math.PI * 2)
+    ctx!.fill()
+
+    // Sphère principale — gradient 3D
+    const lumX = x - rayon * 0.34
+    const lumY = y - rayon * 0.34
     const degrade = ctx!.createRadialGradient(lumX, lumY, 0, x, y, rayon)
-    degrade.addColorStop(0, "rgba(255,255,255,0.9)")
-    degrade.addColorStop(0.3, couleur)
-    degrade.addColorStop(1, assombrir(couleur, -55))
+    degrade.addColorStop(0,    "rgba(255,255,255,0.95)")
+    degrade.addColorStop(0.18, couleur)
+    degrade.addColorStop(0.62, assombrir(couleur, -38))
+    degrade.addColorStop(1,    assombrir(couleur, -85))
     ctx!.fillStyle = degrade
+    ctx!.beginPath()
+    ctx!.arc(x, y, rayon, 0, Math.PI * 2)
+    ctx!.fill()
+
+    // Rim light — reflet en bas-droite
+    const rimGrad = ctx!.createRadialGradient(
+      x + rayon * 0.2, y + rayon * 0.2, rayon * 0.35,
+      x, y, rayon
+    )
+    rimGrad.addColorStop(0,    "transparent")
+    rimGrad.addColorStop(0.72, "transparent")
+    rimGrad.addColorStop(0.88, `rgba(${rgb}, 0.18)`)
+    rimGrad.addColorStop(1,    "transparent")
+    ctx!.fillStyle = rimGrad
     ctx!.beginPath()
     ctx!.arc(x, y, rayon, 0, Math.PI * 2)
     ctx!.fill()

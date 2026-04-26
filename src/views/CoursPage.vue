@@ -9,7 +9,7 @@ const route  = useRoute()
 const router = useRouter()
 
 const slug    = computed(() => (route.params.slug as string).toLowerCase())
-const langage = computed(() => LANGAGES.find(l => l.nom.toLowerCase() === slug.value) ?? null)
+const langage = computed(() => LANGAGES.find(l => l.slug === slug.value) ?? null)
 const cours   = computed(() => COURS_DATA.find(c => c.slug === slug.value) ?? null)
 
 if (!langage.value) router.replace('/cours/javascript')
