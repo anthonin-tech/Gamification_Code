@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import { LANGAGES } from '@/data/langages'
 import type { Langage } from '@/types/langage'
 import type { PlaneteCoursData, Difficulte } from '@/types/cours'
@@ -31,6 +32,35 @@ function badgeClass(d: Difficulte) {
 
 function startLesson() {
   router.push(`/cours/${props.langage.slug}/learn`)
+}
+
+/* ─── 3D Card tilt on mouse move ─────────────────────────── */
+const cardsRef = ref<HTMLElement | null>(null)
+
+function onCardMouseMove(e: MouseEvent) {
+  const card = (e.currentTarget as HTMLElement)
+  const rect = card.getBoundingClientRect()
+  const cx = rect.left + rect.width  / 2
+  const cy = rect.top  + rect.height / 2
+  const dx = (e.clientX - cx) / (rect.width  / 2)
+  const dy = (e.clientY - cy) / (rect.height / 2)
+  const tiltX =  dy * -8
+  const tiltY =  dx *  10
+  card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(6px)`
+}
+
+function onCardMouseLeave(e: MouseEvent) {
+  const card = (e.currentTarget as HTMLElement)
+  card.style.transform = ''
+  card.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color .25s ease, box-shadow .25s ease, background .25s ease'
+  setTimeout(() => {
+    card.style.transition = ''
+  }, 400)
+}
+
+function onCardMouseEnter(e: MouseEvent) {
+  const card = (e.currentTarget as HTMLElement)
+  card.style.transition = 'none'
 }
 </script>
 
@@ -84,7 +114,8 @@ function startLesson() {
           >
             <div
               class="fw-dot"
-              :style="{ color: fw.couleur, borderColor: fw.couleur + '99', boxShadow: `0 0 8px ${fw.couleur}44` }"
+              :style="{ color: fw.couleur, borderColor: fw.couleur + '99', boxShadow: `0 0 10px ${fw.couleur}55` }"
+              :title="fw.nom"
             >
               {{ fw.sym }}
             </div>
@@ -119,8 +150,15 @@ function startLesson() {
         <a class="missions-link">Tout voir →</a>
       </header>
 
-      <div class="cards">
-        <article v-for="m in cours.missions" :key="m.id" class="card">
+      <div class="cards" ref="cardsRef">
+        <article
+          v-for="m in cours.missions"
+          :key="m.id"
+          class="card"
+          @mousemove="onCardMouseMove"
+          @mouseleave="onCardMouseLeave"
+          @mouseenter="onCardMouseEnter"
+        >
           <div
             class="card-banner"
             :style="{ background: `linear-gradient(135deg, ${m.couleurTag}44, ${m.couleurTag}18)` }"
