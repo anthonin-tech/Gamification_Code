@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import type { Framework, Langage } from "@/types/langage"
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useUserStore } from "@/stores/useUserStore"
 
 const router = useRouter()
+const userStore = useUserStore()
+
+const isFavorite = computed(() => props.language?.slug === userStore.userFavoriteLanguage )
+
+function toggleFavorite() {
+  if ( isFavorite.value ) {
+    userStore.updateFavoriteLanguage(null)
+  } else {
+    userStore.updateFavoriteLanguage(props.language!.slug)
+  }
+}
 
 function allerAuCours(langage: Langage) {
   router.push(`/cours/${langage.slug}`)
@@ -68,7 +81,10 @@ defineEmits<{
         >
           {{ language.sym }}
         </div>
-        <h2 class="lang-panel__name">{{ language.nom }}</h2>
+        <div class="lang-panel__name-row">
+          <h2 class="lang-panel__name">{{ language.nom }}</h2>
+          <button class="lang-panel__favorite" @click="toggleFavorite">{{ isFavorite ? '★' : '☆' }}</button>
+        </div>
         <p class="lang-panel__meta">Créé en {{ language.annee }} • {{ language.createur }}</p>
 
         <p class="lang-panel__desc">{{ language.description }}</p>
@@ -116,6 +132,31 @@ defineEmits<{
 </template>
 
 <style scoped>
+/* ── Favori ────────────────────────────────────────── */
+.lang-panel__name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+}
+.lang-panel__name-row .lang-panel__name {
+  margin: 0;
+}
+.lang-panel__favorite {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.15s;
+  color: rgba(255, 255, 255, 0.35);
+}
+.lang-panel__favorite:hover {
+  transform: scale(1.2);
+  color: #fbbf24;
+}
+
 /* ── Fermer / Retour ───────────────────────────────── */
 .lang-panel__close {
   position: sticky;

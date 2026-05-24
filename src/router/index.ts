@@ -5,6 +5,8 @@ import ProgressionPage from '@/views/ProgressionPage.vue'
 import LanguagePage from '@/views/LanguagePage.vue'
 import CoursPage from '@/views/CoursPage.vue'
 import LeçonPython from '@/views/Leçon/LeçonPython.vue'
+import MissionPage from '@/views/MissionPage.vue'
+import MissionDetailPage from '@/views/MissionDetailPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +17,7 @@ const router = createRouter({
     { path: '/language', name: 'language', component: LanguagePage, meta: { title: 'Langages' } },
     { path: '/cours/:slug', name: 'cours', component: CoursPage, meta: { title: 'Cours' } },
     { path: '/cours', redirect: '/cours/javascript' },
+    { path: '/mission', name: 'mission', component: MissionPage, meta: { title: 'Mission'} },
 
     {
       path: '/cours/:slug/learn',
@@ -22,6 +25,13 @@ const router = createRouter({
       component: LeçonPython,
       meta: { title: 'Leçon' }
     },
+
+    {
+      path: '/mission/:id',
+      name: 'missionDetail',
+      component: MissionDetailPage,
+      meta: { title: 'Detail' }
+    }
   ]
 })
 
