@@ -1,0 +1,29 @@
+button {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.primary {
+    background: var(--gradient);
+    color: #fff;
+}
+
+.secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+}

@@ -8,5 +8,8 @@ export interface IMission {
     missionTitre: string
     taches: ITask[]
     xpRecompense: number
-    difficulte: 'FACILE' | 'MOYEN' | 'DIFFICILE'    
+    difficulte: 'FACILE' | 'MOYEN' | 'DIFFICILE'
+    langage: string
+    description: string
+    image: string
 }

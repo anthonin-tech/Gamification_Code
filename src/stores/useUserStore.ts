@@ -16,11 +16,15 @@ export const useUserStore = defineStore('user', {
             this.userId = userData.userId ?? null
             this.username = userData.username ?? null
             this.useremail = userData.useremail ?? null
-            this.userXP = userData.userXP ?? 0
             this.userLevel = userData.userLevel ?? 1
             this.userAvatar = userData.userAvatar ?? null
             this.userFavoriteLanguage = userData.userFavoriteLanguage ?? null
             this.isLoggedIn = true
+
+            const savedXP = localStorage.getItem('userXP')
+            this.userXP = savedXP ? Number(savedXP) : (userData.userXP ?? 0)
+
+            localStorage.setItem('userXP', String(this.userXP))
         },
         resetUser() {
             this.$reset()
@@ -28,12 +32,13 @@ export const useUserStore = defineStore('user', {
         updateXp(recompenseXP: number) {
             if (this.userXP != null) {
                 this.userXP += recompenseXP
+                localStorage.setItem('userXP', String(this.userXP) )
             }
         },
         updateAvatar(avatarUrl: string) {
             this.userAvatar = avatarUrl
         },
-        updateFavoriteLanguage(language: string) {
+        updateFavoriteLanguage(language: string | null) {
             this.userFavoriteLanguage = language
         }
         

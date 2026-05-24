@@ -10,7 +10,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 3, taskTitre: "Afficher les valeurs dans la console" }
         ],
         xpRecompense: 150,
-        difficulte: 'FACILE'
+        difficulte: 'FACILE',
+        langage: 'javascript',
+        description: 'Apprends à déclarer et manipuler tes premières variables en JavaScript.',
+        image: '/missions/variables.png'
     },
     {
         missionId: 2,
@@ -21,7 +24,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 6, taskTitre: "Imbriquer deux conditions" }
         ],
         xpRecompense: 200,
-        difficulte: 'FACILE'
+        difficulte: 'FACILE',
+        langage: 'javascript',
+        description: 'Maîtrise les conditions if/else pour contrôler le flux de ton programme.',
+        image: '/missions/conditions.png'
     },
     {
         missionId: 3,
@@ -33,7 +39,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 10, taskTitre: "Appeler la fonction depuis le programme" }
         ],
         xpRecompense: 280,
-        difficulte: 'FACILE'
+        difficulte: 'FACILE',
+        langage: 'javascript',
+        description: 'Découvre les fonctions pour organiser et réutiliser ton code.',
+        image: '/missions/fonctions.png'
     },
     {
         missionId: 4,
@@ -45,7 +54,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 14, taskTitre: "Filtrer avec filter()" }
         ],
         xpRecompense: 350,
-        difficulte: 'MOYEN'
+        difficulte: 'MOYEN',
+        langage: 'javascript',
+        description: 'Explore les tableaux et leurs méthodes puissantes : map, filter, reduce.',
+        image: '/missions/tableaux.png'
     },
     {
         missionId: 5,
@@ -57,7 +69,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 18, taskTitre: "Utiliser la déstructuration" }
         ],
         xpRecompense: 380,
-        difficulte: 'MOYEN'
+        difficulte: 'MOYEN',
+        langage: 'javascript',
+        description: 'Comprends les objets JavaScript et la déstructuration pour manipuler des données complexes.',
+        image: '/missions/objets.png'
     },
     {
         missionId: 6,
@@ -69,7 +84,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 22, taskTitre: "Gérer une erreur avec try / catch" }
         ],
         xpRecompense: 450,
-        difficulte: 'MOYEN'
+        difficulte: 'MOYEN',
+        langage: 'javascript',
+        description: 'Maîtrise la programmation asynchrone avec les Promises et async/await.',
+        image: '/missions/promises.png'
     },
     {
         missionId: 7,
@@ -81,7 +99,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 26, taskTitre: "Typer les paramètres d'une fonction" }
         ],
         xpRecompense: 420,
-        difficulte: 'MOYEN'
+        difficulte: 'MOYEN',
+        langage: 'typescript',
+        description: 'Découvre le système de types TypeScript pour écrire un code plus robuste et sûr.',
+        image: '/missions/typescript.png'
     },
     {
         missionId: 8,
@@ -93,7 +114,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 30, taskTitre: "Choisir le bon algo selon le contexte" }
         ],
         xpRecompense: 600,
-        difficulte: 'DIFFICILE'
+        difficulte: 'DIFFICILE',
+        langage: 'python',
+        description: 'Plonge dans les algorithmes de tri et compare leurs performances.',
+        image: '/missions/alghorithmes.png'
     },
     {
         missionId: 9,
@@ -105,6 +129,9 @@ export const MISSIONS: IMission[] = [
             { taskId: 34, taskTitre: "Résoudre Fibonacci de façon optimisée" }
         ],
         xpRecompense: 700,
-        difficulte: 'DIFFICILE'
+        difficulte: 'DIFFICILE',
+        langage: 'python',
+        description: 'Résous des problèmes complexes grâce à la récursion et optimise avec la mémoïsation.',
+        image: '/missions/recursion.png'
     }
 ]
