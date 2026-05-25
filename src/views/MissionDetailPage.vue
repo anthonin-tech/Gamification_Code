@@ -39,6 +39,7 @@ async function terminerMission() {
 
   await new Promise(resolve => setTimeout(resolve, 900))
   userStore.updateXp(mission.xpRecompense)
+  userStore.updateMisssion(mission.missionId)
 
   await new Promise(resolve => setTimeout(resolve, 200))
   flyingXp.value = false

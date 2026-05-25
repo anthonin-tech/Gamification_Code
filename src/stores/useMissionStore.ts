@@ -7,7 +7,7 @@ export const useMissionStore = defineStore('mission', {
         missionEnCoursId: null,
         missionFailed: false,
         missionSucceed: false,
-        taskCompletes: []
+        taskCompletes: [],
     }),
     actions: {
         startMission(missionId: number) {
