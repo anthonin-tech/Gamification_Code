@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', {
         userAvatar: null,
         userFavoriteLanguage: null,
         isLoggedIn: false,
+        completeMissions: []
     }),
     actions: {
         initUser(userData: Partial<IUserState>) {
@@ -23,8 +24,12 @@ export const useUserStore = defineStore('user', {
 
             const savedXP = localStorage.getItem('userXP')
             this.userXP = savedXP ? Number(savedXP) : (userData.userXP ?? 0)
+            
+            const savedMission = localStorage.getItem('completeMissions')
+            this.completeMissions = savedMission ? JSON.parse(savedMission) : (userData.completeMissions ?? [])
 
             localStorage.setItem('userXP', String(this.userXP))
+            localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
         },
         resetUser() {
             this.$reset()
@@ -40,6 +45,12 @@ export const useUserStore = defineStore('user', {
         },
         updateFavoriteLanguage(language: string | null) {
             this.userFavoriteLanguage = language
+        },
+        updateMisssion(id: number) {
+            if (this.completeMissions) {
+                this.completeMissions.push(id)
+                localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
+            }
         }
         
     },
@@ -58,5 +69,6 @@ interface IUserState {
     userLevel: number 
     userAvatar: string | null
     userFavoriteLanguage: string | null
-    isLoggedIn: boolean 
+    isLoggedIn: boolean
+    completeMissions: number[]
 }
