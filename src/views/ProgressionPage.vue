@@ -1,25 +1,29 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/useUserStore';
 import { MISSIONS } from '@/data/missions';
-import { CURRICULUM_PYTHON } from '@/data/curriculum';
 import { computed } from 'vue'
+import { curriculums } from '@/composables/useMissionLock';
 
 const userStore = useUserStore()
 const langages = [... new Set(MISSIONS.map(m => m.langage))]
 
 const ProgressionParLangue = computed(() => {
-  return langages.map(langage =>({
-    langage,
-    total: MISSIONS.filter(m => m.langage === langage).length,
-    terminees: MISSIONS.filter(m => m.langage === langage && userStore.completeMissions.includes(m.missionId)).length
-  }))
+  return langages.map(langage => {
+    const CoursTotal = curriculums[langage]?.flatMap((l: any) => l.lessons).length ?? 0
+    const raw = localStorage.getItem(`codequest_${langage}_progress`)
+    const data = raw ? JSON.parse(raw) : null
+    const CoursCompleted = data?.completedLessons?.length ?? 0 
+    const MissionFinish = MISSIONS.filter(m => m.langage === langage && userStore.completeMissions.includes(m.missionId)).length
+    const MissionTotal = MISSIONS.filter(m => m.langage === langage).length
+    return {
+      langage,
+      CoursTotal,
+      CoursCompleted,
+      MissionFinish,
+      MissionTotal
+    }
+  })
 })
-
-const cours = localStorage.getItem('codequest_python_progress')
-const pythonData = cours ? JSON.parse(cours) : null
-const completedLessons = pythonData?.completedLessons ?? []
-const totalLeconsPython = CURRICULUM_PYTHON.reduce((acc, module) => acc + module.lessons.length, 0)
-const termineesLeconsPython = completedLessons.length
 </script>
 
 <template>
@@ -31,16 +35,16 @@ const termineesLeconsPython = completedLessons.length
     >
       <h2>{{ progression.langage }}</h2>
       <p class="section-label">Missions</p>
-      <p>{{ progression.terminees }} / {{ progression.total }}</p>
+      <p>{{ progression.MissionFinish }} / {{ progression.MissionTotal }}</p>
       <div class="barre-conteneur">
-        <div class="barre-remplissage" :style="{ width: (progression.terminees / progression.total) * 100 + '%' }"></div>
+        <div class="barre-remplissage" :style="{ width: (progression.MissionFinish / progression.MissionTotal) * 100 + '%' }"></div>
       </div>
 
-      <div v-if="progression.langage === 'python'" class="cours-section">
+      <div class="cours-section">
         <p class="section-label">Cours — leçons</p>
-        <p>{{ termineesLeconsPython }} / {{ totalLeconsPython }}</p>
+        <p>{{ progression.CoursCompleted }} / {{ progression.CoursTotal }}</p>
         <div class="barre-conteneur">
-          <div class="barre-remplissage" :style="{ width: (termineesLeconsPython / totalLeconsPython) * 100 + '%' }"></div>
+          <div class="barre-remplissage" :style="{ width: progression.CoursTotal > 0 ? (progression.CoursCompleted / progression.CoursTotal) * 100 + '%' : '0%' }"></div>
         </div>
       </div>
     </div>

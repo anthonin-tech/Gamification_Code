@@ -9,16 +9,16 @@ import { CURRICULUM_RUST } from '@/data/curriculum-rust'
 import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
 import { CURRICULUM_CSHARP } from '@/data/curriculum-csharp'
 
-const curriculums: Record<string, any> = {
+export const curriculums: Record<string, any> = {
   javascript: CURRICULUM_JAVASCRIPT,
-  python:     CURRICULUM_PYTHON,
-  java:       CURRICULUM_JAVA,
-  cpp:        CURRICULUM_CPP,
-  go:         CURRICULUM_GO,
-  php:        CURRICULUM_PHP,
-  rust:       CURRICULUM_RUST,
+  python: CURRICULUM_PYTHON,
+  java: CURRICULUM_JAVA,
+  cpp: CURRICULUM_CPP,
+  go: CURRICULUM_GO,
+  php: CURRICULUM_PHP,
+  rust: CURRICULUM_RUST,
   typescript: CURRICULUM_TYPESCRIPT,
-  csharp:     CURRICULUM_CSHARP,
+  csharp: CURRICULUM_CSHARP,
 }
 
 export function MissionIsLock(mission: IMission): boolean {
