@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
+import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
 
 const route = useRoute()
 const id = Number(route.params.id)
@@ -44,11 +45,20 @@ async function terminerMission() {
   await new Promise(resolve => setTimeout(resolve, 200))
   flyingXp.value = false
 }
+
+const missionTermine = computed(() => 
+  userStore.completeMissions.includes(mission?.missionId ?? - 1)
+)
+const IsDelock = computed (() => 
+  MissionIsLock(mission ?? { minLecons: 999, langage: ''} as any)
+)
 </script>
 
 <template>
-  <div v-if="mission" class="mission-detail">
-
+  <div 
+      v-if="mission && IsDelock" 
+      class="mission-detail"
+  >
     <div class="mission-banner" :class="mission.difficulte">
       <img :src="mission.image" :alt="mission.missionTitre" class="mission-banner__img" />
       <div class="mission-banner__overlay">
@@ -74,13 +84,35 @@ async function terminerMission() {
         </ul>
       </section>
 
-      <button @click="terminerMission()" ref="termineMissionBtn" class="btn-terminer">
-        Terminer la mission · +{{ mission.xpRecompense }} XP
+      <button
+        @click="terminerMission()"
+        ref="termineMissionBtn"
+        class="btn-terminer"
+        :class="{ 'btn-terminer--done': missionTermine }"
+        :disabled="missionTermine"
+      >
+        {{ missionTermine ? '✓ Mission terminée' : `Terminer la mission · +${mission.xpRecompense} XP` }}
       </button>
     </div>
 
   </div>
-
+  <div v-else-if="mission" class="mission-locked">
+    <div class="locked-icon">
+      <svg class="holo-lock" viewBox="0 0 64 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 32 L20 20 Q20 8 32 8 Q44 8 44 20 L44 32" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="7" y="30" width="50" height="40" rx="7" stroke="currentColor" stroke-width="2" fill="rgba(0,212,255,0.04)"/>
+        <circle cx="32" cy="47" r="5.5" stroke="currentColor" stroke-width="2"/>
+        <path d="M29 52 L29 59 Q29 61 32 61 Q35 61 35 59 L35 52 Z" fill="currentColor" opacity="0.8"/>
+      </svg>
+    </div>
+    <h2 class="locked-title">{{ mission.missionTitre }}</h2>
+    <p class="locked-msg">
+      Complète <span class="locked-lesson">"{{ getLessonName(mission) }}"</span> pour débloquer cette mission
+    </p>
+    <router-link :to="`/cours/${mission.langage}/learn`" class="locked-btn">
+      Aller au cours {{ mission.langage }}
+    </router-link>
+  </div>
   <div v-else class="mission-not-found">
     <p>Mission introuvable.</p>
   </div>
@@ -242,10 +274,18 @@ async function terminerMission() {
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.btn-terminer:hover {
+.btn-terminer:hover:not(:disabled) {
   border-color: rgba(124, 58, 237, 0.8);
   box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
   transform: translateY(-2px);
+}
+
+.btn-terminer--done {
+  border-color: rgba(52, 211, 153, 0.5);
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(16, 185, 129, 0.1));
+  color: #34d399;
+  cursor: default;
+  opacity: 0.85;
 }
 
 /* ── Not found ───────────────────────────────────────── */
@@ -253,6 +293,74 @@ async function terminerMission() {
   text-align: center;
   padding: 80px 16px;
   color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Mission verrouillée ─────────────────────────────── */
+.mission-locked {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(0, 10, 30, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.locked-icon {
+  color: #00d4ff;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.9))
+          drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+  animation: holo-pulse 2s ease-in-out infinite;
+}
+
+.holo-lock { width: 64px; height: 76px; }
+
+@keyframes holo-pulse {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1; }
+}
+
+.locked-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.locked-msg {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+}
+
+.locked-lesson {
+  color: #ffd700;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.locked-btn {
+  margin-top: 4px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  background: rgba(0, 212, 255, 0.08);
+  color: #00d4ff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.locked-btn:hover {
+  border-color: rgba(0, 212, 255, 0.7);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
 }
 </style>
 

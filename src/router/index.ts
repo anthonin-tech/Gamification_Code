@@ -4,7 +4,15 @@ import ProfilePage from '@/views/ProfilPage.vue'
 import ProgressionPage from '@/views/ProgressionPage.vue'
 import LanguagePage from '@/views/LanguagePage.vue'
 import CoursPage from '@/views/CoursPage.vue'
-import LeçonPython from '@/views/Leçon/LeçonPython.vue'
+import LeçonPython     from '@/views/Leçon/LeçonPython.vue'
+import LeçonJavaScript from '@/views/Leçon/LeçonJavaScript.vue'
+import LeçonTypeScript from '@/views/Leçon/LeçonTypeScript.vue'
+import LeçonJava       from '@/views/Leçon/LeçonJava.vue'
+import LeçonPHP        from '@/views/Leçon/LeçonPHP.vue'
+import LeçonGo         from '@/views/Leçon/LeçonGo.vue'
+import LeçonCPP        from '@/views/Leçon/LeçonCPP.vue'
+import LeçonRust       from '@/views/Leçon/LeçonRust.vue'
+import LeçonCSharp     from '@/views/Leçon/LeçonCSharp.vue'
 import MissionPage from '@/views/MissionPage.vue'
 import MissionDetailPage from '@/views/MissionDetailPage.vue'
 
@@ -19,12 +27,15 @@ const router = createRouter({
     { path: '/cours', redirect: '/cours/javascript' },
     { path: '/mission', name: 'mission', component: MissionPage, meta: { title: 'Mission'} },
 
-    {
-      path: '/cours/:slug/learn',
-      name: 'lecon',
-      component: LeçonPython,
-      meta: { title: 'Leçon' }
-    },
+    { path: '/cours/python/learn',     name: 'leconPython',     component: LeçonPython,     meta: { title: 'Leçon Python' } },
+    { path: '/cours/javascript/learn', name: 'leconJavaScript', component: LeçonJavaScript, meta: { title: 'Leçon JavaScript' } },
+    { path: '/cours/typescript/learn', name: 'leconTypeScript', component: LeçonTypeScript, meta: { title: 'Leçon TypeScript' } },
+    { path: '/cours/java/learn',       name: 'leconJava',       component: LeçonJava,       meta: { title: 'Leçon Java' } },
+    { path: '/cours/php/learn',        name: 'leconPHP',        component: LeçonPHP,        meta: { title: 'Leçon PHP' } },
+    { path: '/cours/go/learn',         name: 'leconGo',         component: LeçonGo,         meta: { title: 'Leçon Go' } },
+    { path: '/cours/cpp/learn',        name: 'leconCPP',        component: LeçonCPP,        meta: { title: 'Leçon C++' } },
+    { path: '/cours/rust/learn',       name: 'leconRust',       component: LeçonRust,       meta: { title: 'Leçon Rust' } },
+    { path: '/cours/csharp/learn',     name: 'leconCSharp',     component: LeçonCSharp,     meta: { title: 'Leçon C#' } },
 
     {
       path: '/mission/:id',

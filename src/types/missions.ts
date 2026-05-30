@@ -12,4 +12,5 @@ export interface IMission {
     langage: string
     description: string
     image: string
+    minLecons: number
 }

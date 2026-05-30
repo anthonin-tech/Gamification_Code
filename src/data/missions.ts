@@ -13,7 +13,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'FACILE',
         langage: 'javascript',
         description: 'Apprends à déclarer et manipuler tes premières variables en JavaScript.',
-        image: '/missions/variables.png'
+        image: '/missions/variables.png',
+        minLecons: 1
     },
     {
         missionId: 2,
@@ -27,7 +28,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'FACILE',
         langage: 'javascript',
         description: 'Maîtrise les conditions if/else pour contrôler le flux de ton programme.',
-        image: '/missions/conditions.png'
+        image: '/missions/conditions.png',
+        minLecons: 1
     },
     {
         missionId: 3,
@@ -42,7 +44,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'FACILE',
         langage: 'javascript',
         description: 'Découvre les fonctions pour organiser et réutiliser ton code.',
-        image: '/missions/fonctions.png'
+        image: '/missions/fonctions.png',
+        minLecons: 2
     },
     {
         missionId: 4,
@@ -57,7 +60,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'MOYEN',
         langage: 'javascript',
         description: 'Explore les tableaux et leurs méthodes puissantes : map, filter, reduce.',
-        image: '/missions/tableaux.png'
+        image: '/missions/tableaux.png',
+        minLecons: 3
     },
     {
         missionId: 5,
@@ -72,7 +76,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'MOYEN',
         langage: 'javascript',
         description: 'Comprends les objets JavaScript et la déstructuration pour manipuler des données complexes.',
-        image: '/missions/objets.png'
+        image: '/missions/objets.png',
+        minLecons: 4
     },
     {
         missionId: 6,
@@ -87,7 +92,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'MOYEN',
         langage: 'javascript',
         description: 'Maîtrise la programmation asynchrone avec les Promises et async/await.',
-        image: '/missions/promises.png'
+        image: '/missions/promises.png',
+        minLecons: 5
     },
     {
         missionId: 7,
@@ -102,7 +108,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'MOYEN',
         langage: 'typescript',
         description: 'Découvre le système de types TypeScript pour écrire un code plus robuste et sûr.',
-        image: '/missions/typescript.png'
+        image: '/missions/typescript.png',
+        minLecons: 1
     },
     {
         missionId: 8,
@@ -117,7 +124,8 @@ export const MISSIONS: IMission[] = [
         difficulte: 'DIFFICILE',
         langage: 'python',
         description: 'Plonge dans les algorithmes de tri et compare leurs performances.',
-        image: '/missions/alghorithmes.png'
+        image: '/missions/alghorithmes.png',
+        minLecons: 3
     },
     {
         missionId: 9,
@@ -132,6 +140,7 @@ export const MISSIONS: IMission[] = [
         difficulte: 'DIFFICILE',
         langage: 'python',
         description: 'Résous des problèmes complexes grâce à la récursion et optimise avec la mémoïsation.',
-        image: '/missions/recursion.png'
+        image: '/missions/recursion.png',
+        minLecons: 5
     }
 ]
