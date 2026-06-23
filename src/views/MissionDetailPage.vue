@@ -52,6 +52,41 @@ const missionTermine = computed(() =>
 const IsDelock = computed (() => 
   MissionIsLock(mission ?? { minLecons: 999, langage: ''} as any)
 )
+
+const ongletActif = ref("missions")
+
+const TableTask = ref([])
+const ProgressTask = computed(() => {
+  const MissionTotal = mission ? mission.taches.length : null
+  if(MissionTotal) {
+    return (TableTask.value.length / MissionTotal) * 100
+  }
+  else {
+    return 0
+  }
+})
+
+const IndiceLock = ref<number[]>([])
+function DeLockIndice(indiceXP: number, indiceNiv: number) {
+  userStore.updateXp(-indiceXP)
+  IndiceLock.value.push(indiceNiv)
+}
+
+const ValidationCriteria = [
+  "Mon code fonctionne sans erreur",
+  "J'ai testé mon code avec différents cas",
+  "Mon code est le plus simple et concis possible",
+  "Je n'ai pas utilisé l'IA pour écrire mon code",
+  "Je suis content du résultat"
+]
+const ValidationCase = ref([])
+const ValidationLink = ref<string>('')
+const ValidationCheck = computed(() => {
+  if (ValidationCase.value.length === ValidationCriteria.length) {
+    return true
+  }
+  return false
+})
 </script>
 
 <template>
@@ -68,16 +103,33 @@ const IsDelock = computed (() =>
       </div>
     </div>
 
-    <div class="mission-content">
+    <div class="mission-tabs">
+      <button @click="ongletActif = 'missions'" :class="{ active: ongletActif === 'missions' }">Missions</button>
+      <button @click="ongletActif = 'indices'" :class="{ active: ongletActif === 'indices' }">Indices</button>
+      <button @click="ongletActif = 'validation'" :class="{ active: ongletActif === 'validation' }">Validations</button>
+      <button @click="ongletActif = 'récompenses'" :class="{ active: ongletActif === 'récompenses' }">Récompenses</button>
+    </div>
+
+    <div v-if="ongletActif === 'missions'" class="mission-content">
       <section class="mission-section">
         <h2 class="mission-section__title">Description</h2>
         <p class="mission-section__text">{{ mission.description }}</p>
       </section>
 
       <section class="mission-section">
+        <div class="task-progress">
+          <div class="task-progress__label">
+            <span>Progression</span>
+            <span>{{ TableTask.length }} / {{ mission.taches.length }}</span>
+          </div>
+          <div class="task-progress__bar">
+            <div class="task-progress__fill" :style="{ width: ProgressTask + '%' }"></div>
+          </div>
+        </div>
         <h2 class="mission-section__title">Tâches</h2>
         <ul class="mission-tasks">
           <li v-for="tache in mission.taches" :key="tache.taskId" class="mission-task">
+            <input type="checkbox" v-model="TableTask" :value="tache.taskId">
             <span class="mission-task__dot" />
             {{ tache.taskTitre }}
           </li>
@@ -94,7 +146,49 @@ const IsDelock = computed (() =>
         {{ missionTermine ? '✓ Mission terminée' : `Terminer la mission · +${mission.xpRecompense} XP` }}
       </button>
     </div>
+  
+    <div v-if="ongletActif === 'indices'" class="mission-indice">
+      <div v-for="indice in mission.indices" :key="indice.niveau">
+        <div
+          v-if="indice.niveau === 1 || IndiceLock.includes(indice.niveau - 1)"
+          class="indice-card"
+          :class="{ 'indice-card--unlocked': IndiceLock.includes(indice.niveau) }"
+        >
+          <div class="indice-header">
+            <span class="indice-niveau">Indice {{ indice.niveau }}</span>
+          </div>
+          <div v-if="IndiceLock.includes(indice.niveau)">
+            <p class="indice-texte">{{ indice.texte }}</p>
+          </div>
+          <div v-else>
+            <button class="btn-debloquer" @click="DeLockIndice(indice.xpCout, indice.niveau)">
+              Débloquer · moins {{ indice.xpCout }} XP
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div v-if="ongletActif === 'validation'" class="mission-validation">
+      <ul class="validation-list">
+        <li v-for="(critere, index) in ValidationCriteria" :key="index" class="validation-item">
+          <input type="checkbox" v-model="ValidationCase" :value="index">
+          {{ critere }}
+        </li>
+      </ul>
+      <input type="text" v-model="ValidationLink" placeholder="Lien GitHub...">
+      <div v-if="ValidationCheck === true">
+        <p class="validation-ready">Prêt à être validé</p>
+      </div>
+      <div v-else>
+        <p class="validation-pending">Vous n'avez pas tout validé</p>
+      </div>
+
+    </div>
+
+    <div v-if="ongletActif === 'récompenses'">
+      <p>Récompenses à venir</p>
+    </div>
   </div>
   <div v-else-if="mission" class="mission-locked">
     <div class="locked-icon">
@@ -199,6 +293,38 @@ const IsDelock = computed (() =>
   text-transform: capitalize;
 }
 
+/* ── Onglets ─────────────────────────────────────────── */
+.mission-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mission-tabs button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.mission-tabs button:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mission-tabs button.active {
+  color: #fff;
+  border-bottom-color: rgba(124, 58, 237, 0.9);
+}
+
 /* ── Contenu ─────────────────────────────────────────── */
 .mission-content {
   padding: 0 24px;
@@ -229,6 +355,36 @@ const IsDelock = computed (() =>
   background: rgba(255, 255, 255, 0.03);
 }
 
+/* ── Barre de progression ────────────────────────────── */
+.task-progress {
+  margin-bottom: 20px;
+}
+
+.task-progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+}
+
+.task-progress__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.task-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.9), rgba(59, 130, 246, 0.8));
+  transition: width 0.35s ease;
+}
+
 /* ── Tâches ──────────────────────────────────────────── */
 .mission-tasks {
   list-style: none;
@@ -249,6 +405,47 @@ const IsDelock = computed (() =>
   background: rgba(255, 255, 255, 0.03);
   color: rgba(255, 255, 255, 0.82);
   font-size: 13.5px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.mission-task:has(input:checked) {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.3);
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: line-through;
+}
+
+.mission-task input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.mission-task input[type="checkbox"]:checked {
+  border-color: rgba(124, 58, 237, 0.8);
+  background: rgba(124, 58, 237, 0.25);
+}
+
+.mission-task input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid rgba(167, 139, 250, 1);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
 }
 
 .mission-task__dot {
@@ -286,6 +483,239 @@ const IsDelock = computed (() =>
   color: #34d399;
   cursor: default;
   opacity: 0.85;
+}
+
+/* ── Onglet Indices ──────────────────────────────────── */
+.mission-indice {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.indice-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  position: relative;
+}
+
+.indice-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.indice-card--unlocked {
+  border-color: rgba(124, 58, 237, 0.4);
+  background: rgba(124, 58, 237, 0.05);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(167, 139, 250, 0.1);
+}
+
+.indice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+}
+
+.indice-niveau {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.15);
+  color: rgba(167, 139, 250, 1);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
+.indice-card--unlocked .indice-niveau {
+  background: rgba(124, 58, 237, 0.25);
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+.indice-cout {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(251, 191, 36, 0.6);
+}
+
+.indice-card--unlocked .indice-cout {
+  color: rgba(52, 211, 153, 0.7);
+}
+
+.indice-texte {
+  padding: 0 20px 18px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 14px;
+}
+
+.indice-lock {
+  padding: 4px 20px 20px;
+}
+
+.btn-debloquer {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(245, 158, 11, 0.08));
+  color: #fbbf24;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  width: 100%;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(251, 191, 36, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-debloquer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  pointer-events: none;
+}
+
+.btn-debloquer:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(251, 191, 36, 0.25), 0 8px 24px rgba(251, 191, 36, 0.15);
+}
+
+.btn-debloquer:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.btn-debloquer:hover {
+  border-color: rgba(251, 191, 36, 0.65);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.2);
+}
+
+/* ── Onglet Validation ───────────────────────────────── */
+.mission-validation {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.validation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.validation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.validation-item:has(input:checked) {
+  background: rgba(52, 211, 153, 0.08);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.validation-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.validation-item input[type="checkbox"]:checked {
+  border-color: rgba(52, 211, 153, 0.8);
+  background: rgba(52, 211, 153, 0.25);
+}
+
+.validation-item input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid rgba(110, 231, 183, 1);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.mission-validation input[type="text"] {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mission-validation input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.mission-validation input[type="text"]:focus {
+  border-color: rgba(124, 58, 237, 0.5);
+}
+
+.mission-validation .btn-debloquer:disabled,
+.validation-ready {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.08);
+  color: #34d399;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.validation-pending {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
 }
 
 /* ── Not found ───────────────────────────────────────── */

@@ -9,6 +9,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 2, taskTitre: "Déclarer une constante avec const" },
             { taskId: 3, taskTitre: "Afficher les valeurs dans la console" }
         ],
+        indices: [
+            { niveau: 1, texte: "Une variable se déclare avec le mot-clé `let` suivi d'un nom, puis d'un `=` et d'une valeur.", xpCout: 10 },
+            { niveau: 2, texte: "La différence entre `let` et `const` : `let` peut être réassigné, `const` non. Utilise `const` dès que la valeur ne change pas.", xpCout: 20 },
+            { niveau: 3, texte: "Exemple complet : `let score = 0; const NOM = 'Alice'; console.log(NOM, score);`", xpCout: 40 }
+        ],
         xpRecompense: 150,
         difficulte: 'FACILE',
         langage: 'javascript',
@@ -23,6 +28,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 4, taskTitre: "Écrire un if / else basique" },
             { taskId: 5, taskTitre: "Utiliser un opérateur de comparaison" },
             { taskId: 6, taskTitre: "Imbriquer deux conditions" }
+        ],
+        indices: [
+            { niveau: 1, texte: "Un `if` exécute un bloc de code seulement si la condition entre parenthèses est vraie.", xpCout: 10 },
+            { niveau: 2, texte: "Les opérateurs de comparaison : `===` (égal strict), `!==` (différent), `>`, `<`, `>=`, `<=`. Préfère toujours `===` à `==`.", xpCout: 20 },
+            { niveau: 3, texte: "Exemple : `if (age >= 18) { console.log('majeur') } else { console.log('mineur') }`", xpCout: 40 }
         ],
         xpRecompense: 200,
         difficulte: 'FACILE',
@@ -40,6 +50,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 9, taskTitre: "Retourner une valeur avec return" },
             { taskId: 10, taskTitre: "Appeler la fonction depuis le programme" }
         ],
+        indices: [
+            { niveau: 1, texte: "Une fonction se déclare avec `function nomFonction() { }`. Le code à l'intérieur ne s'exécute que quand on l'appelle.", xpCout: 10 },
+            { niveau: 2, texte: "Les paramètres sont des variables locales à la fonction. On les passe entre parenthèses : `function addition(a, b) { }`.", xpCout: 20 },
+            { niveau: 3, texte: "Exemple : `function addition(a, b) { return a + b } const résultat = addition(3, 4)`", xpCout: 40 }
+        ],
         xpRecompense: 280,
         difficulte: 'FACILE',
         langage: 'javascript',
@@ -55,6 +70,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 12, taskTitre: "Parcourir avec une boucle for" },
             { taskId: 13, taskTitre: "Utiliser map() pour transformer" },
             { taskId: 14, taskTitre: "Filtrer avec filter()" }
+        ],
+        indices: [
+            { niveau: 1, texte: "Un tableau se déclare avec des crochets : `const fruits = ['pomme', 'banane']`. On accède aux éléments avec leur index depuis 0.", xpCout: 15 },
+            { niveau: 2, texte: "`map()` retourne un nouveau tableau transformé. `filter()` retourne un nouveau tableau avec seulement les éléments qui passent le test.", xpCout: 30 },
+            { niveau: 3, texte: "Exemple : `const doubles = [1,2,3].map(n => n * 2)` → `[2,4,6]`. `const pairs = [1,2,3,4].filter(n => n % 2 === 0)` → `[2,4]`", xpCout: 50 }
         ],
         xpRecompense: 350,
         difficulte: 'MOYEN',
@@ -72,6 +92,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 17, taskTitre: "Modifier une propriété" },
             { taskId: 18, taskTitre: "Utiliser la déstructuration" }
         ],
+        indices: [
+            { niveau: 1, texte: "Un objet se déclare avec des accolades : `const user = { nom: 'Alice', age: 25 }`. Chaque entrée est une paire clé/valeur.", xpCout: 15 },
+            { niveau: 2, texte: "Pour accéder à une propriété : `user.nom` ou `user['nom']`. Pour modifier : `user.age = 26`.", xpCout: 30 },
+            { niveau: 3, texte: "Déstructuration : `const { nom, age } = user` crée deux variables `nom` et `age` directement depuis l'objet.", xpCout: 50 }
+        ],
         xpRecompense: 380,
         difficulte: 'MOYEN',
         langage: 'javascript',
@@ -87,6 +112,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 20, taskTitre: "Utiliser .then() et .catch()" },
             { taskId: 21, taskTitre: "Réécrire avec async / await" },
             { taskId: 22, taskTitre: "Gérer une erreur avec try / catch" }
+        ],
+        indices: [
+            { niveau: 1, texte: "Une Promise représente une valeur qui sera disponible dans le futur. Elle a 3 états : pending, fulfilled, rejected.", xpCout: 20 },
+            { niveau: 2, texte: "`.then(résultat => ...)` s'exécute si la Promise réussit. `.catch(erreur => ...)` s'exécute si elle échoue.", xpCout: 35 },
+            { niveau: 3, texte: "Avec async/await : `async function getData() { try { const data = await fetch(url) } catch(e) { console.error(e) } }`", xpCout: 60 }
         ],
         xpRecompense: 450,
         difficulte: 'MOYEN',
@@ -104,6 +134,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 25, taskTitre: "Utiliser un type union" },
             { taskId: 26, taskTitre: "Typer les paramètres d'une fonction" }
         ],
+        indices: [
+            { niveau: 1, texte: "En TypeScript, on annote les types après le nom : `let score: number = 0`. Les types primitifs sont `string`, `number`, `boolean`.", xpCout: 15 },
+            { niveau: 2, texte: "Une interface décrit la forme d'un objet : `interface User { nom: string; age: number }`. Un type union accepte plusieurs types : `string | number`.", xpCout: 30 },
+            { niveau: 3, texte: "Exemple de fonction typée : `function saluer(nom: string): string { return 'Bonjour ' + nom }`", xpCout: 50 }
+        ],
         xpRecompense: 420,
         difficulte: 'MOYEN',
         langage: 'typescript',
@@ -120,6 +155,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 29, taskTitre: "Comparer les complexités O(n)" },
             { taskId: 30, taskTitre: "Choisir le bon algo selon le contexte" }
         ],
+        indices: [
+            { niveau: 1, texte: "Le tri à bulles compare deux éléments adjacents et les échange si nécessaire, en répétant jusqu'à ce que le tableau soit trié.", xpCout: 25 },
+            { niveau: 2, texte: "Le quicksort choisit un pivot, place les éléments plus petits à gauche et plus grands à droite, puis récurse sur chaque partie.", xpCout: 45 },
+            { niveau: 3, texte: "Tri à bulles : O(n²) — simple mais lent. Quicksort : O(n log n) en moyenne — bien plus rapide sur les grands tableaux.", xpCout: 70 }
+        ],
         xpRecompense: 600,
         difficulte: 'DIFFICILE',
         langage: 'python',
@@ -135,6 +175,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 32, taskTitre: "Identifier le cas de base" },
             { taskId: 33, taskTitre: "Optimiser avec la mémoïsation" },
             { taskId: 34, taskTitre: "Résoudre Fibonacci de façon optimisée" }
+        ],
+        indices: [
+            { niveau: 1, texte: "Une fonction récursive s'appelle elle-même. Elle doit toujours avoir un cas de base (condition d'arrêt) pour éviter une boucle infinie.", xpCout: 25 },
+            { niveau: 2, texte: "La mémoïsation consiste à stocker les résultats déjà calculés dans un objet/cache pour ne pas recalculer deux fois la même chose.", xpCout: 45 },
+            { niveau: 3, texte: "Fibonacci mémoïsé : `const memo = {}; function fib(n) { if (n <= 1) return n; if (memo[n]) return memo[n]; return memo[n] = fib(n-1) + fib(n-2) }`", xpCout: 70 }
         ],
         xpRecompense: 700,
         difficulte: 'DIFFICILE',
