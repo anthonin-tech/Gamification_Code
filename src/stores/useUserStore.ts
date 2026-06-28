@@ -10,7 +10,8 @@ export const useUserStore = defineStore('user', {
         userAvatar: null,
         userFavoriteLanguage: null,
         isLoggedIn: false,
-        completeMissions: []
+        completeMissions: [],
+        editorTheme: 'codequest'
     }),
     actions: {
         initUser(userData: Partial<IUserState>) {
@@ -21,12 +22,16 @@ export const useUserStore = defineStore('user', {
             this.userAvatar = userData.userAvatar ?? null
             this.userFavoriteLanguage = userData.userFavoriteLanguage ?? null
             this.isLoggedIn = true
+            this.editorTheme = 'codequest'
 
             const savedXP = localStorage.getItem('userXP')
             this.userXP = savedXP ? Number(savedXP) : (userData.userXP ?? 0)
             
             const savedMission = localStorage.getItem('completeMissions')
             this.completeMissions = savedMission ? JSON.parse(savedMission) : (userData.completeMissions ?? [])
+
+            const savedEditorTheme = localStorage.getItem('editorTheme')
+            this.editorTheme = savedEditorTheme ? JSON.parse(savedEditorTheme) : 'codequest'
 
             localStorage.setItem('userXP', String(this.userXP))
             localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
@@ -51,6 +56,12 @@ export const useUserStore = defineStore('user', {
                 this.completeMissions.push(id)
                 localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
             }
+        },
+        updateEditorTheme(theme: string) {
+            if (this.editorTheme) {
+                this.editorTheme = theme
+                localStorage.setItem('editorTheme', JSON.stringify(this.editorTheme))
+            }
         }
         
     },
@@ -71,4 +82,5 @@ interface IUserState {
     userFavoriteLanguage: string | null
     isLoggedIn: boolean
     completeMissions: number[]
+    editorTheme: string
 }

@@ -9,6 +9,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 2, taskTitre: "Déclarer une constante avec const" },
             { taskId: 3, taskTitre: "Afficher les valeurs dans la console" }
         ],
+        verification: [
+            { taskId: 1, wordKey: 'let' },
+            { taskId: 2, wordKey: 'const' },
+            { taskId: 3, wordKey: 'console.log' }
+        ],
         indices: [
             { niveau: 1, texte: "Une variable se déclare avec le mot-clé `let` suivi d'un nom, puis d'un `=` et d'une valeur.", xpCout: 10 },
             { niveau: 2, texte: "La différence entre `let` et `const` : `let` peut être réassigné, `const` non. Utilise `const` dès que la valeur ne change pas.", xpCout: 20 },
@@ -28,6 +33,11 @@ export const MISSIONS: IMission[] = [
             { taskId: 4, taskTitre: "Écrire un if / else basique" },
             { taskId: 5, taskTitre: "Utiliser un opérateur de comparaison" },
             { taskId: 6, taskTitre: "Imbriquer deux conditions" }
+        ],
+        verification: [
+            { taskId: 4, wordKey: 'else' },
+            { taskId: 5, wordKey: '===' },
+            { taskId: 6, wordKey: 'else if' }
         ],
         indices: [
             { niveau: 1, texte: "Un `if` exécute un bloc de code seulement si la condition entre parenthèses est vraie.", xpCout: 10 },
@@ -50,6 +60,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 9, taskTitre: "Retourner une valeur avec return" },
             { taskId: 10, taskTitre: "Appeler la fonction depuis le programme" }
         ],
+        verification: [
+            { taskId: 7, wordKey: 'function' },
+            { taskId: 8, wordKey: '(' },
+            { taskId: 9, wordKey: 'return' },
+            { taskId: 10, wordKey: '(' }
+        ],
         indices: [
             { niveau: 1, texte: "Une fonction se déclare avec `function nomFonction() { }`. Le code à l'intérieur ne s'exécute que quand on l'appelle.", xpCout: 10 },
             { niveau: 2, texte: "Les paramètres sont des variables locales à la fonction. On les passe entre parenthèses : `function addition(a, b) { }`.", xpCout: 20 },
@@ -70,6 +86,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 12, taskTitre: "Parcourir avec une boucle for" },
             { taskId: 13, taskTitre: "Utiliser map() pour transformer" },
             { taskId: 14, taskTitre: "Filtrer avec filter()" }
+        ],
+        verification: [
+            { taskId: 11, wordKey: '[' },
+            { taskId: 12, wordKey: 'for' },
+            { taskId: 13, wordKey: '.map(' },
+            { taskId: 14, wordKey: '.filter(' }
         ],
         indices: [
             { niveau: 1, texte: "Un tableau se déclare avec des crochets : `const fruits = ['pomme', 'banane']`. On accède aux éléments avec leur index depuis 0.", xpCout: 15 },
@@ -92,6 +114,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 17, taskTitre: "Modifier une propriété" },
             { taskId: 18, taskTitre: "Utiliser la déstructuration" }
         ],
+        verification: [
+            { taskId: 15, wordKey: '{' },
+            { taskId: 16, wordKey: '.' },
+            { taskId: 17, wordKey: '=' },
+            { taskId: 18, wordKey: 'const {' }
+        ],
         indices: [
             { niveau: 1, texte: "Un objet se déclare avec des accolades : `const user = { nom: 'Alice', age: 25 }`. Chaque entrée est une paire clé/valeur.", xpCout: 15 },
             { niveau: 2, texte: "Pour accéder à une propriété : `user.nom` ou `user['nom']`. Pour modifier : `user.age = 26`.", xpCout: 30 },
@@ -112,6 +140,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 20, taskTitre: "Utiliser .then() et .catch()" },
             { taskId: 21, taskTitre: "Réécrire avec async / await" },
             { taskId: 22, taskTitre: "Gérer une erreur avec try / catch" }
+        ],
+        verification: [
+            { taskId: 19, wordKey: 'new Promise' },
+            { taskId: 20, wordKey: '.then(' },
+            { taskId: 21, wordKey: 'await' },
+            { taskId: 22, wordKey: 'try' }
         ],
         indices: [
             { niveau: 1, texte: "Une Promise représente une valeur qui sera disponible dans le futur. Elle a 3 états : pending, fulfilled, rejected.", xpCout: 20 },
@@ -134,6 +168,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 25, taskTitre: "Utiliser un type union" },
             { taskId: 26, taskTitre: "Typer les paramètres d'une fonction" }
         ],
+        verification: [
+            { taskId: 23, wordKey: ': number' },
+            { taskId: 24, wordKey: 'interface' },
+            { taskId: 25, wordKey: '|' },
+            { taskId: 26, wordKey: '): ' }
+        ],
         indices: [
             { niveau: 1, texte: "En TypeScript, on annote les types après le nom : `let score: number = 0`. Les types primitifs sont `string`, `number`, `boolean`.", xpCout: 15 },
             { niveau: 2, texte: "Une interface décrit la forme d'un objet : `interface User { nom: string; age: number }`. Un type union accepte plusieurs types : `string | number`.", xpCout: 30 },
@@ -155,6 +195,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 29, taskTitre: "Comparer les complexités O(n)" },
             { taskId: 30, taskTitre: "Choisir le bon algo selon le contexte" }
         ],
+        verification: [
+            { taskId: 27, wordKey: 'def' },
+            { taskId: 28, wordKey: 'pivot' },
+            { taskId: 29, wordKey: 'O(' },
+            { taskId: 30, wordKey: 'def' }
+        ],
         indices: [
             { niveau: 1, texte: "Le tri à bulles compare deux éléments adjacents et les échange si nécessaire, en répétant jusqu'à ce que le tableau soit trié.", xpCout: 25 },
             { niveau: 2, texte: "Le quicksort choisit un pivot, place les éléments plus petits à gauche et plus grands à droite, puis récurse sur chaque partie.", xpCout: 45 },
@@ -175,6 +221,12 @@ export const MISSIONS: IMission[] = [
             { taskId: 32, taskTitre: "Identifier le cas de base" },
             { taskId: 33, taskTitre: "Optimiser avec la mémoïsation" },
             { taskId: 34, taskTitre: "Résoudre Fibonacci de façon optimisée" }
+        ],
+        verification: [
+            { taskId: 31, wordKey: 'def' },
+            { taskId: 32, wordKey: 'return' },
+            { taskId: 33, wordKey: 'memo' },
+            { taskId: 34, wordKey: 'fib' }
         ],
         indices: [
             { niveau: 1, texte: "Une fonction récursive s'appelle elle-même. Elle doit toujours avoir un cas de base (condition d'arrêt) pour éviter une boucle infinie.", xpCout: 25 },
