@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
+import { Verification } from '@/composables/Verification'
+import CodeEditor from '@/components/Terminal/CodeEditor.vue'
 
 const route = useRoute()
 const id = Number(route.params.id)
@@ -55,7 +57,7 @@ const IsDelock = computed (() =>
 
 const ongletActif = ref("missions")
 
-const TableTask = ref([])
+const TableTask = ref<number[]>([])
 const ProgressTask = computed(() => {
   const MissionTotal = mission ? mission.taches.length : null
   if(MissionTotal) {
@@ -87,6 +89,11 @@ const ValidationCheck = computed(() => {
   }
   return false
 })
+
+function ManageSubmission (code: string) {
+  if (!mission) return
+  TableTask.value = Verification(mission, code).filter(resultat => resultat.valide).map(resultat => resultat.taskId)
+}
 </script>
 
 <template>
@@ -111,6 +118,9 @@ const ValidationCheck = computed(() => {
     </div>
 
     <div v-if="ongletActif === 'missions'" class="mission-content">
+
+      <CodeEditor :langage="mission.langage" @submit="ManageSubmission"/>
+
       <section class="mission-section">
         <h2 class="mission-section__title">Description</h2>
         <p class="mission-section__text">{{ mission.description }}</p>
@@ -129,7 +139,7 @@ const ValidationCheck = computed(() => {
         <h2 class="mission-section__title">Tâches</h2>
         <ul class="mission-tasks">
           <li v-for="tache in mission.taches" :key="tache.taskId" class="mission-task">
-            <input type="checkbox" v-model="TableTask" :value="tache.taskId">
+            <input type="checkbox" :checked="TableTask.includes(tache.taskId)" disabled>
             <span class="mission-task__dot" />
             {{ tache.taskTitre }}
           </li>
@@ -207,6 +217,7 @@ const ValidationCheck = computed(() => {
       Aller au cours {{ mission.langage }}
     </router-link>
   </div>
+
   <div v-else class="mission-not-found">
     <p>Mission introuvable.</p>
   </div>

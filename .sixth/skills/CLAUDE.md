@@ -140,14 +140,14 @@ Déjà fait :
 ### Sprint 3 — Éditeur de code & vérification (~30h)
 
 #### ⌨️ Éditeur CodeMirror
-- [ ] Installer CodeMirror 6 dans le projet Vue *(1h)*
-- [ ] Créer le composant `CodeEditor.vue` *(2h)*
-- [ ] Coloration syntaxique JavaScript *(30 min)*
-- [ ] Coloration syntaxique Python *(30 min)*
-- [ ] Coloration syntaxique TypeScript *(30 min)*
-- [ ] Support des 6 autres langages Rust, Go, PHP, C++, C#, Java *(1h)*
-- [ ] Thème sombre adapté au design CodeQuest *(1h)*
-- [ ] Raccourcis clavier — Tab, Ctrl+Enter pour soumettre *(1h)*
+- [x] Installer CodeMirror 6 dans le projet Vue *(1h)*
+- [x] Créer le composant `CodeEditor.vue` *(2h)*
+- [x] Coloration syntaxique JavaScript *(30 min)*
+- [x] Coloration syntaxique Python *(30 min)*
+- [x] Coloration syntaxique TypeScript *(30 min)*
+- [x] Support des 6 autres langages Rust, Go, PHP, C++, C#, Java *(1h)*
+- [x] Thème sombre adapté au design CodeQuest *(1h)* — étendu à 6 thèmes sélectionnables (codequest, dark, light, ocean, matrix, sunset), persistés via `userStore`
+- [x] Raccourcis clavier — Tab, Ctrl+Enter pour soumettre *(1h)*
 
 #### 🔍 Moteur de vérification statique
 - [ ] Créer `verifier.js` — moteur principal *(1h)*

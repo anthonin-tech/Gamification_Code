@@ -3,6 +3,11 @@ export interface ITask {
     taskTitre: string
 }
 
+export interface IVerification {
+    taskId: number
+    wordKey: string
+}
+
 export interface IIndice {
     niveau: 1 | 2 | 3
     texte: string
@@ -14,6 +19,7 @@ export interface IMission {
     missionTitre: string
     taches: ITask[]
     indices: IIndice[]
+    verification: IVerification[]
     xpRecompense: number
     difficulte: 'FACILE' | 'MOYEN' | 'DIFFICILE'
     langage: string

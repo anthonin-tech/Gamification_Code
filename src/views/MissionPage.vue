@@ -2,6 +2,7 @@
 import { MISSIONS } from '@/data/missions'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/useUserStore'
 import { MissionIsLock } from '@/composables/useMissionLock'
 import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
 import { CURRICULUM_PYTHON } from '@/data/curriculum'
@@ -16,6 +17,7 @@ import { CURRICULUM_CSHARP } from '@/data/curriculum-csharp'
 const filtreLangage = ref('')
 const filtreDifficulte = ref('')
 const router = useRouter()
+const useUser = useUserStore()
 
 const filterMission = computed(() => {
     return MISSIONS.filter(mission => {
@@ -124,7 +126,11 @@ function getLessonName(mission: any) {
               </svg>
               SIGNAL · {{ mission.langage.slice(0,2).toUpperCase() }}-{{ String(mission.missionId).padStart(2, '0') }}
             </span>
-            <span class="diff" :class="mission.difficulte">{{ mission.difficulte }}</span>
+            <div class="card-header-right">
+              <span v-if="useUser.completeMissions.includes(mission.missionId)" class="status-badge status-badge--done">Terminé</span>
+              <span v-else class="status-badge status-badge--new">Nouveau</span>
+              <span class="diff" :class="mission.difficulte">{{ mission.difficulte }}</span>
+            </div>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ mission.missionTitre }}</h3>
@@ -292,6 +298,36 @@ function getLessonName(mission: any) {
   color: var(--accent);
   font-family: 'Courier New', monospace;
   opacity: 0.85;
+}
+
+/* ── Header droite ───────────────────────────────────── */
+.card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Badge statut ────────────────────────────────────── */
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-badge--new {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.status-badge--done {
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
 
 /* ── Badge difficulté ────────────────────────────────── */
