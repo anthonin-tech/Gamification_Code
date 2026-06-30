@@ -5,7 +5,9 @@ import XpCard               from '@/components/profile/XpCard.vue'
 import StreakCard            from '@/components/profile/StreakCard.vue'
 import FavoriteLanguages    from '@/components/profile/FavoriteLanguages.vue'
 import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
-import { USER_PROFILE } from '@/data/profil'
+import { useUserStore } from '@/stores/useUserStore'
+
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -14,28 +16,28 @@ import { USER_PROFILE } from '@/data/profil'
     <div class="profil-layout">
 
       <CharacterPanel
-        :avatar-url="USER_PROFILE.avatarUrl"
-        :level="USER_PROFILE.level"
+        :avatar-url="userStore.userAvatar ?? ''"
+        :level="userStore.userLevel"
       />
 
       <section class="profil-info">
         <header>
           <span class="profil-header__tag">PROFIL</span>
-          <h1 class="profil-header__username">{{ USER_PROFILE.username }}</h1>
-          <p  class="profil-header__title">{{ USER_PROFILE.title }}</p>
+          <h1 class="profil-header__username">{{ userStore.username }}</h1>
+          <p class="profil-header__title">Cosmic Developer</p>
         </header>
 
         <XpCard
-          :xp="USER_PROFILE.xp"
-          :xp-to-next="USER_PROFILE.xpToNext"
-          :level="USER_PROFILE.level"
+          :xp="userStore.userXP"
+          :xp-to-next="1000"
+          :level="userStore.userLevel"
         />
 
-        <StreakCard :streak="USER_PROFILE.streak" />
+        <StreakCard :streak="0" />
 
-        <FavoriteLanguages :languages="USER_PROFILE.favoriteLanguages" />
+        <FavoriteLanguages :languages="[]" />
 
-        <CurrentLanguageCard :language="USER_PROFILE.currentLanguage" />
+        <CurrentLanguageCard :language="{ name: userStore.userFavoriteLanguage ?? '', icon: '', color: '#7c3aed', progress: 0, mission: '' }" />
 
       </section>
     </div>
