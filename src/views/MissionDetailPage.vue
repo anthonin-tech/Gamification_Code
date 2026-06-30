@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { useRoute } from 'vue-router'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
 import { Verification } from '@/composables/Verification'
@@ -46,6 +46,9 @@ async function terminerMission() {
 
   await new Promise(resolve => setTimeout(resolve, 200))
   flyingXp.value = false
+
+  localStorage.removeItem(`codequest_mission_${mission?.missionId}_time`)
+  pause.value = true
 }
 
 const missionTermine = computed(() => 
@@ -72,6 +75,7 @@ const IndiceLock = ref<number[]>([])
 function DeLockIndice(indiceXP: number, indiceNiv: number) {
   userStore.updateXp(-indiceXP)
   IndiceLock.value.push(indiceNiv)
+  localStorage.setItem(`codequest_mission_${mission?.missionId}_indices`, JSON.stringify(IndiceLock.value))
 }
 
 const ValidationCriteria = [
@@ -94,6 +98,41 @@ function ManageSubmission (code: string) {
   if (!mission) return
   TableTask.value = Verification(mission, code).filter(resultat => resultat.valide).map(resultat => resultat.taskId)
 }
+
+const SecondElapsed = ref<number>(0)
+const pause = ref <boolean>(false)
+let TimerIntervale: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  IndiceLock.value = JSON.parse(localStorage.getItem(`codequest_mission_${mission?.missionId}_indices`) ?? '[]')
+  SecondElapsed.value = SecondElapsed.value = Number(localStorage.getItem(`codequest_mission_${mission?.missionId}_time`) ?? 0)
+  TimerIntervale = setInterval(() => {
+      if (!pause.value) {
+        SecondElapsed.value ++ 
+      }
+  }, 1000)
+})
+
+onUnmounted(() => {
+  localStorage.setItem(`codequest_mission_${mission?.missionId}_time`, String(SecondElapsed.value))
+  if (TimerIntervale) {
+    clearInterval(TimerIntervale)
+  }
+})
+
+const TempsFormate = computed(() => {
+  if (SecondElapsed.value <= 3600) {
+    const minutes = Math.floor((SecondElapsed.value % 3600) / 60)
+    const secondes = SecondElapsed.value % 60
+    return `${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`
+  }
+  else {
+    const minutes = Math.floor((SecondElapsed.value % 3600) / 60)
+    const secondes = SecondElapsed.value % 60
+    const heures = Math.floor(SecondElapsed.value / 3600)
+    return `${heures}:${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`
+  }
+})
 </script>
 
 <template>
@@ -115,6 +154,13 @@ function ManageSubmission (code: string) {
       <button @click="ongletActif = 'indices'" :class="{ active: ongletActif === 'indices' }">Indices</button>
       <button @click="ongletActif = 'validation'" :class="{ active: ongletActif === 'validation' }">Validations</button>
       <button @click="ongletActif = 'récompenses'" :class="{ active: ongletActif === 'récompenses' }">Récompenses</button>
+    </div>
+
+    <div v-if="!missionTermine" class="timer-bar">
+      <span class="timer-display">{{ TempsFormate }}</span>
+      <button class="btn-pause" :class="{ 'btn-pause--active': pause }" @click="pause = !pause">
+        {{ pause ? '▶ Reprendre' : '⏸ Pause' }}
+      </button>
     </div>
 
     <div v-if="ongletActif === 'missions'" class="mission-content">
@@ -167,8 +213,13 @@ function ManageSubmission (code: string) {
           <div class="indice-header">
             <span class="indice-niveau">Indice {{ indice.niveau }}</span>
           </div>
-          <div v-if="IndiceLock.includes(indice.niveau)">
+          <div v-if="IndiceLock.includes(indice.niveau) && indice.niveau != 3">
             <p class="indice-texte">{{ indice.texte }}</p>
+          </div>
+          <div v-else-if="indice.niveau === 3">
+            <p class="indice-texte">{{ indice.texte }}</p>
+            <CodeEditor :langage="mission.langage" @submit="ManageSubmission">
+            </CodeEditor>
           </div>
           <div v-else>
             <button class="btn-debloquer" @click="DeLockIndice(indice.xpCout, indice.niveau)">
@@ -196,8 +247,12 @@ function ManageSubmission (code: string) {
 
     </div>
 
-    <div v-if="ongletActif === 'récompenses'">
-      <p>Récompenses à venir</p>
+    <div v-if="ongletActif === 'récompenses'" class="mission-recompenses">
+      <div class="recompense-temps">
+        <span class="recompense-temps__label">Temps passé</span>
+        <span class="recompense-temps__value">{{ TempsFormate }}</span>
+        <span class="recompense-temps__hint">Temps total passé sur cette mission</span>
+      </div>
     </div>
   </div>
   <div v-else-if="mission" class="mission-locked">
@@ -726,6 +781,97 @@ function ManageSubmission (code: string) {
   margin: 0;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+/* ── Timer bar ───────────────────────────────────────── */
+.timer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 24px 20px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.timer-display {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 2px;
+}
+
+.btn-pause {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.btn-pause:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.btn-pause--active {
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.06);
+}
+
+.btn-pause--active:hover {
+  border-color: rgba(251, 191, 36, 0.7);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+/* ── Récompenses ─────────────────────────────────────── */
+.mission-recompenses {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recompense-temps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.recompense-temps__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.recompense-temps__value {
+  font-family: 'Courier New', monospace;
+  font-size: 42px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+}
+
+.recompense-temps__hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
   font-style: italic;
 }
 
