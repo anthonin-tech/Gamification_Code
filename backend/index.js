@@ -10,6 +10,10 @@ import { loadDotEnv } from './lib/env.js'
 import { Article } from './models/Article.js'
 import { scrapeAllSources } from './rssScraper.js'
 
+import { User } from './models/User.js'
+import { parseBody } from './lib/parseBody.js'
+import jwt from 'jsonwebtoken'
+
 function isDnsLikeMongoError(error) {
   const code = error?.code
   const syscall = error?.syscall
@@ -54,7 +58,7 @@ async function connectMongo({ mongodbUri, mongodbUriFallback, serverSelectionTim
       const envServers = parseDnsServers(process.env.MONGODB_DNS_SERVERS)
       const dnsServers = envServers || ['1.1.1.1', '8.8.8.8']
       try {
-        console.warn('⚠️ DNS SRV refusé: tentative avec DNS publics (1.1.1.1 / 8.8.8.8)...')
+        console.warn('DNS SRV refusé: tentative avec DNS publics (1.1.1.1 / 8.8.8.8)...')
         const result = await tryConnectWithAltDns({ mongodbUri, serverSelectionTimeoutMS, dnsServers })
         if (result.connected) {
           return { uriUsed: mongodbUri, usedFallback: false, usedAltDns: true }
@@ -65,7 +69,7 @@ async function connectMongo({ mongodbUri, mongodbUriFallback, serverSelectionTim
     }
 
     if (!mongodbUriFallback) throw error
-    console.warn('⚠️ Connexion MongoDB (primary) échouée, tentative fallback...')
+    console.warn('Connexion MongoDB (primary) échouée, tentative fallback...')
     console.warn(error)
     await mongoose.connect(mongodbUriFallback, { serverSelectionTimeoutMS })
     return { uriUsed: mongodbUriFallback, usedFallback: true }
@@ -154,9 +158,9 @@ export async function startBackend(options = {}) {
       serverSelectionTimeoutMS,
     })
     mongoConnected = true
-    console.log(`✅ MongoDB connecté${usedFallback ? ' (fallback)' : ''}`)
-    if (usedFallback) console.log(`ℹ️ URI utilisée: ${uriUsed}`)
-    if (usedAltDns) console.log('ℹ️ Connexion établie via DNS alternatifs (config interne Node)')
+    console.log(`MongoDB connecté${usedFallback ? ' (fallback)' : ''}`)
+    if (usedFallback) console.log(`URI utilisée: ${uriUsed}`)
+    if (usedAltDns) console.log('Connexion établie via DNS alternatifs (config interne Node)')
   } catch (error) {
     const isDnsError = isDnsLikeMongoError(error) || isDnsLikeMongoError(error?.cause)
     if (isDnsError && String(mongodbUri).startsWith('mongodb+srv://')) {
@@ -167,23 +171,23 @@ export async function startBackend(options = {}) {
     }
 
     if (mongodbRequired) throw error
-    console.warn('⚠️ MongoDB indisponible: démarrage en mode dégradé (MONGODB_REQUIRED=false).')
+    console.warn('MongoDB indisponible: démarrage en mode dégradé (MONGODB_REQUIRED=false).')
     console.warn(error)
   }
 
   if (enableScheduler && mongoConnected) {
-    console.log('⏰ Démarrage du scheduler RSS...')
+    console.log('Démarrage du scheduler RSS...')
     setTimeout(() => {
       scrapeAllSources().catch(console.error)
     }, 3000)
     cron.schedule('0 * * * *', async () => {
       await scrapeAllSources()
     })
-    console.log('✅ Scheduler actif (scraping toutes les heures)')
+    console.log('Scheduler actif (scraping toutes les heures)')
   } else if (!enableScheduler) {
-    console.log('ℹ️ Scheduler désactivé (ENABLE_SCHEDULER=false)')
+    console.log('Scheduler désactivé (ENABLE_SCHEDULER=false)')
   } else {
-    console.log('ℹ️ Scheduler désactivé (MongoDB non connecté)')
+    console.log('Scheduler désactivé (MongoDB non connecté)')
   }
 
   const server = http.createServer(async (req, res) => {
@@ -224,11 +228,11 @@ export async function startBackend(options = {}) {
   })
 
   server.listen(port, () => {
-    console.log(`🚀 Backend prêt sur http://localhost:${port}`)
+    console.log(`Backend prêt sur http://localhost:${port}`)
   })
 
   const shutdown = async () => {
-    console.log('🛑 Arrêt du backend...')
+    console.log('Arrêt du backend...')
     server.close(() => {
       console.log('HTTP server arrêté')
     })
@@ -253,7 +257,11 @@ export async function startBackend(options = {}) {
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   startBackend().catch((e) => {
-    console.error('❌ Impossible de démarrer le backend:', e)
+    console.error('Impossible de démarrer le backend:', e)
     process.exit(1)
   })
+}
+
+function handleRegister() {
+  
 }
