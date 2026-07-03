@@ -6,8 +6,37 @@ import StreakCard            from '@/components/profile/StreakCard.vue'
 import FavoriteLanguages    from '@/components/profile/FavoriteLanguages.vue'
 import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
 import { useUserStore } from '@/stores/useUserStore'
+import { useXP } from '@/composables/useXP'
+import { computed } from 'vue'
+import { CURRICULUM_PYTHON }     from '@/data/curriculum'
+import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
+import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
+import { CURRICULUM_JAVA }       from '@/data/curriculum-java'
+import { CURRICULUM_PHP }        from '@/data/curriculum-php'
+import { CURRICULUM_GO }         from '@/data/curriculum-go'
+import { CURRICULUM_CPP }        from '@/data/curriculum-cpp'
+import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
+import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
 
 const userStore = useUserStore()
+const { currentLevel } = useXP()
+
+const progressionLangages = computed(() => [
+  { langage: 'python',     curriculum: CURRICULUM_PYTHON },
+  { langage: 'javascript', curriculum: CURRICULUM_JAVASCRIPT },
+  { langage: 'typescript', curriculum: CURRICULUM_TYPESCRIPT },
+  { langage: 'java',       curriculum: CURRICULUM_JAVA },
+  { langage: 'php',        curriculum: CURRICULUM_PHP },
+  { langage: 'go',         curriculum: CURRICULUM_GO },
+  { langage: 'cpp',        curriculum: CURRICULUM_CPP },
+  { langage: 'rust',       curriculum: CURRICULUM_RUST },
+  { langage: 'csharp',     curriculum: CURRICULUM_CSHARP },
+].map(({ langage, curriculum }) => {
+  const saved = localStorage.getItem(`codequest_${langage}_progress`)
+  const completedLessons: number[] = saved ? JSON.parse(saved).completedLessons ?? [] : []
+  const total = curriculum.reduce((acc, module) => acc + module.lessons.length, 0)
+  return { langage, completed: completedLessons.length, total }
+}))
 </script>
 
 <template>
@@ -17,7 +46,7 @@ const userStore = useUserStore()
 
       <CharacterPanel
         :avatar-url="userStore.userAvatar ?? ''"
-        :level="userStore.userLevel"
+        :level="currentLevel"
       />
 
       <section class="profil-info">
@@ -28,10 +57,25 @@ const userStore = useUserStore()
         </header>
 
         <XpCard
-          :xp="userStore.userXP"
-          :xp-to-next="1000"
-          :level="userStore.userLevel"
+          :xp="userStore.userXP % 500
+          "
+          :xp-to-next="500"
+          :level="currentLevel"
         />
+
+        <section class="stat">
+          <span class="stat__value">{{ userStore.completeMissions.length }}</span>
+          <span class="stat__label">Missions terminées</span>
+        </section>
+
+        <section class="langages">
+          <div v-for="{ langage, completed, total } in progressionLangages">
+            {{ langage }}
+            <div class="lang-bar">
+              <div class="lang-bar__fill" :style="{ width: (total > 0 ? Math.round(completed/total * 100) : 0) + '%' }" />
+            </div>
+          </div>
+        </section>
 
         <StreakCard :streak="0" />
 
