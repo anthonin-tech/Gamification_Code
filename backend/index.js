@@ -13,6 +13,9 @@ import { scrapeAllSources } from './rssScraper.js'
 import { User } from './models/User.js'
 import { parseBody } from './lib/parseBody.js'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+
+import { parseCookies } from './lib/parseCookies.js'
 
 function isDnsLikeMongoError(error) {
   const code = error?.code
@@ -83,9 +86,10 @@ function sendJson(res, statusCode, payload) {
 }
 
 function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Max-Age', '86400')
 }
 
@@ -220,6 +224,40 @@ export async function startBackend(options = {}) {
         return await handleScrape(res)
       }
 
+      if (req.method === 'POST' && url.pathname === '/api/auth/register') {
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleRegister(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/login'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleLogin(req, res)
+      }
+      if (req.method === 'GET' && url.pathname === '/api/auth/profil'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleMe(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/logout'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleLogout(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/badges/unlock'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleLockBadge(req, res)
+      }
+
       return sendJson(res, 404, { error: 'Not found' })
     } catch (error) {
       console.error('Erreur API:', error)
@@ -262,6 +300,63 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   })
 }
 
-function handleRegister() {
-  
+async function handleRegister(req, res) {
+  const { username, email, password } = await parseBody(req)
+  const userInfo = new User({ username, email, password })
+  await userInfo.save()
+  const token = jwt.sign( {id: userInfo._id, username }, process.env.JWT_SECRET , { expiresIn: '7d' })
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  sendJson(res, 201, { message: 'Compte créé' })
+}
+
+async function handleLogin(req, res) {
+  const { email, password } = await parseBody(req)
+  const user = await User.findOne({ email })
+  if (!user) {
+    return sendJson(res, 401, { error: 'Identifiants introuvables' })
+  }
+  const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) {
+    return sendJson(res, 401, { error: 'Mauvais mot de passe' })
+  }
+  const token = jwt.sign( {id: user._id, username: user.username }, process.env.JWT_SECRET , { expiresIn: '7d' })
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  sendJson(res, 200, { message: 'Connecté' })
+}
+
+async function handleMe(req, res) {
+    const cookie = parseCookies(req)
+    if (!cookie.token) {
+      return sendJson(res, 401, { error: 'Non connecté' })
+    }
+    let response
+    try {
+      response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+    } catch (error) {
+      return sendJson(res, 401, { message: 'Token invalide'})
+    }
+    const user = await User.findById(response.id)
+    sendJson(res, 200, { user })
+}
+
+async function handleLogout(req, res) {
+  res.setHeader('Set-Cookie', `token=; HttpOnly; Path=/; Max-Age=0`)
+  sendJson(res, 200, { message: 'Déconnecté' })
+}
+
+async function handleLockBadge(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) {
+    return sendJson(res, 401, { error: 'Non connecté' })
+  }
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch (error) {
+    return sendJson(res, 401, { message: 'Token invalide'})
+  }
+  const userId = response.id
+  const { badgeId } = await parseBody(req)
+  const badge = await User.findByIdAndUpdate(userId, { $addToSet: { badges: badgeId } })
+  sendJson(res, 200, { message: 'Badge ✓'})  
 }

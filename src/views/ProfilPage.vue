@@ -17,6 +17,7 @@ import { CURRICULUM_GO }         from '@/data/curriculum-go'
 import { CURRICULUM_CPP }        from '@/data/curriculum-cpp'
 import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
 import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const { currentLevel } = useXP()
@@ -37,6 +38,14 @@ const progressionLangages = computed(() => [
   const total = curriculum.reduce((acc, module) => acc + module.lessons.length, 0)
   return { langage, completed: completedLessons.length, total }
 }))
+
+const router = useRouter()
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include'})
+  userStore.resetUser()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -86,6 +95,7 @@ const progressionLangages = computed(() => [
       </section>
     </div>
 
+    <button @click="logout">Se déconnecter</button>
   </div>
 </template>
 
