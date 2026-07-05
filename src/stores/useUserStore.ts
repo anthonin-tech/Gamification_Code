@@ -11,7 +11,8 @@ export const useUserStore = defineStore('user', {
         userFavoriteLanguage: null,
         isLoggedIn: false,
         completeMissions: [],
-        editorTheme: 'codequest'
+        editorTheme: 'codequest',
+        badges: [],
     }),
     actions: {
         initUser(userData: Partial<IUserState>) {
@@ -83,4 +84,5 @@ interface IUserState {
     isLoggedIn: boolean
     completeMissions: number[]
     editorTheme: string
+    badges: number[]
 }

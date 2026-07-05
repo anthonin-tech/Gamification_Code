@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import NavBar from './components/layout/NavBar.vue';
-import { USER_PROFILE } from './data/profil';
 import { useUserStore } from './stores/useUserStore';
 
 const userStore = useUserStore()
 
-onMounted(() => {
+onMounted(async () => {
+  const response = await fetch('/api/auth/profil', { credentials: 'include' })
+  if (response.ok) {
+    const data =  await response.json()
     userStore.initUser({
-    userXP: USER_PROFILE.xp,
-    userLevel: USER_PROFILE.level,
-    username: USER_PROFILE.username,
-  })
+      userXP: data.user.xp,
+      username: data.user.username,
+    })
+  }
 })
 </script>
 

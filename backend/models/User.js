@@ -30,6 +30,10 @@ const UserSchema = new Schema (
         editorTheme: {
             type: String,
             default: 'codequest'
+        },
+        badges: {
+            type: [Number],
+            default: []
         }
     }
 )

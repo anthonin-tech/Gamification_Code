@@ -235,6 +235,30 @@
   justify-content: center;
 }
 
+/* ─── AVATAR LOGIN ───────────────────────────────────────── */
+
+.navbar-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-avatar a {
+  display: block;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.navbar-avatar a:hover {
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.6));
+}
+
+.navbar-avatar__svg {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────────── */
 
 @media (max-width: 640px) {
