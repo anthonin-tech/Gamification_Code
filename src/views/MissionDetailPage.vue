@@ -5,6 +5,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
 import { Verification } from '@/composables/Verification'
+import { useBadge } from '@/composables/useBadge.ts'
 import CodeEditor from '@/components/Terminal/CodeEditor.vue'
 
 const route = useRoute()
@@ -43,6 +44,12 @@ async function terminerMission() {
   await new Promise(resolve => setTimeout(resolve, 900))
   userStore.updateXp(mission.xpRecompense)
   userStore.updateMisssion(mission.missionId)
+
+  const { checkAndUnlock } = useBadge()
+  
+  await checkAndUnlock(100 + mission.missionId, mission.missionId)
+  await checkAndUnlock(5, userStore.completeMissions.length)
+  await checkAndUnlock(6, userStore.completeMissions.length)
 
   await new Promise(resolve => setTimeout(resolve, 200))
   flyingXp.value = false

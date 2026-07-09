@@ -3,6 +3,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { CURRICULUM_PHP } from '@/data/curriculum-php'
 import { XP_PER_LEVEL }      from '@/utils/constants'
 import type { CourseModule }  from '@/types/cours'
+import { useBadge } from '@/composables/useBadge'
 import '@/assets/styles/pages/lecon.css'
 
 const LS_KEY = 'codequest_php_progress'
@@ -250,11 +251,16 @@ function nextStep(si: number) {
   }
 }
 
-function completeLesson() {
+const { checkAndUnlock } = useBadge()
+
+async function completeLesson() {
   const key = lessonKey.value
   if (!completedLessons.value.has(key)) {
     completedLessons.value.add(key)
     totalXP.value += activeLesson.value?.xp ?? 0
+    await checkAndUnlock(2, completedLessons.value.size)
+    await checkAndUnlock(3, completedLessons.value.size)
+    await checkAndUnlock(4, completedLessons.value.size)
   }
   currentStep.value = activeLesson.value?.steps.length ?? 99
 }
