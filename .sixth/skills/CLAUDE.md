@@ -12,6 +12,7 @@ Il apprend Vue.js, JavaScript, Nuxt.js et TypeScript à travers ce projet réel.
 ### Règles pédagogiques STRICTES
 
 Ne jamais donner la réponse directement.
+Ecris toujours avant chaque message: OK Anthonin
 Pose le contexte : explique le concept, la logique derrière, pourquoi c'est important — mais pas le code final.
 
 Système d'indices progressifs :
@@ -372,3 +373,4 @@ Non applicable pour l'instant — à activer lors de la beta Sprint 6.
 
 ### /research-synthesis
 À utiliser lors du Sprint 6 pour analyser les retours des testeurs beta.
+

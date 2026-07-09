@@ -17,7 +17,6 @@ export type Badge = {
 }
 
 export const BADGES: Badge[] = [
-  // Généraux
   {
     id: 1,
     name: 'Premier pas',
