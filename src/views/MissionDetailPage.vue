@@ -101,9 +101,14 @@ const ValidationCheck = computed(() => {
   return false
 })
 
-function ManageSubmission (code: string) {
+const isVerifying = ref<boolean>(false)
+
+async function ManageSubmission (code: string) {
   if (!mission) return
-  TableTask.value = Verification(mission, code).filter(resultat => resultat.valide).map(resultat => resultat.taskId)
+  isVerifying.value = true
+  const results = await Verification(mission, code, mission.langage)
+  isVerifying.value = false
+  TableTask.value = results.filter(resultat => resultat.valide).map(resultat => resultat.taskId)
 }
 
 const SecondElapsed = ref<number>(0)
@@ -172,7 +177,22 @@ const TempsFormate = computed(() => {
 
     <div v-if="ongletActif === 'missions'" class="mission-content">
 
-      <CodeEditor :langage="mission.langage" @submit="ManageSubmission"/>
+      <div class="editor-wrapper">
+        <CodeEditor :langage="mission.langage" @submit="ManageSubmission"/>
+        <div v-if="isVerifying" class="editor-verifying">
+          <div class="verifying-scene">
+            <video
+              class="verifying-video"
+              src="/Loading Coder.mp4"
+              autoplay
+              loop
+              muted
+              playsinline
+            />
+            <span class="verifying-label">Vérification en cours…</span>
+          </div>
+        </div>
+      </div>
 
       <section class="mission-section">
         <h2 class="mission-section__title">Description</h2>
@@ -204,7 +224,7 @@ const TempsFormate = computed(() => {
         ref="termineMissionBtn"
         class="btn-terminer"
         :class="{ 'btn-terminer--done': missionTermine }"
-        :disabled="missionTermine"
+        :disabled="missionTermine || TableTask.length < mission.taches.length"
       >
         {{ missionTermine ? '✓ Mission terminée' : `Terminer la mission · +${mission.xpRecompense} XP` }}
       </button>
@@ -292,6 +312,49 @@ const TempsFormate = computed(() => {
 </template>
 
 <style scoped>
+/* ── Loading overlay éditeur ─────────────────────────── */
+.editor-wrapper {
+  position: relative;
+}
+
+.editor-verifying {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: rgba(2, 0, 20, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.verifying-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.verifying-video {
+  width: 200px;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+}
+
+.verifying-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(167, 139, 250, 0.9);
+  animation: pulse-text 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
 .mission-detail {
   max-width: 860px;
   margin: 0 auto;

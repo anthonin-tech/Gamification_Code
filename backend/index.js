@@ -258,6 +258,13 @@ export async function startBackend(options = {}) {
         return await handleLockBadge(req, res)
       }
 
+      if (req.method === 'POST' && url.pathname === '/api/execute'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleExcute(req, res)
+      }
+
       return sendJson(res, 404, { error: 'Not found' })
     } catch (error) {
       console.error('Erreur API:', error)
@@ -359,4 +366,26 @@ async function handleLockBadge(req, res) {
   const { badgeId } = await parseBody(req)
   const badge = await User.findByIdAndUpdate(userId, { $addToSet: { badges: badgeId } })
   sendJson(res, 200, { message: 'Badge ✓'})  
+}
+
+async function handleExcute(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) {
+    return sendJson(res, 401, { error: 'Non connecté'})
+  }
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch (error) {
+    return sendJson(res, 401, { message: 'Token invalide'})
+  }
+  const { langage, code } = await parseBody(req)
+  const pistonRes = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ language: langage, version: '*', files: [{ content: code }] })
+  })
+  const data = await pistonRes.json()
+
+  sendJson(res, 200, { stdout: data.run.stdout, stderr: data.run.stderr, exitCode: data.run.code })
 }

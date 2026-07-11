@@ -12,6 +12,8 @@ onMounted(async () => {
     userStore.initUser({
       userXP: data.user.xp,
       username: data.user.username,
+      badges: data.user.badges,
+      completeMissions: data.user.completeMissions
     })
   }
 })

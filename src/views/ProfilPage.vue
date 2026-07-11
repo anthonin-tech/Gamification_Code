@@ -18,6 +18,7 @@ import { CURRICULUM_CPP }        from '@/data/curriculum-cpp'
 import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
 import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
 import { useRouter } from 'vue-router'
+import { BADGES } from '@/data/badges'
 
 const userStore = useUserStore()
 const { currentLevel } = useXP()
@@ -46,6 +47,10 @@ async function logout() {
   userStore.resetUser()
   router.push('/login')
 }
+
+const RecentBadges = computed(() => {
+  return userStore.badges.map(id => BADGES.find(b => b.id === id)).filter(Boolean).slice(-3)
+})
 </script>
 
 <template>
@@ -92,6 +97,15 @@ async function logout() {
 
         <CurrentLanguageCard :language="{ name: userStore.userFavoriteLanguage ?? '', icon: '', color: '#7c3aed', progress: 0, mission: '' }" />
 
+        <section class="badges">
+          <h2>Badges récents</h2>
+          <span v-for="badges in RecentBadges"
+            :key="badges?.id" 
+          >
+            {{ badges?.icon }}
+          </span>
+          <RouterLink to="/galaxy">Voir tous</RouterLink>
+        </section>
       </section>
     </div>
 

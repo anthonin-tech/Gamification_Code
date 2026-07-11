@@ -134,6 +134,56 @@
   transition: width 0.4s ease;
 }
 
+/* ── Badges récents ──────────────────────────────────── */
+.badges {
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badges h2 {
+  font-family: var(--pp-font-hd);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.badges span {
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.5));
+  transition: transform 0.2s;
+  cursor: default;
+}
+
+.badges span:hover {
+  transform: scale(1.25);
+}
+
+.badges a {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.7);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.badges a:hover {
+  color: rgba(0, 212, 255, 1);
+}
+
 @media (max-width: 880px) {
   .profil-page { padding: 1.25rem; align-items: flex-start; }
 

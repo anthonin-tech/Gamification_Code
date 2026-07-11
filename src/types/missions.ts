@@ -6,6 +6,7 @@ export interface ITask {
 export interface IVerification {
     taskId: number
     wordKey: string
+    expectedOutput: string
 }
 
 export interface IIndice {

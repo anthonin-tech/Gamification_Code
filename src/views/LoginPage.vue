@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
+import { useBadge } from '@/composables/useBadge'
 
 const isLogin = ref(true)
 const email = ref('')
@@ -13,11 +14,18 @@ const error = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 
+const { checkAndUnlock } = useBadge()
+
 async function loadUser() {
     const res = await fetch('/api/auth/profil', { credentials: 'include' })
     if (res.ok) {
         const { user } = await res.json()
-        userStore.initUser({ username: user.username, userXP: user.xp })
+        userStore.initUser({ 
+            username: user.username, 
+            userXP: user.xp, 
+            badges: user.badges, 
+            completeMissions: user.completeMissions 
+        })
     }
 }
 
@@ -52,6 +60,7 @@ async function handleRegister() {
     const data = await response.json()
     if (response.ok) {
         await loadUser()
+        await checkAndUnlock(1, 1)
         router.push('/')
     } else {
         error.value = data.error ?? 'Erreur lors de l\'inscription'
