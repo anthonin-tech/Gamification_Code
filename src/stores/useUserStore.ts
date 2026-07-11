@@ -34,8 +34,12 @@ export const useUserStore = defineStore('user', {
             const savedEditorTheme = localStorage.getItem('editorTheme')
             this.editorTheme = savedEditorTheme ? JSON.parse(savedEditorTheme) : 'codequest'
 
+            const savedBadge = localStorage.getItem('badges')
+            this.badges = userData.badges ?? (savedBadge ? JSON.parse(savedBadge) : [])
+
             localStorage.setItem('userXP', String(this.userXP))
             localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
+            localStorage.setItem('badges', JSON.stringify(this.badges))
         },
         resetUser() {
             this.$reset()

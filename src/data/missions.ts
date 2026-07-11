@@ -10,9 +10,9 @@ export const MISSIONS: IMission[] = [
             { taskId: 3, taskTitre: "Afficher les valeurs dans la console" }
         ],
         verification: [
-            { taskId: 1, wordKey: 'let' },
-            { taskId: 2, wordKey: 'const' },
-            { taskId: 3, wordKey: 'console.log' }
+            { taskId: 1, wordKey: 'let', expectedOutput: '' },
+            { taskId: 2, wordKey: 'const', expectedOutput: '' },
+            { taskId: 3, wordKey: 'console.log', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "Une variable se déclare avec le mot-clé `let` suivi d'un nom, puis d'un `=` et d'une valeur.", xpCout: 10 },
@@ -35,9 +35,9 @@ export const MISSIONS: IMission[] = [
             { taskId: 6, taskTitre: "Imbriquer deux conditions" }
         ],
         verification: [
-            { taskId: 4, wordKey: 'else' },
-            { taskId: 5, wordKey: '===' },
-            { taskId: 6, wordKey: 'else if' }
+            { taskId: 4, wordKey: 'else', expectedOutput: '' },
+            { taskId: 5, wordKey: '===', expectedOutput: '' },
+            { taskId: 6, wordKey: 'else if', expectedOutput: 'mineur' }
         ],
         indices: [
             { niveau: 1, texte: "Un `if` exécute un bloc de code seulement si la condition entre parenthèses est vraie.", xpCout: 10 },
@@ -61,10 +61,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 10, taskTitre: "Appeler la fonction depuis le programme" }
         ],
         verification: [
-            { taskId: 7, wordKey: 'function' },
-            { taskId: 8, wordKey: '(' },
-            { taskId: 9, wordKey: 'return' },
-            { taskId: 10, wordKey: '(' }
+            { taskId: 7, wordKey: 'function', expectedOutput: '' },
+            { taskId: 8, wordKey: '(', expectedOutput: '' },
+            { taskId: 9, wordKey: 'return', expectedOutput: '' },
+            { taskId: 10, wordKey: '(', expectedOutput: '42' }
         ],
         indices: [
             { niveau: 1, texte: "Une fonction se déclare avec `function nomFonction() { }`. Le code à l'intérieur ne s'exécute que quand on l'appelle.", xpCout: 10 },
@@ -88,10 +88,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 14, taskTitre: "Filtrer avec filter()" }
         ],
         verification: [
-            { taskId: 11, wordKey: '[' },
-            { taskId: 12, wordKey: 'for' },
-            { taskId: 13, wordKey: '.map(' },
-            { taskId: 14, wordKey: '.filter(' }
+            { taskId: 11, wordKey: '[', expectedOutput: '' },
+            { taskId: 12, wordKey: 'for', expectedOutput: '' },
+            { taskId: 13, wordKey: '.map(', expectedOutput: '' },
+            { taskId: 14, wordKey: '.filter(', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "Un tableau se déclare avec des crochets : `const fruits = ['pomme', 'banane']`. On accède aux éléments avec leur index depuis 0.", xpCout: 15 },
@@ -115,10 +115,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 18, taskTitre: "Utiliser la déstructuration" }
         ],
         verification: [
-            { taskId: 15, wordKey: '{' },
-            { taskId: 16, wordKey: '.' },
-            { taskId: 17, wordKey: '=' },
-            { taskId: 18, wordKey: 'const {' }
+            { taskId: 15, wordKey: '{', expectedOutput: '' },
+            { taskId: 16, wordKey: '.', expectedOutput: '' },
+            { taskId: 17, wordKey: '=', expectedOutput: '' },
+            { taskId: 18, wordKey: 'const {', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "Un objet se déclare avec des accolades : `const user = { nom: 'Alice', age: 25 }`. Chaque entrée est une paire clé/valeur.", xpCout: 15 },
@@ -142,10 +142,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 22, taskTitre: "Gérer une erreur avec try / catch" }
         ],
         verification: [
-            { taskId: 19, wordKey: 'new Promise' },
-            { taskId: 20, wordKey: '.then(' },
-            { taskId: 21, wordKey: 'await' },
-            { taskId: 22, wordKey: 'try' }
+            { taskId: 19, wordKey: 'new Promise', expectedOutput: '' },
+            { taskId: 20, wordKey: '.then(', expectedOutput: '' },
+            { taskId: 21, wordKey: 'await', expectedOutput: '' },
+            { taskId: 22, wordKey: 'try', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "Une Promise représente une valeur qui sera disponible dans le futur. Elle a 3 états : pending, fulfilled, rejected.", xpCout: 20 },
@@ -169,10 +169,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 26, taskTitre: "Typer les paramètres d'une fonction" }
         ],
         verification: [
-            { taskId: 23, wordKey: ': number' },
-            { taskId: 24, wordKey: 'interface' },
-            { taskId: 25, wordKey: '|' },
-            { taskId: 26, wordKey: '): ' }
+            { taskId: 23, wordKey: ': number', expectedOutput: '' },
+            { taskId: 24, wordKey: 'interface', expectedOutput: '' },
+            { taskId: 25, wordKey: '|', expectedOutput: '' },
+            { taskId: 26, wordKey: '): ', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "En TypeScript, on annote les types après le nom : `let score: number = 0`. Les types primitifs sont `string`, `number`, `boolean`.", xpCout: 15 },
@@ -196,10 +196,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 30, taskTitre: "Choisir le bon algo selon le contexte" }
         ],
         verification: [
-            { taskId: 27, wordKey: 'def' },
-            { taskId: 28, wordKey: 'pivot' },
-            { taskId: 29, wordKey: 'O(' },
-            { taskId: 30, wordKey: 'def' }
+            { taskId: 27, wordKey: 'def', expectedOutput: '' },
+            { taskId: 28, wordKey: 'pivot', expectedOutput: '' },
+            { taskId: 29, wordKey: 'O(', expectedOutput: '' },
+            { taskId: 30, wordKey: 'def', expectedOutput: '' }
         ],
         indices: [
             { niveau: 1, texte: "Le tri à bulles compare deux éléments adjacents et les échange si nécessaire, en répétant jusqu'à ce que le tableau soit trié.", xpCout: 25 },
@@ -223,10 +223,10 @@ export const MISSIONS: IMission[] = [
             { taskId: 34, taskTitre: "Résoudre Fibonacci de façon optimisée" }
         ],
         verification: [
-            { taskId: 31, wordKey: 'def' },
-            { taskId: 32, wordKey: 'return' },
-            { taskId: 33, wordKey: 'memo' },
-            { taskId: 34, wordKey: 'fib' }
+            { taskId: 31, wordKey: 'def', expectedOutput: '' },
+            { taskId: 32, wordKey: 'return', expectedOutput: '' },
+            { taskId: 33, wordKey: 'memo', expectedOutput: '' },
+            { taskId: 34, wordKey: 'fib', expectedOutput: '55' }
         ],
         indices: [
             { niveau: 1, texte: "Une fonction récursive s'appelle elle-même. Elle doit toujours avoir un cas de base (condition d'arrêt) pour éviter une boucle infinie.", xpCout: 25 },
