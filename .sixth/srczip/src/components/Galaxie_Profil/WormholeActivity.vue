@@ -1,0 +1,182 @@
+<script setup lang="ts">
+import type { WormholeActivity } from '@/types/profil'
+interface Props { activity: WormholeActivity }
+const props = defineProps<Props>()
+
+// Map Tailwind strings → real gradients
+const GRAD: Record<string, { css: string; glow: string }> = {
+  'from-purple-500 to-pink-500':   { css: 'linear-gradient(135deg,#a855f7,#ec4899)', glow: 'rgba(168,85,247,0.3)' },
+  'from-blue-500 to-cyan-500':     { css: 'linear-gradient(135deg,#3b82f6,#06b6d4)', glow: 'rgba(59,130,246,0.3)' },
+  'from-green-500 to-emerald-500': { css: 'linear-gradient(135deg,#22c55e,#10b981)', glow: 'rgba(34,197,94,0.3)' },
+}
+const g = GRAD[props.activity.color] ?? GRAD['from-purple-500 to-pink-500']
+</script>
+
+<template>
+  <div class="activity-row group">
+    <!-- Wormhole portal glow left -->
+    <div class="portal-glow">
+      <div class="portal-core" :style="{ background: g.css }" />
+      <div
+        v-for="i in 4"
+        :key="`pr${i}`"
+        class="portal-ring"
+        :style="{ borderColor: g.glow, animationDelay: `${i * 0.3}s` }"
+      />
+    </div>
+
+    <!-- Card -->
+    <div class="activity-card group-hover:border-cyan-400/50">
+      <div class="card-hover-bg opacity-0 group-hover:opacity-10" :style="{ background: g.css }" />
+
+      <div class="card-body">
+        <div class="card-left">
+          <h3 class="activity-title">
+            {{ activity.title }}
+            <span class="sparkle">✨</span>
+          </h3>
+          <div class="activity-meta">
+            <span class="dimension">🌍 {{ activity.dimension }}</span>
+            <span class="time">{{ activity.time }}</span>
+          </div>
+        </div>
+
+        <div class="card-right">
+          <div class="energy-value" :style="{ background: g.css, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }">
+            +{{ activity.energy }}
+          </div>
+          <div class="energy-label">Energy Gained</div>
+        </div>
+      </div>
+
+      <!-- Hover particles -->
+      <div class="particles-wrap">
+        <div
+          v-for="i in 10"
+          :key="`p${i}`"
+          class="particle opacity-0 group-hover:animate-particle"
+          :style="{
+            top:            `${Math.random()*100}%`,
+            left:           `${Math.random()*100}%`,
+            background:     g.css,
+            animationDelay: `${Math.random()*2}s`,
+          }"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.activity-row {
+  position: relative;
+}
+
+.portal-glow {
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 120px;
+  height: 120px;
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.activity-row:hover .portal-glow { opacity: 0.55; }
+
+.portal-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  filter: blur(20px);
+  animation: pulse 2s ease-in-out infinite;
+}
+.portal-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid;
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: ping 2s ease-out infinite;
+}
+
+@keyframes ping  {
+  0%   { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.activity-card {
+  position: relative;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(168,85,247,0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.card-hover-bg {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.3s;
+}
+
+.card-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-left {}
+.activity-title {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.sparkle { animation: pulse 2s ease-in-out infinite; }
+
+.activity-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #c084fc;
+  font-size: 0.9rem;
+}
+.time { color: #22d3ee; }
+
+.card-right { text-align: right; }
+.energy-value { font-size: 2.25rem; font-weight: 700; margin-bottom: 4px; }
+.energy-label { font-size: 0.8rem; color: #c084fc; }
+
+/* Particles */
+.particles-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+@keyframes animate-particle {
+  0%   { opacity: 0; transform: translate(0,0) scale(0); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(20px,-30px) scale(1.5); }
+}
+.animate-particle { animation: animate-particle 2s ease-out infinite; }
+</style>

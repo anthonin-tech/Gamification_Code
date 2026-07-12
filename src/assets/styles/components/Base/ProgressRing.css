@@ -1,0 +1,27 @@
+.progress-ring {
+    width: 88px;
+    height: 88px;
+}
+
+.progress-ring__track {
+    fill: none;
+    stroke: var(--surface-2);
+    stroke-width: 7;
+}
+
+.progress-ring__fill {
+    fill: none;
+    stroke: url(#grad);
+    stroke-width: 7;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 0.4s ease;
+    stroke: var(--primary);
+}
+
+.progress-ring__text {
+    fill: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}

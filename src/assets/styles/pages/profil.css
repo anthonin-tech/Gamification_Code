@@ -1,0 +1,226 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap');
+
+.profil-page {
+  --pp-bg:        #020008;
+  --pp-font-hd:   'Rajdhani', 'Trebuchet MS', sans-serif;
+  --pp-font-body: 'Outfit', 'Segoe UI', sans-serif;
+  --pp-text:      #e8dcff;
+
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 140% 80% at 50% 0%, rgba(60, 10, 120, 0.5) 0%, var(--pp-bg) 56%),
+    var(--pp-bg);
+  color: var(--pp-text);
+  font-family: var(--pp-font-body);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.profil-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;  
+  gap: 1.75rem;
+  width: 100%;
+  max-width: 1060px;
+  min-height: 600px;
+}
+
+.profil-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.profil-header__tag {
+  font-family: var(--pp-font-hd);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(14, 243, 255, 0.62);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.profil-header__username {
+  font-family: var(--pp-font-hd);
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  background: linear-gradient(100deg, #ffffff 0%, #0ef3ff 38%, #9d4dff 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 26px rgba(160, 80, 255, 0.28));
+  margin: 0;
+}
+
+.profil-header__title {
+  font-size: 0.85rem;
+  color: rgba(170, 140, 220, 0.55);
+  letter-spacing: 0.03em;
+  margin: 0.4rem 0 0;
+}
+
+/* ── Stats missions ──────────────────────────────────── */
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stat__value {
+  font-family: var(--pp-font-hd);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  min-width: 2.5ch;
+}
+
+.stat__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Progression langages ────────────────────────────── */
+.langages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.langages > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.langages > div:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.langages > div img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.langages > div .lang-bar {
+  flex: 1;
+}
+
+.lang-selected {
+  border-color: rgba(0, 212, 255, 0.45) !important;
+  background: rgba(0, 212, 255, 0.06) !important;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.lang-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.lang-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.9), rgba(0, 212, 255, 0.7));
+  transition: width 0.4s ease;
+}
+
+/* ── Badges récents ──────────────────────────────────── */
+.badges {
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badges h2 {
+  font-family: var(--pp-font-hd);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.badges span {
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.5));
+  transition: transform 0.2s;
+  cursor: default;
+}
+
+.badges span:hover {
+  transform: scale(1.25);
+}
+
+.badges a {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.7);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.badges a:hover {
+  color: rgba(0, 212, 255, 1);
+}
+
+@media (max-width: 880px) {
+  .profil-page { padding: 1.25rem; align-items: flex-start; }
+
+  .profil-layout {
+    grid-template-columns: 1fr;    
+    grid-template-rows: 380px auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .profil-layout { gap: 1rem; }
+}
