@@ -258,11 +258,18 @@ export async function startBackend(options = {}) {
         return await handleLockBadge(req, res)
       }
 
-      if (req.method === 'POST' && url.pathname === '/api/execute'){
+      if (req.method === 'POST' && url.pathname === '/api/profil/streak'){
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
         }
         return await handleExcute(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/execute'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleUpdateStreak(req, res)
       }
 
       return sendJson(res, 404, { error: 'Not found' })
@@ -388,4 +395,56 @@ async function handleExcute(req, res) {
   const data = await pistonRes.json()
 
   sendJson(res, 200, { stdout: data.run.stdout, stderr: data.run.stderr, exitCode: data.run.code })
+}
+
+async function handleFavoriteLanguages(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) {
+    return sendJson(res, 401, { error: 'Non connecté'})
+  }
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch (error) {
+    return sendJson(res, 401, { message: 'Token invalide'})
+  }
+  const favoritelangage = await parseBody(req)
+  if (favoritelangage > 3) {
+    return sendJson(res, 401, { message: 'Trop de Favorite Language' })
+  }
+  await findByIdAndUpdate(favoritelangage)
+  return sendJson(res, 200, { message: 'Favorite Language ✓' })
+}
+
+async function handleUpdateStreak(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) {
+    return sendJson(res, 401, { error: 'Non connecté'})
+  }
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch (error) {
+    return sendJson(res, 401, { message: 'Token invalide'})
+  }
+  const user = await User.findById(response.id)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const last = user.lastActivityDate ? new Date(user.lastActivityDate) : null
+  if (last) {
+    last.setHours(0, 0, 0, 0)
+  }
+  const diffDays = last ? (today - last) / (1000 * 60 * 60 * 24) : null
+
+  if (diffDays === 0) {
+    return sendJson(res, 200, { streak: user.streak })
+  } else if (diffDays === 1) {
+    user.streak += 1
+  } else {
+    user.streak = 1
+  }
+
+  user.lastActivityDate = today
+  await user.save() 
+  return sendJson(res, 200, { streak: user.streak }) 
 }

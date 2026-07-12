@@ -143,7 +143,7 @@ import { API_BASE_URL } from '@/utils/constants'
           <!-- Strip de stats minimaliste -->
           <div class="hero-strip">
             <span class="hero-strip-item">
-              <span class="hero-strip-value">7</span> technologies
+              <span class="hero-strip-value">9</span> technologies
             </span>
             <span class="hero-strip-sep">·</span>
             <span class="hero-strip-item">Actus en temps réel</span>

@@ -13,6 +13,8 @@ export const useUserStore = defineStore('user', {
         completeMissions: [],
         editorTheme: 'codequest',
         badges: [],
+        favoriteLanguages: [],
+        streak: 0
     }),
     actions: {
         initUser(userData: Partial<IUserState>) {
@@ -37,9 +39,17 @@ export const useUserStore = defineStore('user', {
             const savedBadge = localStorage.getItem('badges')
             this.badges = userData.badges ?? (savedBadge ? JSON.parse(savedBadge) : [])
 
+            const savedFavoriteLangage = localStorage.getItem('favoriteLanguages')
+            this.favoriteLanguages = userData.favoriteLanguages ?? (savedFavoriteLangage ? JSON.parse(savedFavoriteLangage) : [])
+
+            const savedStreakDay = localStorage.getItem('streak')
+            this.streak = userData.streak ?? (savedStreakDay ? JSON.parse(savedStreakDay) : 0)
+
             localStorage.setItem('userXP', String(this.userXP))
             localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
             localStorage.setItem('badges', JSON.stringify(this.badges))
+            localStorage.setItem('favoriteLanguages', JSON.stringify(this.favoriteLanguages))
+            localStorage.setItem('streak', JSON.stringify(this.streak))
         },
         resetUser() {
             this.$reset()
@@ -89,4 +99,6 @@ interface IUserState {
     completeMissions: number[]
     editorTheme: string
     badges: number[]
+    favoriteLanguages: string[]
+    streak: number
 }

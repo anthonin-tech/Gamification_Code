@@ -35,29 +35,28 @@ defineProps<{
         :style="{ '--lang-color': language.color }"
         :aria-label="language.name"
       >
-        {{ language.icon }}
+        <img :src="language.icon" :alt="language.name" style="width:26px;height:26px;object-fit:contain;" />
       </div>
 
       
       <div class="cur-lang__details">
         <p class="cur-lang__name">{{ language.name }}</p>
-        <p class="cur-lang__mission">{{ language.mission }}</p>
-
-        
-        <div class="cur-lang__bar-row">
-          <div class="cur-lang__bar" role="progressbar"
-            :aria-valuenow="language.progress"
-            aria-valuemin="0"
-            aria-valuemax="100">
-            <div
-              class="cur-lang__bar-fill"
-              :style="{ width: language.progress + '%' }"
-            />
-          </div>
-          <span class="cur-lang__pct">{{ language.progress }}%</span>
-        </div>
+        <p v-if="language.mission" class="cur-lang__mission">{{ language.mission }}</p>
       </div>
 
+    </div>
+
+    <div class="cur-lang__bar-row">
+      <div class="cur-lang__bar" role="progressbar"
+        :aria-valuenow="language.progress"
+        aria-valuemin="0"
+        aria-valuemax="100">
+        <div
+          class="cur-lang__bar-fill"
+          :style="{ width: language.progress + '%' }"
+        />
+      </div>
+      <span class="cur-lang__pct">{{ language.progress }}%</span>
     </div>
   </div>
 </template>

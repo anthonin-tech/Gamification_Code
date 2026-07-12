@@ -82,7 +82,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.15rem;
 }
 
 .cur-lang__name {
@@ -102,7 +102,7 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
 }
 
 .cur-lang__bar {

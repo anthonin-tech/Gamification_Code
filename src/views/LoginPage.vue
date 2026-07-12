@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 import { useBadge } from '@/composables/useBadge'
+import FavoriteLanguages from '@/components/profile/FavoriteLanguages.vue'
 
 const isLogin = ref(true)
 const email = ref('')
@@ -24,7 +25,8 @@ async function loadUser() {
             username: user.username, 
             userXP: user.xp, 
             badges: user.badges, 
-            completeMissions: user.completeMissions 
+            completeMissions: user.completeMissions,
+            favoriteLanguages: user.favoriteLanguages 
         })
     }
 }

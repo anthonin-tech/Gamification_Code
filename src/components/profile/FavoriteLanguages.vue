@@ -32,7 +32,7 @@ defineProps<{
         
         <div class="fav-langs__orb-ring" aria-hidden="true" />
 
-        <span class="fav-langs__orb-icon">{{ lang.icon }}</span>
+        <img class="fav-langs__orb-icon" :src="lang.icon" :alt="lang.name" />
         <span class="fav-langs__orb-name">{{ lang.name }}</span>
       </div>
     </div>

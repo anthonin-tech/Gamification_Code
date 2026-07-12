@@ -34,6 +34,18 @@ const UserSchema = new Schema (
         badges: {
             type: [Number],
             default: []
+        },
+        favoriteLanguages: {
+            type: [String],
+            default: []
+        },
+        streak: {
+            type: Number,
+            default: 0
+        },
+        lastActivityDate: {
+            type: Date,
+            default: null
         }
     }
 )
