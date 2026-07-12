@@ -23,6 +23,18 @@ import { BADGES } from '@/data/badges'
 const userStore = useUserStore()
 const { currentLevel } = useXP()
 
+const LANG_META: Record<string, { icon: string; color: string; glow: string }> = {
+  javascript: { icon: '/icons/javascript.svg', color: '#F7DC6F', glow: 'rgba(247, 220, 111, 0.4)' },
+  python:     { icon: '/icons/python.webp',    color: '#3776AB', glow: 'rgba(55, 118, 171, 0.4)'  },
+  typescript: { icon: '/icons/typescript.png', color: '#3178C6', glow: 'rgba(49, 120, 198, 0.4)'  },
+  java:       { icon: '/icons/java.png',       color: '#b07219', glow: 'rgba(176, 114, 25, 0.4)'  },
+  php:        { icon: '/icons/php.webp',       color: '#787CB5', glow: 'rgba(120, 124, 181, 0.4)' },
+  go:         { icon: '/icons/go.png',         color: '#00ADD8', glow: 'rgba(0, 173, 216, 0.4)'   },
+  cpp:        { icon: '/icons/cpp.webp',       color: '#093eef', glow: 'rgba(9, 62, 239, 0.4)'    },
+  rust:       { icon: '/icons/rust.png',       color: '#fbd491', glow: 'rgba(251, 212, 145, 0.4)' },
+  csharp:     { icon: '/icons/csharp.png',     color: '#9B4FD0', glow: 'rgba(155, 79, 208, 0.4)'  },
+}
+
 const progressionLangages = computed(() => [
   { langage: 'python',     curriculum: CURRICULUM_PYTHON },
   { langage: 'javascript', curriculum: CURRICULUM_JAVASCRIPT },
@@ -50,6 +62,43 @@ async function logout() {
 
 const RecentBadges = computed(() => {
   return userStore.badges.map(id => BADGES.find(b => b.id === id)).filter(Boolean).slice(-3)
+})
+
+const selectedLanguages = computed(() => userStore.favoriteLanguages)
+
+const favLangsDisplay = computed(() =>
+  selectedLanguages.value.map(slug => ({
+    name:  slug,
+    icon:  LANG_META[slug]?.icon  ?? '',
+    color: LANG_META[slug]?.color ?? '#fff',
+    glow:  LANG_META[slug]?.glow  ?? 'rgba(255,255,255,0.2)',
+  }))
+)
+
+async function toggleLanguage(slug: string) {
+  if (selectedLanguages.value.includes(slug)) {
+    userStore.favoriteLanguages = userStore.favoriteLanguages.filter(s => s !== slug)
+  }
+  else if (selectedLanguages.value.length < 3) {
+    userStore.favoriteLanguages.push(slug)
+  }
+  return await fetch('/api/profil/favorites', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    credentials: 'include',
+    body: JSON.stringify({ favoriteLanguages: userStore.favoriteLanguages })
+  })
+}
+
+const currentLanguage = computed(() => {
+  const best = progressionLangages.value.reduce((meilleur, actuel) => actuel.completed/actuel.total > meilleur.completed/meilleur.total ? actuel : meilleur)
+  return {
+    name:     best.langage,
+    icon:     LANG_META[best.langage]?.icon  ?? '',
+    color:    LANG_META[best.langage]?.color ?? '#fff',
+    progress: best.total > 0 ? Math.round(best.completed / best.total * 100) : 0,
+    mission:  ''
+  } 
 })
 </script>
 
@@ -83,7 +132,12 @@ const RecentBadges = computed(() => {
         </section>
 
         <section class="langages">
-          <div v-for="{ langage, completed, total } in progressionLangages">
+          <div 
+            v-for="{ langage, completed, total } in progressionLangages"
+            @click="toggleLanguage(langage)"
+            :class="{ 'lang-selected': selectedLanguages.includes(langage) }"
+          >
+            <img :src="LANG_META[langage]?.icon" />
             {{ langage }}
             <div class="lang-bar">
               <div class="lang-bar__fill" :style="{ width: (total > 0 ? Math.round(completed/total * 100) : 0) + '%' }" />
@@ -91,11 +145,11 @@ const RecentBadges = computed(() => {
           </div>
         </section>
 
-        <StreakCard :streak="0" />
+        <FavoriteLanguages :languages="favLangsDisplay" />
+        
+        <StreakCard :streak="userStore.streak" />
 
-        <FavoriteLanguages :languages="[]" />
-
-        <CurrentLanguageCard :language="{ name: userStore.userFavoriteLanguage ?? '', icon: '', color: '#7c3aed', progress: 0, mission: '' }" />
+        <CurrentLanguageCard :language="currentLanguage" />
 
         <section class="badges">
           <h2>Badges récents</h2>
