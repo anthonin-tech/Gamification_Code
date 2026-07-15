@@ -77,7 +77,7 @@ function getLessonName(mission: any) {
         <option value="go">Go</option>
         <option value="java">Java</option>
         <option value="csharp">C#</option>
-        <option value="c++">C++</option>
+        <option value="cpp">C++</option>
       </select>
     </div>
 
@@ -114,7 +114,7 @@ function getLessonName(mission: any) {
                 <path d="M29 52 L29 59 Q29 61 32 61 Q35 61 35 59 L35 52 Z" fill="currentColor" opacity="0.8"/>
               </svg>
             </div>
-            <span class="lock-label"><span class="lesson-namz">{{ getLessonName(mission )}} </span> leçons requises</span>
+            <span class="lock-label"><span class="lesson-name">{{ getLessonName(mission )}} </span> leçons requises</span>
           </div>
           <div class="card-header">
             <span class="card-signal">

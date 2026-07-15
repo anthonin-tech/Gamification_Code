@@ -5,7 +5,7 @@ import { computed } from 'vue'
 import { curriculums } from '@/composables/useMissionLock';
 
 const userStore = useUserStore()
-const langages = [... new Set(MISSIONS.map(m => m.langage))]
+const langages = ['javascript', 'typescript', 'python', 'java', 'php', 'go', 'cpp', 'rust', 'csharp']
 
 const ProgressionParLangue = computed(() => {
   return langages.map(langage => {

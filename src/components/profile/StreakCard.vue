@@ -35,8 +35,8 @@ const DAYS = [1, 2, 3, 4, 5, 6, 7]
           :key="day"
           class="streak-card__dot"
           :class="{
-            'streak-card__dot--active': day <= DAYS.length,
-            'streak-card__dot--today':  day === DAYS.length,
+            'streak-card__dot--active': day <= props.streak,
+            'streak-card__dot--today':  day === props.streak,
           }"
         />
       </div>

@@ -87,7 +87,7 @@ function sendJson(res, statusCode, payload) {
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Max-Age', '86400')
@@ -262,14 +262,41 @@ export async function startBackend(options = {}) {
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
         }
-        return await handleExcute(req, res)
+        return await handleUpdateStreak(req, res)
       }
 
       if (req.method === 'POST' && url.pathname === '/api/execute'){
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
         }
-        return await handleUpdateStreak(req, res)
+        return await handleExcute(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/profil/favorites'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleFavoriteLanguages(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/xp') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleUpdateXP(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/missions') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleUpdateMissions(req, res)
+      }
+
+      if (req.method === 'GET' && url.pathname === '/api/user/progress') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleGetProgress(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/progress') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleSaveProgress(req, res)
       }
 
       return sendJson(res, 404, { error: 'Not found' })
@@ -409,10 +436,10 @@ async function handleFavoriteLanguages(req, res) {
     return sendJson(res, 401, { message: 'Token invalide'})
   }
   const favoritelangage = await parseBody(req)
-  if (favoritelangage > 3) {
+  if (favoritelangage.favoriteLanguages?.length > 3) {
     return sendJson(res, 401, { message: 'Trop de Favorite Language' })
   }
-  await findByIdAndUpdate(favoritelangage)
+  await User.findByIdAndUpdate(response.id, { favoriteLanguages: favoritelangage.favoriteLanguages })
   return sendJson(res, 200, { message: 'Favorite Language ✓' })
 }
 
@@ -445,6 +472,62 @@ async function handleUpdateStreak(req, res) {
   }
 
   user.lastActivityDate = today
-  await user.save() 
-  return sendJson(res, 200, { streak: user.streak }) 
+  await user.save()
+  return sendJson(res, 200, { streak: user.streak })
+}
+
+async function handleUpdateXP(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { xp } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $inc: { xp } })
+  return sendJson(res, 200, { message: 'XP mis à jour' })
+}
+
+async function handleUpdateMissions(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { missionId } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $addToSet: { completeMissions: missionId } })
+  return sendJson(res, 200, { message: 'Mission enregistrée' })
+}
+
+async function handleGetProgress(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const user = await User.findById(response.id)
+  const lessonProgress = Object.fromEntries(user.lessonProgress)
+  return sendJson(res, 200, { lessonProgress })
+}
+
+async function handleSaveProgress(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { langage, completedLessons } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $set: { [`lessonProgress.${langage}`]: completedLessons } })
+  return sendJson(res, 200, { message: 'Leçon mise à jour'})
 }
