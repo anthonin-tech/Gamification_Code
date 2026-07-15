@@ -8,7 +8,6 @@ export const useUserStore = defineStore('user', {
         userXP: 0,
         userLevel: 1,
         userAvatar: null,
-        userFavoriteLanguage: null,
         isLoggedIn: false,
         completeMissions: [],
         editorTheme: 'codequest',
@@ -23,7 +22,6 @@ export const useUserStore = defineStore('user', {
             this.useremail = userData.useremail ?? null
             this.userLevel = userData.userLevel ?? 1
             this.userAvatar = userData.userAvatar ?? null
-            this.userFavoriteLanguage = userData.userFavoriteLanguage ?? null
             this.isLoggedIn = true
             this.editorTheme = 'codequest'
 
@@ -57,19 +55,28 @@ export const useUserStore = defineStore('user', {
         updateXp(recompenseXP: number) {
             if (this.userXP != null) {
                 this.userXP += recompenseXP
-                localStorage.setItem('userXP', String(this.userXP) )
+                localStorage.setItem('userXP', String(this.userXP))
+                fetch('/api/user/xp', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ xp: recompenseXP })
+                })
             }
         },
         updateAvatar(avatarUrl: string) {
             this.userAvatar = avatarUrl
         },
-        updateFavoriteLanguage(language: string | null) {
-            this.userFavoriteLanguage = language
-        },
         updateMisssion(id: number) {
             if (this.completeMissions) {
                 this.completeMissions.push(id)
                 localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
+                fetch('/api/user/missions', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ missionId: id })
+                })
             }
         },
         updateEditorTheme(theme: string) {
@@ -80,11 +87,6 @@ export const useUserStore = defineStore('user', {
         }
         
     },
-    getters: {
-        computedLevel() {
-            return null
-        }
-    },
 })
 
 interface IUserState {
@@ -94,7 +96,6 @@ interface IUserState {
     userXP: number 
     userLevel: number 
     userAvatar: string | null
-    userFavoriteLanguage: string | null
     isLoggedIn: boolean
     completeMissions: number[]
     editorTheme: string

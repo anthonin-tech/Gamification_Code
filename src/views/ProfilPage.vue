@@ -8,6 +8,7 @@ import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { useXP } from '@/composables/useXP'
 import { computed } from 'vue'
+import { XP_PER_LEVEL } from '@/utils/constants'
 import { CURRICULUM_PYTHON }     from '@/data/curriculum'
 import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
 import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
@@ -90,15 +91,34 @@ async function toggleLanguage(slug: string) {
   })
 }
 
+const CURRICULUM_MAP: Record<string, any[]> = {
+  python: CURRICULUM_PYTHON, javascript: CURRICULUM_JAVASCRIPT,
+  typescript: CURRICULUM_TYPESCRIPT, java: CURRICULUM_JAVA,
+  php: CURRICULUM_PHP, go: CURRICULUM_GO,
+  cpp: CURRICULUM_CPP, rust: CURRICULUM_RUST, csharp: CURRICULUM_CSHARP,
+}
+
 const currentLanguage = computed(() => {
   const best = progressionLangages.value.reduce((meilleur, actuel) => actuel.completed/actuel.total > meilleur.completed/meilleur.total ? actuel : meilleur)
+  const saved = localStorage.getItem(`codequest_${best.langage}_progress`)
+  const completedSet = new Set<string>(saved ? JSON.parse(saved).completedLessons ?? [] : [])
+  const curriculum = CURRICULUM_MAP[best.langage] ?? []
+  let nextLesson = ''
+  outer: for (let mi = 0; mi < curriculum.length; mi++) {
+    for (let li = 0; li < curriculum[mi].lessons.length; li++) {
+      if (!completedSet.has(`${mi}-${li}`)) {
+        nextLesson = curriculum[mi].lessons[li].title
+        break outer
+      }
+    }
+  }
   return {
     name:     best.langage,
     icon:     LANG_META[best.langage]?.icon  ?? '',
     color:    LANG_META[best.langage]?.color ?? '#fff',
     progress: best.total > 0 ? Math.round(best.completed / best.total * 100) : 0,
-    mission:  ''
-  } 
+    mission:  nextLesson
+  }
 })
 </script>
 
@@ -120,9 +140,8 @@ const currentLanguage = computed(() => {
         </header>
 
         <XpCard
-          :xp="userStore.userXP % 500
-          "
-          :xp-to-next="500"
+          :xp="userStore.userXP % XP_PER_LEVEL"
+          :xp-to-next="XP_PER_LEVEL"
           :level="currentLevel"
         />
 

@@ -16,11 +16,11 @@ const userStore = useUserStore()
 
 const termineMissionBtn = ref<HTMLElement | null>(null)
 const btnRect = ref<DOMRect | null>(null)
-const xpBar = document.querySelector('.navbar-xpbar')
 const flyingXp = ref(false)
 const flyStyle = ref({})
 
 async function terminerMission() {
+  const xpBar = document.querySelector('.navbar-xpbar')
   if (!xpBar || !termineMissionBtn.value || !mission) return
 
   const xpBarRect = xpBar.getBoundingClientRect()

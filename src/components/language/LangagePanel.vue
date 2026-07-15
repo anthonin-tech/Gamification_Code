@@ -7,14 +7,22 @@ import { useUserStore } from "@/stores/useUserStore"
 const router = useRouter()
 const userStore = useUserStore()
 
-const isFavorite = computed(() => props.language?.slug === userStore.userFavoriteLanguage )
+const isFavorite = computed(() => !!props.language && userStore.favoriteLanguages.includes(props.language.slug))
 
-function toggleFavorite() {
-  if ( isFavorite.value ) {
-    userStore.updateFavoriteLanguage(null)
-  } else {
-    userStore.updateFavoriteLanguage(props.language!.slug)
+async function toggleFavorite() {
+  if (!props.language) return
+  const slug = props.language.slug
+  if (isFavorite.value) {
+    userStore.favoriteLanguages = userStore.favoriteLanguages.filter(s => s !== slug)
+  } else if (userStore.favoriteLanguages.length < 3) {
+    userStore.favoriteLanguages.push(slug)
   }
+  await fetch('/api/profil/favorites', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ favoriteLanguages: userStore.favoriteLanguages })
+  })
 }
 
 function allerAuCours(langage: Langage) {

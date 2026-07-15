@@ -47,6 +47,11 @@ const UserSchema = new Schema (
             type: Date,
             default: null
         }
+        lessonProgress: {
+            type: Map,
+            of: [String],
+            default: []
+        }
     }
 )
 
