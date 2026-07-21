@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
 import { LANGAGES } from '@/data/langages'
 import type { Langage } from '@/types/langage'
-import type { PlaneteCoursData, Difficulte } from '@/types/cours'
+import type { PlaneteCoursData, CourseModule } from '@/types/cours'
+import { CURRICULUM_PYTHON } from '@/data/curriculum'
+import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
+import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
+import { CURRICULUM_JAVA } from '@/data/curriculum-java'
+import { CURRICULUM_PHP } from '@/data/curriculum-php'
+import { CURRICULUM_GO } from '@/data/curriculum-go'
+import { CURRICULUM_CPP } from '@/data/curriculum-cpp'
+import { CURRICULUM_RUST } from '@/data/curriculum-rust'
+import { CURRICULUM_CSHARP } from '@/data/curriculum-csharp'
 
 const props = defineProps<{
   langage: Langage
@@ -22,46 +31,83 @@ function labelFor(slug: string) {
   return LANGAGES.find(l => l.slug === slug)?.nom ?? slug
 }
 
-function badgeClass(d: Difficulte) {
-  return {
-    'FACILE': 'badge--facile',
-    'MOYEN': 'badge--moyen',
-    'DIFFICILE': 'badge--difficile',
-  }[d]
+function colorFor(slug: string) {
+  return LANGAGES.find(l => l.slug === slug)?.couleur ?? '#a78bfa'
 }
 
 function startLesson() {
   router.push(`/cours/${props.langage.slug}/learn`)
 }
 
-/* ─── 3D Card tilt on mouse move ─────────────────────────── */
-const cardsRef = ref<HTMLElement | null>(null)
-
-function onCardMouseMove(e: MouseEvent) {
-  const card = (e.currentTarget as HTMLElement)
-  const rect = card.getBoundingClientRect()
-  const cx = rect.left + rect.width  / 2
-  const cy = rect.top  + rect.height / 2
-  const dx = (e.clientX - cx) / (rect.width  / 2)
-  const dy = (e.clientY - cy) / (rect.height / 2)
-  const tiltX =  dy * -8
-  const tiltY =  dx *  10
-  card.style.transform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(6px)`
+const CURRICULUM_MAP: Record<string, CourseModule[]> = {
+  python:     CURRICULUM_PYTHON,
+  javascript: CURRICULUM_JAVASCRIPT,
+  typescript: CURRICULUM_TYPESCRIPT,
+  java:       CURRICULUM_JAVA,
+  php:        CURRICULUM_PHP,
+  go:         CURRICULUM_GO,
+  cpp:        CURRICULUM_CPP,
+  rust:       CURRICULUM_RUST,
+  csharp:     CURRICULUM_CSHARP,
 }
 
-function onCardMouseLeave(e: MouseEvent) {
-  const card = (e.currentTarget as HTMLElement)
-  card.style.transform = ''
-  card.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color .25s ease, box-shadow .25s ease, background .25s ease'
-  setTimeout(() => {
-    card.style.transition = ''
-  }, 400)
+const curriculumData = computed(() => CURRICULUM_MAP[props.langage.slug] ?? [])
+const completedLessons = ref(new Set<string>())
+
+onMounted(() => {
+  const raw = localStorage.getItem(`codequest_${props.langage.slug}_progress`)
+  if (raw) {
+    try {
+      const data = JSON.parse(raw)
+      completedLessons.value = new Set<string>(data.completedLessons ?? [])
+    } catch {}
+  }
+})
+
+const totalLessons = computed(() =>
+  curriculumData.value.reduce((s, m) => s + m.lessons.length, 0)
+)
+
+const completedCount = computed(() => completedLessons.value.size)
+
+const progressPct = computed(() =>
+  totalLessons.value ? Math.round((completedCount.value / totalLessons.value) * 100) : 0
+)
+
+function modCompleted(mi: number) {
+  const mod = curriculumData.value[mi]
+  if (!mod) return 0
+  return mod.lessons.filter((_, li) => completedLessons.value.has(`${mi}-${li}`)).length
 }
 
-function onCardMouseEnter(e: MouseEvent) {
-  const card = (e.currentTarget as HTMLElement)
-  card.style.transition = 'none'
+function isLessonCompleted(mi: number, li: number) {
+  return completedLessons.value.has(`${mi}-${li}`)
 }
+
+function isModuleComplete(mi: number) {
+  const mod = curriculumData.value[mi]
+  return !!mod && mod.lessons.every((_, li) => isLessonCompleted(mi, li))
+}
+
+function isModuleLocked(mi: number) {
+  if (mi === 0) return false
+  return !isModuleComplete(mi - 1)
+}
+
+function isLessonLocked(mi: number, li: number) {
+  if (mi === 0 && li === 0) return false
+  if (isModuleLocked(mi)) return true
+  if (li > 0) return !isLessonCompleted(mi, li - 1)
+  return false
+}
+
+function lessonStatus(mi: number, li: number): 'done' | 'active' | 'locked' {
+  if (isLessonCompleted(mi, li)) return 'done'
+  if (isLessonLocked(mi, li)) return 'locked'
+  return 'active'
+}
+
+const STATUS_LABEL = { done: 'TERMINÉ', active: 'EN COURS', locked: 'VERROUILLÉ' } as const
 </script>
 
 <template>
@@ -75,111 +121,59 @@ function onCardMouseEnter(e: MouseEvent) {
         :class="{ 'sw-btn--active': langage.slug === slug }"
         @click="goTo(slug)"
       >
+        <span class="sw-dot" :style="{ background: colorFor(slug), boxShadow: `0 0 5px ${colorFor(slug)}` }"></span>
         {{ labelFor(slug) }}
       </button>
     </nav>
 
-    <section class="hero">
-      <div class="hero-left">
-        <p class="hero-eyebrow">COURS {{ langage.nom.toUpperCase() }}</p>
-        <h1 class="hero-h1">
-          Apprends le code,<br>
-          <span class="hero-gradient">explore {{ langage.nom }}.</span>
-        </h1>
-        <p class="hero-desc">{{ langage.description }}</p>
-        <div class="hero-btns">
-          <button class="btn btn--primary" @click="startLesson">Démarrer le cours</button>
-          <a href="/language"><button class="btn btn--ghost">Voir la carte</button></a>
-        </div>
-        <p class="hero-meta">
-          <strong>{{ langage.popularite }}%</strong> popularité
-          &nbsp;·&nbsp;
-          <strong>{{ cours.totalMissions }}</strong> missions
-          &nbsp;·&nbsp;
-          <strong>{{ langage.frameworks.length }}</strong> frameworks
-        </p>
-      </div>
-
-      <div class="hero-right">
-        <div class="planet-scene">
-          <div class="orbit orbit--1"></div>
-          <div class="orbit orbit--2"></div>
-          <div class="orbit orbit--3"></div>
-          <div class="planet">{{ langage.sym }}</div>
-          <div
-            v-for="(fw, i) in langage.frameworks"
-            :key="fw.nom"
-            class="fw-orbit"
-            :style="{ '--delay': `${i * -3}s`, '--radius': `${52 + i * 22}px`, '--speed': `${8 + i * 3}s` }"
-          >
-            <div
-              class="fw-dot"
-              :style="{ color: fw.couleur, borderColor: fw.couleur + '99', boxShadow: `0 0 10px ${fw.couleur}55` }"
-              :title="fw.nom"
-            >
-              {{ fw.sym }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="stats-bar">
-      <div class="stat">
-        <span class="stat-v">Niv. 14</span>
-        <span class="stat-k">ASTRONAUTE</span>
-      </div>
-      <div class="stat">
-        <span class="stat-v">27</span>
-        <span class="stat-k">BADGES</span>
-      </div>
-      <div class="stat">
-        <span class="stat-v">{{ cours.missionsTerminees }} / {{ cours.totalMissions }}</span>
-        <span class="stat-k">MISSIONS</span>
-      </div>
-      <div class="stat">
-        <span class="stat-v">32</span>
-        <span class="stat-k">JOURS D'AFFILÉE</span>
-      </div>
-    </section>
-
-    <section class="missions">
-      <header class="missions-head">
-        <span class="missions-tag">MISSIONS ACTIVES</span>
-        <h2 class="missions-title">Quêtes du quadrant</h2>
-        <a class="missions-link">Tout voir →</a>
-      </header>
-
-      <div class="cards" ref="cardsRef">
-        <article
-          v-for="m in cours.missions"
-          :key="m.id"
-          class="card"
-          @mousemove="onCardMouseMove"
-          @mouseleave="onCardMouseLeave"
-          @mouseenter="onCardMouseEnter"
+    <div class="cp-header">
+      <div class="cp-header__left">
+        <div
+          class="cp-planet"
+          :style="{
+            background: `radial-gradient(circle at 32% 28%, rgba(255,255,255,.55), ${langage.couleur} 55%, color-mix(in srgb, ${langage.couleur} 75%, #000))`,
+            boxShadow: `0 0 30px color-mix(in srgb, ${langage.couleur} 45%, transparent), inset 0 -6px 14px rgba(0,0,0,.3)`
+          }"
         >
-          <div
-            class="card-banner"
-            :style="{ background: `linear-gradient(135deg, ${m.couleurTag}44, ${m.couleurTag}18)` }"
-          >
-            <span class="diff" :class="badgeClass(m.difficulte)">{{ m.difficulte }}</span>
-            <span class="card-tag" :style="{ color: m.couleurTag }">{{ m.tag }}</span>
+          {{ langage.sym }}
+        </div>
+        <div class="cp-header__info">
+          <h1 class="cp-header__title">{{ langage.nom }}</h1>
+          <p class="cp-header__sub">{{ completedCount }} / {{ totalLessons }} leçons complètes</p>
+          <div class="cp-header__bar">
+            <div
+              class="cp-header__fill"
+              :style="{ width: progressPct + '%', background: langage.couleur, boxShadow: `0 0 10px ${langage.couleur}` }"
+            ></div>
           </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ m.titre }}</h3>
-            <p class="card-desc">{{ m.description }}</p>
-            <div class="card-foot">
-              <span class="prog-lbl">Progression</span>
-              <span class="xp">+{{ m.xp }} XP</span>
-            </div>
-            <div class="bar">
-              <div class="bar-fill" :style="{ width: m.progression + '%', background: m.couleurTag }"></div>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
-    </section>
+      <button class="cp-btn-continue" @click="startLesson">CONTINUER ►</button>
+    </div>
+
+    <div class="cp-modules">
+      <div v-for="(mod, mi) in curriculumData" :key="mi" class="cp-module">
+        <div class="cp-module__head">
+          <span class="cp-module__num">M{{ mi + 1 }}</span>
+          <span class="cp-module__icon">{{ mod.icon }}</span>
+          <span class="cp-module__title">{{ mod.title.toUpperCase() }}</span>
+          <span class="cp-module__badge">{{ modCompleted(mi) }}/{{ mod.lessons.length }}</span>
+        </div>
+        <div class="cp-lessons">
+          <div
+            v-for="(lesson, li) in mod.lessons"
+            :key="li"
+            class="cp-lesson"
+            :class="`cp-lesson--${lessonStatus(mi, li)}`"
+          >
+            <span class="cp-lesson__dot"></span>
+            <span class="cp-lesson__name">{{ lesson.title }}</span>
+            <span class="cp-lesson__tag">{{ STATUS_LABEL[lessonStatus(mi, li)] }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 

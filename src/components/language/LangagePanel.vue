@@ -113,11 +113,17 @@ defineEmits<{
           <p class="lang-panel__stat">{{ language.popularite }}% des devs l'utilisent</p>
         </div>
 
-        <div class="lang-panel__cours">
-          <button @click="allerAuCours(language)">
-            Accéder au cours
-          </button>
+        <div class="lang-panel__section">
+          <span class="lang-panel__label">Difficulté</span>
+          <div class="lang-panel__bar">
+            <div
+              class="lang-panel__bar-fill"
+              :style="{ width: language.difficulte + '%', background: 'linear-gradient(90deg, #34d399, #fbbf24 50%, #ef4444)' }"
+            />
+          </div>
+          <p class="lang-panel__stat">{{ language.difficulte }}/100</p>
         </div>
+
         <div v-if="language.frameworks.length" class="lang-panel__section">
           <span class="lang-panel__label">Frameworks ({{ language.frameworks.length }})</span>
           <div class="lang-panel__frameworks">
@@ -132,6 +138,12 @@ defineEmits<{
             </div>
           </div>
           <p class="lang-panel__hint">Cliquez sur une planète pour explorer un framework</p>
+        </div>
+
+        <div class="lang-panel__cours">
+          <button @click="allerAuCours(language)">
+            COMMENCER LE COURS →
+          </button>
         </div>
       </template>
 
@@ -324,32 +336,25 @@ defineEmits<{
 }
 
 /* ── CTA cours ─────────────────────────────────────── */
-.lang-panel__cours { margin: 12px 0 0; }
+.lang-panel__cours { margin: 14px 0 0; }
 .lang-panel__cours button {
   width: 100%;
-  padding: 13px 20px;
+  padding: 14px 20px;
   border-radius: 12px;
   border: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  font-family: var(--font-orbitron);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #0b1020;
   cursor: pointer;
-  background: linear-gradient(
-    135deg,
-    var(--lc, #7c3aed) 0%,
-    color-mix(in srgb, var(--lc, #7c3aed) 60%, #3b82f6) 100%
-  );
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-    0 8px 28px color-mix(in srgb, var(--lc, #7c3aed) 35%, transparent);
-  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+  background: linear-gradient(90deg, #a78bfa, #60a5fa);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset, 0 8px 28px rgba(124, 58, 237, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 .lang-panel__cours button:hover {
   transform: translateY(-2px);
-  filter: brightness(1.12);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.10) inset,
-    0 14px 40px color-mix(in srgb, var(--lc, #7c3aed) 50%, transparent);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 14px 40px rgba(124, 58, 237, 0.55);
 }
 
 /* ── Chips frameworks ──────────────────────────────── */

@@ -12,16 +12,15 @@
 .home-intro .page-title {
     padding-top: 0;
     padding-bottom: 0;
-    text-align: center;
+    text-align: left;
 }
 
 /* ── Hero layout ────────────────────────────────────── */
 .intro-hero {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    gap: 32px;
     min-height: calc(100svh - 45px);
     padding: 40px 22px;
     background: transparent;
@@ -32,7 +31,7 @@
 .intro-copy {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 0;
     max-width: 680px;
     width: 100%;
@@ -43,13 +42,14 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 20px 8px 12px;
+    padding: 7px 16px;
     border-radius: 999px;
-    border: 1px solid rgba(124, 58, 237, 0.45);
-    background: rgba(124, 58, 237, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 14px;
-    letter-spacing: 0.4px;
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    background: rgba(124, 58, 237, 0.12);
+    color: #c4b5fd;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1.5px;
     margin-bottom: 32px;
     backdrop-filter: blur(8px);
 }
@@ -85,12 +85,12 @@
 
 /* ── Subtitle ───────────────────────────────────────── */
 .intro-subtitle {
-    margin: 22px auto 0;
-    text-align: center;
-    max-width: 52ch;
-    color: rgba(255, 255, 255, 0.82);
-    line-height: 1.8;
-    font-size: 18px;
+    margin: 22px 0 0;
+    text-align: left;
+    max-width: 480px;
+    color: rgba(255, 255, 255, 0.62);
+    line-height: 1.65;
+    font-size: 16px;
     letter-spacing: 0.2px;
 }
 
@@ -100,7 +100,7 @@
 /* ── CTA buttons ────────────────────────────────────── */
 .intro-actions {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
@@ -112,14 +112,16 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 16px 34px;
-    border-radius: 999px;
+    padding: 15px 28px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
+    font-family: var(--font-orbitron);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(10px);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     cursor: pointer;
@@ -132,31 +134,27 @@
 }
 
 .btn--primary {
-    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #3b82f6 100%);
+    background: linear-gradient(90deg, #a78bfa, #60a5fa);
     border-color: transparent;
-    color: #fff;
-    box-shadow:
-        0 0 0 1px rgba(124, 58, 237, 0.3),
-        0 8px 32px rgba(124, 58, 237, 0.35);
+    color: #0b1020;
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
 }
 
 .btn--primary:hover {
     transform: translateY(-2px);
-    box-shadow:
-        0 0 0 1px rgba(124, 58, 237, 0.5),
-        0 14px 48px rgba(124, 58, 237, 0.5);
+    box-shadow: 0 10px 32px rgba(124, 58, 237, 0.55);
 }
 
 .btn--ghost {
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(167, 139, 250, 0.4);
+    color: #c4b5fd;
 }
 
 .btn--ghost:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.22);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(124, 58, 237, 0.15);
+    border-color: rgba(167, 139, 250, 0.6);
+    color: #e0d4ff;
 }
 
 /* ── Feature strip ──────────────────────────────────── */
@@ -166,7 +164,7 @@
     gap: 18px;
     margin-top: 44px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .hero-strip-item {
@@ -177,12 +175,14 @@
 }
 
 .hero-strip-value {
-    font-weight: 600;
+    font-family: var(--font-orbitron);
+    font-size: 16px;
+    font-weight: 700;
     color: #ffffff;
 }
 
 .hero-strip-sep {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.2);
     font-size: 18px;
     line-height: 1;
 }
@@ -234,33 +234,24 @@
 /* anciens surcharges carousel supprimés — voir .planet-carousel */
 
 .page-title {
-    color: rgb(201, 121, 16);
-    text-align: center;
-    padding-top: 44px;
-    padding-bottom: 22px;
-    font-family: var(--font-pixel);
-    font-size: clamp(32px, 8vw, 72px);
+    font-family: var(--font-orbitron);
+    font-size: clamp(36px, 8vw, 64px);
+    font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    line-height: 1.25;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-align: left;
+    padding-top: 0;
+    padding-bottom: 22px;
     position: relative;
-
-    background: linear-gradient(
-        110deg,
-        color-mix(in srgb, rgb(201, 121, 16) 85%, #000) 0%,
-        color-mix(in srgb, rgb(201, 121, 16) 65%, #fff) 35%,
-        #fff 50%,
-        color-mix(in srgb, rgb(201, 121, 16) 65%, #fff) 65%,
-        color-mix(in srgb, rgb(201, 121, 16) 85%, #000) 100%
-    );
+    background: linear-gradient(120deg, #ffffff 20%, #a78bfa 55%, #60a5fa 90%);
     background-size: 240% 100%;
     background-position: 0% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 18px color-mix(in srgb, rgb(201, 121, 16) 50%, transparent);
-    animation: title-shimmer 2.6s linear infinite;
+    animation: title-shimmer 4s linear infinite;
 }
 
 .home-section {
@@ -371,6 +362,10 @@
         text-align: center;
     }
 
+    .intro-copy {
+        align-items: center;
+    }
+
     .intro-subtitle {
         text-align: center;
         margin: 0 auto;
@@ -380,8 +375,8 @@
         justify-content: center;
     }
 
-    .intro-features {
-        grid-template-columns: 1fr;
+    .hero-character {
+        display: none;
     }
 
     .home-section--code :deep(.code-typing) {
@@ -515,9 +510,11 @@
 .hero-title {
     margin: 22px 0 10px;
     font-size: clamp(22px, 4vw, 40px);
-    letter-spacing: 0.6px;
-    font-family: var(--font-pixel);
-    line-height: 1.3;
+    font-family: var(--font-orbitron);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    line-height: 1.2;
 }
 
 .accent {
@@ -527,6 +524,10 @@
     color: transparent;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 18px rgba(124, 58, 237, 0.25);
+}
+
+.accent-purple {
+    color: #a78bfa;
 }
 
 .hero-subtitle {
@@ -784,24 +785,181 @@
 }
 
 /* ============================================================
-   HERO — PERSONNAGE PIXEL (colonne droite)
+   HERO — PLANÈTE AVEC ORBITES (colonne droite)
    ============================================================ */
 
-.hero-character {
+.hero-visual {
+    position: relative;
+    height: 440px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.hero-character :deep(.hello-card) {
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: none;
+.hero-orbit {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(167, 139, 250, 0.25);
 }
 
-.hero-character :deep(.sprite) {
-    width: 110px;
-    height: 110px;
+.hero-orbit--outer {
+    width: 380px;
+    height: 380px;
+    animation: cqSpin 60s linear infinite;
+}
+
+.hero-orbit--inner {
+    width: 270px;
+    height: 270px;
+    border-color: rgba(96, 165, 250, 0.25);
+    animation: cqSpin 38s linear infinite reverse;
+}
+
+.hero-orbit-dot {
+    position: absolute;
+    border-radius: 50%;
+    display: block;
+}
+
+.hero-planet {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, #c4b5fd, #7c3aed 48%, #2e1065 85%, #0b1020);
+    animation: cqGlow 4s ease-in-out infinite, cqFloat 7s ease-in-out infinite;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.hero-planet__ring {
+    position: absolute;
+    inset: -24px;
+    border: 2px solid rgba(167, 139, 250, 0.35);
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    pointer-events: none;
+}
+
+.hero-planet__code {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+   SECTION CHOISIS TA PLANÈTE
+   ============================================================ */
+
+.choisis-section {
+    margin-top: 70px;
+    max-width: var(--container, 1100px);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 22px;
+}
+
+.choisis-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.choisis-title {
+    font-family: var(--font-orbitron);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin: 0;
+    color: var(--text);
+}
+
+.choisis-link {
+    color: #a78bfa;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.choisis-link:hover { color: #c4b5fd; }
+
+.planete-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.planete-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.planete-btn:hover {
+    border-color: rgba(167, 139, 250, 0.5);
+    transform: translateY(-3px);
+}
+
+.planete-sphere {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset -6px -6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.planete-icon {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.92);
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+.planete-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.planete-name {
+    font-family: var(--font-orbitron);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.planete-tagline {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+    .planete-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-visual { display: none; }
+}
+
+@media (max-width: 600px) {
+    .planete-grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================
@@ -887,8 +1045,11 @@
 }
 
 .planet-label {
-    font-family: var(--font-pixel);
+    font-family: var(--font-orbitron);
     font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     color: rgba(255, 255, 255, 0.92);
     text-align: center;
 }

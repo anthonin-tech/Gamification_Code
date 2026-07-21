@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 import { useBadge } from '@/composables/useBadge'
-import FavoriteLanguages from '@/components/profile/FavoriteLanguages.vue'
 
 const isLogin = ref(true)
 const email = ref('')
@@ -74,20 +73,43 @@ async function handleRegister() {
 <template>
     <div class="login-page">
         <div class="login-card">
-            <h1 class="login-title">CodeQuest</h1>
-            <p class="login-subtitle">{{ isLogin ? 'Connecte-toi pour continuer' : 'Crée ton compte' }}</p>
+            <!-- Logo planète -->
+            <div class="login-planet">&lt;/&gt;</div>
+
+            <div class="login-header">
+                <h1 class="login-title">{{ isLogin ? 'EMBARQUEMENT' : 'ENRÔLEMENT' }}</h1>
+                <p class="login-subtitle">{{ isLogin ? 'Connecte-toi pour reprendre ta mission' : 'Crée ton compte spatial' }}</p>
+            </div>
 
             <p v-if="error" class="login-error">{{ error }}</p>
 
             <div v-if="isLogin" class="login-fields">
-                <input class="login-input" v-model="email" placeholder="Entrez votre mail" />
-                <input class="login-input" v-model="password" type="password" placeholder="Entrez votre mot de passe" />
+                <label class="login-label">
+                    EMAIL
+                    <input class="login-input" v-model="email" type="email" placeholder="astronaute@codequest.dev" />
+                </label>
+                <label class="login-label">
+                    MOT DE PASSE
+                    <input class="login-input" v-model="password" type="password" placeholder="••••••••" />
+                </label>
             </div>
             <div v-else class="login-fields">
-                <input class="login-input" v-model="username" placeholder="Entrez votre surnom" />
-                <input class="login-input" v-model="email" placeholder="Entrez votre mail" />
-                <input class="login-input" v-model="password" type="password" placeholder="Entrez votre mot de passe" />
-                <input class="login-input" v-model="password_confirmation" type="password" placeholder="Confirmer votre mot de passe" />
+                <label class="login-label">
+                    PSEUDO
+                    <input class="login-input" v-model="username" placeholder="NomDePilote" />
+                </label>
+                <label class="login-label">
+                    EMAIL
+                    <input class="login-input" v-model="email" type="email" placeholder="astronaute@codequest.dev" />
+                </label>
+                <label class="login-label">
+                    MOT DE PASSE
+                    <input class="login-input" v-model="password" type="password" placeholder="••••••••" />
+                </label>
+                <label class="login-label">
+                    CONFIRMER
+                    <input class="login-input" v-model="password_confirmation" type="password" placeholder="••••••••" />
+                </label>
                 <div v-if="password && password_confirmation && password !== password_confirmation" class="login-password-mismatch">
                     Les mots de passe ne correspondent pas
                 </div>
@@ -95,11 +117,14 @@ async function handleRegister() {
 
             <div class="login-actions">
                 <button class="login-btn-primary" @click="isLogin ? handleLogin() : handleRegister()">
-                    {{ isLogin ? 'Se connecter' : "S'inscrire" }}
+                    {{ isLogin ? 'DÉCOLLAGE 🚀' : 'ENRÔLEMENT →' }}
                 </button>
-                <button class="login-btn-secondary" @click="isLogin = !isLogin">
-                    {{ isLogin ? 'Pas encore de compte ?' : 'Déjà un compte ?' }}
-                </button>
+                <p class="login-switch">
+                    {{ isLogin ? 'Pas encore de vaisseau ?' : 'Déjà un compte ?' }}
+                    <button class="login-btn-secondary" @click="isLogin = !isLogin">
+                        {{ isLogin ? 'Créer un compte' : 'Se connecter' }}
+                    </button>
+                </p>
             </div>
         </div>
     </div>

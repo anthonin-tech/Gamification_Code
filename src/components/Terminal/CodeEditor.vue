@@ -86,6 +86,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-height: 0;
 }
 
 .code-editor-toolbar {
@@ -155,6 +157,7 @@
 }
 
 .code-editor-mount {
+    flex: 1;
     min-height: 200px;
 }
 

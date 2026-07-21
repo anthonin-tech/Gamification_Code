@@ -72,11 +72,69 @@ function fermerFramework() {
 watch(rechercheActive, (active) => {
   if (!active) setTimeout(() => { rechercheActive.value = false }, 200)
 })
+
+const TAGLINES: Record<string, string> = {
+  javascript: 'Le langage universel du web',
+  python:     'Syntaxe épurée, usages infinis',
+  typescript: 'JavaScript avec des super-typages',
+  java:       'Robuste, portable, incontournable',
+  php:        'Le moteur historique du web',
+  go:         'Simple, rapide, concurrent',
+  cpp:        'Puissance et contrôle total',
+  rust:       'Performant et sans crash',
+  csharp:     'Le couteau suisse de .NET',
+}
+
+function orbitDur(li: number): string {
+  const durs = [20, 16, 24, 18, 22, 14, 26, 17, 21]
+  return (durs[li] ?? 20) + 's'
+}
 </script>
 
 <template>
   <div class="galaxie-page">
     <canvas ref="canvasRef" class="galaxie-canvas" />
+
+    <Transition name="fade">
+      <div v-if="scene === 'systemes'" class="lang-systemes-overlay">
+        <div class="lang-systemes-header">
+          <h1 class="lang-systemes-title">9 SYSTÈMES DÉTECTÉS</h1>
+          <p class="lang-systemes-sub">Chaque planète est un langage. Clique pour scanner son système.</p>
+        </div>
+        <div class="lang-systemes-grid">
+          <div
+            v-for="(lang, li) in LANGAGES"
+            :key="lang.slug"
+            class="lang-card"
+            @click="allerA('solaire', lang)"
+          >
+            <div class="lang-planet-wrap" :style="{ '--orbit-dur': orbitDur(li) }">
+              <div class="lang-orbit-ring">
+                <span
+                  v-for="(fw, fi) in lang.frameworks"
+                  :key="fw.nom"
+                  class="lang-sat-arm"
+                  :style="{ '--slot-angle': (fi * 360 / lang.frameworks.length) + 'deg' }"
+                >
+                  <span class="lang-satellite" :style="{ '--fw-color': fw.couleur }">{{ fw.sym }}</span>
+                </span>
+              </div>
+              <div class="lang-planet" :style="{ '--lang-color': lang.couleur }">
+                <span class="lang-planet__sym">{{ lang.sym }}</span>
+              </div>
+            </div>
+            <h3 class="lang-card__name">{{ lang.nom }}</h3>
+            <p class="lang-card__tagline">{{ TAGLINES[lang.slug] }}</p>
+            <div class="lang-card__tags">
+              <template v-for="(fw, fi) in lang.frameworks" :key="fw.nom">
+                <span class="lang-card__tag" :style="{ color: fw.couleur }">{{ fw.nom.toUpperCase() }}</span>
+                <span v-if="fi < lang.frameworks.length - 1" class="lang-card__tag-sep">·</span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
 
     <div class="galaxie-ui">
       <div class="galaxie-topbar">
@@ -104,7 +162,7 @@ watch(rechercheActive, (active) => {
         </div>
       </div>
 
-      <div class="galaxie-search-wrap">
+      <div v-if="scene !== 'systemes'" class="galaxie-search-wrap">
         <span class="galaxie-search-icon">🔍</span>
         <input
           v-model="recherche"
@@ -134,17 +192,6 @@ watch(rechercheActive, (active) => {
         </Transition>
       </div>
 
-      <Transition name="fade">
-        <p v-if="scene === 'galaxie'" class="galaxie-hint">
-          Cliquez sur la galaxie pour explorer les langages
-        </p>
-      </Transition>
-
-      <Transition name="fade">
-        <p v-if="scene === 'systemes'" class="galaxie-hint">
-          Cliquez sur un langage pour voir son système solaire
-        </p>
-      </Transition>
     </div>
 
     <LangagePanel

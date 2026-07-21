@@ -46,7 +46,7 @@ const UserSchema = new Schema (
         lastActivityDate: {
             type: Date,
             default: null
-        }
+        },
         lessonProgress: {
             type: Map,
             of: [String],
