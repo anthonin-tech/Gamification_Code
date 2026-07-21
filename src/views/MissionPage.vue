@@ -61,31 +61,37 @@ function getLessonName(mission: any) {
 
 <template>
   <div class="missions-page">
-    <div class="filters">
-      <select v-model="filtreDifficulte" class="filter-select">
-        <option value="">Toutes les difficultés</option>
-        <option value="FACILE">Facile</option>
-        <option value="MOYEN">Moyen</option>
-        <option value="DIFFICILE">Difficile</option>
-      </select>
-      <select v-model="filtreLangage" class="filter-select">
-        <option value="">Tous les langages</option>
-        <option value="python">Python</option>
-        <option value="javascript">JavaScript</option>
-        <option value="typescript">TypeScript</option>
-        <option value="rust">Rust</option>
-        <option value="go">Go</option>
-        <option value="java">Java</option>
-        <option value="csharp">C#</option>
-        <option value="cpp">C++</option>
-      </select>
+    <div class="missions-toprow">
+      <div class="missions-header">
+        <h1 class="missions-page-title">CENTRE DE MISSIONS</h1>
+        <p class="missions-page-sub">Des défis de code pour gagner de l'XP et débloquer des badges.</p>
+      </div>
+      <div class="filters">
+        <select v-model="filtreDifficulte" class="filter-select">
+          <option value="">Toutes les difficultés</option>
+          <option value="FACILE">Facile</option>
+          <option value="MOYEN">Moyen</option>
+          <option value="DIFFICILE">Difficile</option>
+        </select>
+        <select v-model="filtreLangage" class="filter-select">
+          <option value="">Tous les langages</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="rust">Rust</option>
+          <option value="go">Go</option>
+          <option value="java">Java</option>
+          <option value="csharp">C#</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
     </div>
 
     <div 
         v-for="groupe in missionParLangue"
         :key="groupe.langage"
         class="separation-mission">
-        <h2>{{ groupe.langage }}</h2>
+        <h2><span class="lang-planet-dot" :class="`planet--${groupe.langage}`"></span>{{ groupe.langage }}</h2>
         <div class="barre-separation"></div>
         <div class="cards">
         <article
@@ -155,12 +161,57 @@ function getLessonName(mission: any) {
   padding: 0 16px;
 }
 
+/* ── En-tête page ─────────────────────────────────────── */
+.missions-toprow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.missions-header {
+  margin-bottom: 0;
+}
+
+.missions-page-title {
+  margin: 0 0 6px;
+  font-family: var(--font-orbitron);
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ffffff 30%, #a78bfa 60%, #60a5fa 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.missions-page-sub {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.5px;
+}
+
+.lang-planet-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.45);
+}
+
 /* ── Filtres ─────────────────────────────────────────── */
 .filters {
   display: flex;
   gap: 10px;
-  margin-bottom: 24px;
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .filter-select {
@@ -202,12 +253,15 @@ function getLessonName(mission: any) {
 
 .separation-mission h2 {
   margin: 0 0 10px;
-  font-size: 13px;
+  font-family: var(--font-orbitron);
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-pixel);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .barre-separation {

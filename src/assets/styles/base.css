@@ -1,39 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #0b1020;
+  --bg: #070b18;
   --bg-effects:
-    radial-gradient(1200px 700px at 18% -10%, rgba(124, 58, 237, 0.38), transparent 58%),
-    radial-gradient(900px 600px at 85% 10%, rgba(59, 130, 246, 0.28), transparent 62%),
-    radial-gradient(1200px 800px at 50% 110%, rgba(124, 58, 237, 0.18), transparent 62%);
+    radial-gradient(1100px 650px at 15% -10%, rgba(124, 58, 237, 0.22), transparent 60%),
+    radial-gradient(900px 550px at 88% 8%, rgba(59, 130, 246, 0.16), transparent 60%),
+    radial-gradient(1200px 800px at 50% 115%, rgba(124, 58, 237, 0.12), transparent 62%);
   --container: 1100px;
 
-  --surface-1: rgba(255, 255, 255, 0.06);
-  --surface-2: rgba(255, 255, 255, 0.09);
-  --border: rgba(255, 255, 255, 0.12);
+  --surface-1: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.10);
   --border-strong: rgba(255, 255, 255, 0.18);
 
   --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.68);
+  --muted: rgba(255, 255, 255, 0.60);
   --primary: #7c3aed;
+  --primary-light: #a78bfa;
   --primary-2: #3b82f6;
-  --radius: 14px;
-  --radius-lg: 18px;
+  --primary-2-light: #60a5fa;
+  --radius: 16px;
+  --radius-lg: 20px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 18px 60px rgba(0, 0, 0, 0.45);
   --focus: color-mix(in srgb, var(--primary) 70%, #ffffff);
   --focus-soft: color-mix(in srgb, var(--primary) 35%, transparent);
-  --gradient: linear-gradient(90deg, var(--primary), var(--primary-2));
+  --gradient: linear-gradient(90deg, #a78bfa, #60a5fa);
 
   --text-primary: rgba(255, 255, 255, 0.92);
-  --text-secondary: rgba(255, 255, 255, 0.68);
-  --text-muted: rgba(255, 255, 255, 0.55);
-  --font-pixel: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
+  --text-secondary: rgba(255, 255, 255, 0.60);
+  --text-muted: rgba(255, 255, 255, 0.45);
+
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 *,
@@ -75,7 +80,7 @@ body {
   color: var(--text);
   background: var(--bg);
   isolation: isolate;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -153,4 +158,73 @@ input {
 
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── Animations globales (README design_handoff_codequest) ── */
+
+@keyframes cqFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cqFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes cqSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cqPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.88); }
+}
+
+@keyframes cqGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.4), 0 0 80px rgba(124, 58, 237, 0.15); }
+  50%       { box-shadow: 0 0 55px rgba(124, 58, 237, 0.7), 0 0 120px rgba(124, 58, 237, 0.3); }
+}
+
+.cq-fade-up {
+  animation: cqFadeUp 0.5s ease both;
+}
+
+/* ── Sphères planètes (partagées entre pages) ─────────── */
+
+.planet--python {
+  background: radial-gradient(circle at 32% 28%, rgba(120,180,255,0.5) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #3776ab 0%, #1a3d5c 50%, #0a1e30 100%);
+}
+.planet--javascript {
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,180,0.6) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #f7df1e 0%, #b8a000 50%, #4a3d00 100%);
+}
+.planet--typescript {
+  background: radial-gradient(circle at 32% 28%, rgba(150,200,255,0.5) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #3178c6 0%, #174a8a 50%, #071830 100%);
+}
+.planet--java {
+  background: radial-gradient(circle at 32% 28%, rgba(255,220,130,0.55) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #f89820 0%, #a05a00 50%, #3a1c00 100%);
+}
+.planet--php {
+  background: radial-gradient(circle at 32% 28%, rgba(200,190,255,0.4) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #777bb4 0%, #3d4070 50%, #181828 100%);
+}
+.planet--go {
+  background: radial-gradient(circle at 32% 28%, rgba(170,240,255,0.5) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #00add8 0%, #005f80 50%, #001a26 100%);
+}
+.planet--cpp {
+  background: radial-gradient(circle at 32% 28%, rgba(100,180,255,0.4) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #00599c 0%, #00305a 50%, #001020 100%);
+}
+.planet--rust {
+  background: radial-gradient(circle at 32% 28%, rgba(255,170,110,0.5) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #ce4219 0%, #7a2208 50%, #2a0900 100%);
+}
+.planet--csharp {
+  background: radial-gradient(circle at 32% 28%, rgba(210,160,255,0.45) 0%, transparent 45%),
+              radial-gradient(circle at 50% 50%, #9b4dca 0%, #5a1e82 50%, #200930 100%);
 }

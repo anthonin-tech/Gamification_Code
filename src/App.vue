@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import NavBar from './components/layout/NavBar.vue';
+import GalaxyBackground from './components/home/GalaxyBackground.vue';
 import { useUserStore } from './stores/useUserStore';
 
 const userStore = useUserStore()
@@ -25,6 +26,7 @@ onMounted(async () => {
 
 <template>
   <div class="app-shell">
+    <GalaxyBackground />
     <NavBar />
     <div class="app-main">
       <router-view />

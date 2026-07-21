@@ -1,69 +1,133 @@
 .page-title {
-  color: rgb(201, 121, 16);
   text-align: center;
   padding-top: 44px;
   padding-bottom: 22px;
-  font-family: var(--font-pixel);
-  font-size: clamp(20px, 6vw, 47px);
+  font-family: var(--font-orbitron);
+  font-size: clamp(24px, 5vw, 48px);
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  line-height: 1.25;
+  letter-spacing: 2px;
+  line-height: 1.15;
+  background: linear-gradient(120deg, #ffffff 20%, #a78bfa 55%, #60a5fa 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-subtitle {
+  text-align: center;
+  margin: 0 0 32px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
 }
 
 /* ── Layout ──────────────────────────────────────────── */
 .progression-page {
-  max-width: 100%;
+  max-width: var(--container, 1100px);
   margin: 0 auto;
-  padding: 40px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: radial-gradient(ellipse at 20% 30%, rgba(124,58,237,0.08) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 70%, rgba(59,130,246,0.06) 0%, transparent 60%);
+  padding: 40px 24px 60px;
   min-height: 100vh;
 }
 
+/* ── Grille 3 colonnes ───────────────────────────────── */
+.prog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) { .prog-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .prog-grid { grid-template-columns: 1fr; } }
+
 /* ── Carte langage ───────────────────────────────────── */
-.progression-page > div {
+.prog-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   transition: border-color 0.2s, background 0.2s;
 }
 
-.progression-page > div:hover {
+.prog-card:hover {
   border-color: rgba(124, 58, 237, 0.3);
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* ── Titre langage ───────────────────────────────────── */
-.progression-page h2 {
-  margin: 0 0 16px;
+/* ── Header carte ────────────────────────────────────── */
+.prog-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.prog-card__pct {
+  margin-left: auto;
+  font-family: var(--font-orbitron);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.prog-card__pct.pct--active {
+  color: #a78bfa;
+}
+
+.prog-card__planet {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.prog-card__name {
+  margin: 0;
+  font-family: var(--font-orbitron);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.6);
-  font-family: var(--font-pixel);
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Piste de progression ────────────────────────────── */
+.prog-track {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prog-track__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* ── Label section ───────────────────────────────────── */
 .section-label {
-  margin: 0 0 4px !important;
+  margin: 0 !important;
+  font-family: var(--font-mono) !important;
   font-size: 10px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   text-transform: uppercase !important;
-  letter-spacing: 1.5px !important;
+  letter-spacing: 1.8px !important;
   color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* ── Compteur ────────────────────────────────────────── */
-.progression-page p:not(.section-label) {
-  margin: 0 0 8px;
-  font-size: 22px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.85);
+.prog-track__count {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ── Barre ───────────────────────────────────────────── */
@@ -106,6 +170,54 @@
 .card-python h2 { color: #4b8bbe; }
 .card-python .barre-conteneur { background: rgba(75,139,190,0.15); }
 .card-python .barre-remplissage { background: linear-gradient(90deg, #4b8bbe, #ffd700); }
+
+.card-java {
+  border-left: 3px solid #f89820;
+  background: linear-gradient(135deg, rgba(248,152,32,0.08), rgba(160,90,0,0.04));
+}
+.card-java h2 { color: #f89820; }
+.card-java .barre-conteneur { background: rgba(248,152,32,0.12); }
+.card-java .barre-remplissage { background: linear-gradient(90deg, #f89820, #b05a00); }
+
+.card-php {
+  border-left: 3px solid #777bb4;
+  background: linear-gradient(135deg, rgba(119,123,180,0.10), rgba(61,64,112,0.04));
+}
+.card-php h2 { color: #9096cc; }
+.card-php .barre-conteneur { background: rgba(119,123,180,0.15); }
+.card-php .barre-remplissage { background: linear-gradient(90deg, #777bb4, #aab0e8); }
+
+.card-go {
+  border-left: 3px solid #00add8;
+  background: linear-gradient(135deg, rgba(0,173,216,0.10), rgba(0,95,128,0.04));
+}
+.card-go h2 { color: #00add8; }
+.card-go .barre-conteneur { background: rgba(0,173,216,0.15); }
+.card-go .barre-remplissage { background: linear-gradient(90deg, #00add8, #00d4ff); }
+
+.card-cpp {
+  border-left: 3px solid #00599c;
+  background: linear-gradient(135deg, rgba(0,89,156,0.12), rgba(0,48,90,0.04));
+}
+.card-cpp h2 { color: #4da6f5; }
+.card-cpp .barre-conteneur { background: rgba(0,89,156,0.15); }
+.card-cpp .barre-remplissage { background: linear-gradient(90deg, #00599c, #4da6f5); }
+
+.card-rust {
+  border-left: 3px solid #ce4219;
+  background: linear-gradient(135deg, rgba(206,66,25,0.10), rgba(122,34,8,0.04));
+}
+.card-rust h2 { color: #e86a3f; }
+.card-rust .barre-conteneur { background: rgba(206,66,25,0.15); }
+.card-rust .barre-remplissage { background: linear-gradient(90deg, #ce4219, #ff7043); }
+
+.card-csharp {
+  border-left: 3px solid #9b4dca;
+  background: linear-gradient(135deg, rgba(155,77,202,0.10), rgba(90,30,130,0.04));
+}
+.card-csharp h2 { color: #b97de0; }
+.card-csharp .barre-conteneur { background: rgba(155,77,202,0.15); }
+.card-csharp .barre-remplissage { background: linear-gradient(90deg, #9b4dca, #c084fc); }
 
 /* ── Section cours (dans carte Python) ──────────────── */
 .cours-section {

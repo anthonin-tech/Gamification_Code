@@ -1,47 +1,21 @@
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch } from 'vue'
 import CategoryFilter from '@/components/news/CategoryFilter.vue'
 import ArticleCard from '@/components/news/ArticleCard.vue'
-import GalaxyBackground from '@/components/home/GalaxyBackground.vue'
 import type { ArticlesResponse } from '@/types'
 import { API_BASE_URL } from '@/utils/constants'
 
   const cards = [
-      { id: 1, type: 'python', iconSrc: '/icons/python.webp', title: 'Python', sub: 'Langage interprété, orienté objet et syntaxe épurée.' },
-      { id: 2, type: 'javascript', iconSrc: '/icons/javascript.svg', title: 'JavaScript', sub: 'Langage de script dynamique pour le web.' },
-      { id: 3, type: 'java', iconSrc: '/icons/java.png', title: 'Java', sub: 'Langage orienté objet, robuste et portable.' },
-      { id: 4, type: 'csharp', iconSrc: '/icons/csharp.png', title: 'C#', sub: 'Langage moderne pour le développement .NET.' },
-      { id: 5, type: 'php', iconSrc: '/icons/php.webp', title: 'PHP', sub: 'Langage de script côté serveur pour le web dynamique.' },
-      { id: 6, type: 'rust', iconSrc: '/icons/rust.png', title: 'Rust', sub: 'Langage système performant et sécurisé.' },
-      { id: 7, type: 'go', iconSrc: '/icons/go.png', title: 'Go', sub: 'Langage de programmation simple et efficace pour les systèmes distribués.' },
-      { id: 8, type: 'typescript', iconSrc: '/icons/typescript.png', title: 'TypeScript', sub: 'Superset de JavaScript avec typage statique.' },
-      { id: 9, type: 'cpp', iconSrc: '/icons/cpp.webp', title: 'C++', sub: 'Langage de programmation puissant pour les applications performantes.' },
-
+      { id: 1, type: 'python',     icon: 'devicon-python-plain',     title: 'Python',     tagline: 'Polyvalent, lisible, puissant' },
+      { id: 2, type: 'javascript', icon: 'devicon-javascript-plain', title: 'JavaScript', tagline: 'Le langage du web' },
+      { id: 3, type: 'typescript', icon: 'devicon-typescript-plain', title: 'TypeScript', tagline: 'JavaScript avec types' },
+      { id: 4, type: 'java',       icon: 'devicon-java-plain',       title: 'Java',       tagline: 'Write once, run anywhere' },
+      { id: 5, type: 'php',        icon: 'devicon-php-plain',        title: 'PHP',        tagline: 'Pour le web côté serveur' },
+      { id: 6, type: 'go',         icon: 'devicon-go-plain',         title: 'Go',         tagline: 'Simple et très performant' },
+      { id: 7, type: 'cpp',        icon: 'devicon-cplusplus-plain',  title: 'C++',        tagline: 'Puissant et très rapide' },
+      { id: 8, type: 'rust',       icon: 'devicon-rust-plain',       title: 'Rust',       tagline: 'Sûr, concurrent et ultra-rapide' },
+      { id: 9, type: 'csharp',     icon: 'devicon-csharp-plain',     title: 'C#',         tagline: 'Pour .NET et les jeux Unity' },
   ]
-
-  const currentIndex = ref(0)
-  let autoTimer: ReturnType<typeof setInterval> | null = null
-
-  function prevPlanet() {
-    currentIndex.value = (currentIndex.value - 1 + cards.length) % cards.length
-    resetTimer()
-  }
-  function nextPlanet() {
-    currentIndex.value = (currentIndex.value + 1) % cards.length
-    resetTimer()
-  }
-
-  function resetTimer() {
-    if (autoTimer) clearInterval(autoTimer)
-    autoTimer = setInterval(() => {
-      currentIndex.value = (currentIndex.value + 1) % cards.length
-    }, 3000)
-  }
-
-  onMounted(() => { resetTimer() })
-  onBeforeUnmount(() => { if (autoTimer) clearInterval(autoTimer) })
-
-  const currentCard = computed(() => cards[currentIndex.value])
 
   const selectedCategory = ref('Tous')
   const searchQuery      = ref('')
@@ -102,13 +76,7 @@ import { API_BASE_URL } from '@/utils/constants'
 </script>
 
 <template>
-  <GalaxyBackground />
-
-  <div class="deco-planet-wrapper" aria-hidden="true">
-    <div class="deco-planet" />
-  </div>
-
-  <main class="page">
+<main class="page">
     <section class="home-intro" aria-label="Intro">
 
       <div class="intro-hero">
@@ -117,7 +85,7 @@ import { API_BASE_URL } from '@/utils/constants'
           <!-- Badge eyebrow -->
           <div class="hero-badge">
             <span class="hero-badge-pulse"></span>
-            Gamification du développement
+            APPRENDRE LE CODE EN JOUANT
           </div>
 
           <!-- Titre principal -->
@@ -130,62 +98,72 @@ import { API_BASE_URL } from '@/utils/constants'
 
           <!-- Description -->
           <p class="intro-subtitle">
-            Découvre les technologies, suis les actus dev en temps réel<br class="br-desktop" />
-            et progresse chaque jour grâce à la gamification.
+            Chaque langage est une planète. Suis les leçons, accomplis des missions,
+            gagne de l'XP et débloque des badges — jusqu'à conquérir toute la galaxie du code.
           </p>
 
           <!-- CTA -->
           <div class="intro-actions">
-            <a class="btn btn--primary" href="#carousel">Explorer les technos</a>
-            <a class="btn btn--ghost" href="#news">Voir les news</a>
+            <router-link class="btn btn--primary" to="/language">EXPLORER LA GALAXIE</router-link>
+            <router-link class="btn btn--ghost" to="/mission">VOIR LES MISSIONS</router-link>
           </div>
 
-          <!-- Strip de stats minimaliste -->
+          <!-- Strip de stats -->
           <div class="hero-strip">
             <span class="hero-strip-item">
-              <span class="hero-strip-value">9</span> technologies
+              <span class="hero-strip-value">9</span> langages
             </span>
-            <span class="hero-strip-sep">·</span>
-            <span class="hero-strip-item">Actus en temps réel</span>
-            <span class="hero-strip-sep">·</span>
-            <span class="hero-strip-item">XP &amp; quêtes <span class="hero-strip-soon">bientôt</span></span>
+            <span class="hero-strip-sep">|</span>
+            <span class="hero-strip-item">
+              <span class="hero-strip-value">120+</span> leçons
+            </span>
+            <span class="hero-strip-sep">|</span>
+            <span class="hero-strip-item">
+              <span class="hero-strip-value">27</span> missions
+            </span>
           </div>
 
+        </div>
+
+        <!-- Planète hero avec orbites -->
+        <div class="hero-visual">
+          <div class="hero-orbit hero-orbit--outer">
+            <span class="hero-orbit-dot" style="top:-7px;left:50%;width:14px;height:14px;background:#F7DC6F;box-shadow:0 0 12px #F7DC6F;"></span>
+            <span class="hero-orbit-dot" style="bottom:40px;right:8px;width:11px;height:11px;background:#00ADD8;box-shadow:0 0 10px #00ADD8;"></span>
+            <span class="hero-orbit-dot" style="bottom:60px;left:16px;width:9px;height:9px;background:#DEA584;box-shadow:0 0 10px #DEA584;"></span>
+          </div>
+          <div class="hero-orbit hero-orbit--inner">
+            <span class="hero-orbit-dot" style="top:26px;right:14px;width:12px;height:12px;background:#3178C6;box-shadow:0 0 10px #3178C6;"></span>
+            <span class="hero-orbit-dot" style="bottom:-5px;left:50%;width:10px;height:10px;background:#9B4FD0;box-shadow:0 0 10px #9B4FD0;"></span>
+          </div>
+          <div class="hero-planet">
+            <div class="hero-planet__ring"></div>
+            <span class="hero-planet__code">&lt;/&gt;</span>
+          </div>
         </div>
       </div>
 
-      <!-- Carrousel : une planète à la fois -->
-      <section id="carousel" class="home-section home-section--carousel" aria-label="Technologies">
-        <div class="planet-carousel">
-          <button class="planet-nav planet-nav--prev" @click="prevPlanet" aria-label="Planète précédente">‹</button>
-
-          <div class="planet-stage">
-            <Transition name="planet-fade" mode="out-in">
-              <div class="planet-single" :key="currentCard.type">
-                <div class="planet-orbit">
-                  <div :class="['planet-sphere', `planet--${currentCard.type}`]">
-                    <img class="planet-icon" :src="currentCard.iconSrc" :alt="currentCard.title" />
-                  </div>
-                </div>
-                <div class="planet-label">{{ currentCard.title }}</div>
-                <div class="planet-desc">{{ currentCard.sub }}</div>
-              </div>
-            </Transition>
-          </div>
-
-          <button class="planet-nav planet-nav--next" @click="nextPlanet" aria-label="Planète suivante">›</button>
+      <!-- Section CHOISIS TA PLANÈTE -->
+      <section class="choisis-section">
+        <div class="choisis-header">
+          <h2 class="choisis-title">CHOISIS TA PLANÈTE</h2>
+          <router-link to="/language" class="choisis-link">Vue galaxie →</router-link>
         </div>
-
-        <!-- Points de navigation -->
-        <div class="planet-dots" role="tablist" aria-label="Navigation planètes">
-          <button
-            v-for="(card, i) in cards"
+        <div class="planete-grid">
+          <router-link
+            v-for="card in cards"
             :key="card.id"
-            class="planet-dot"
-            :class="{ 'planet-dot--active': i === currentIndex }"
-            @click="currentIndex = i"
-            :aria-label="`Aller à ${card.title}`"
-          />
+            :to="`/cours/${card.type}`"
+            class="planete-btn"
+          >
+            <span class="planete-sphere" :class="`planet--${card.type}`">
+              <i :class="card.icon" class="planete-icon"></i>
+            </span>
+            <span class="planete-info">
+              <span class="planete-name">{{ card.title }}</span>
+              <span class="planete-tagline">{{ card.tagline }}</span>
+            </span>
+          </router-link>
         </div>
       </section>
 
@@ -194,7 +172,7 @@ import { API_BASE_URL } from '@/utils/constants'
     <section id="news" class="home-section home-section--news" aria-label="Actualités">
       <header class="hero">
         <h2 class="hero-title">
-          <span class="accent">Tech</span>News
+          TRANSMISSIONS <span class="accent-purple">// ACTUS DEV</span>
         </h2>
         <p class="hero-subtitle">
           Les dernières actualités sur les langages de programmation
