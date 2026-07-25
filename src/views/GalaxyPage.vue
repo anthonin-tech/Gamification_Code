@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { BADGES } from '@/data/badges'
 import { useUserStore } from '@/stores/useUserStore'
 import { computed, ref } from 'vue'
@@ -171,7 +171,6 @@ function closeBadge() { selectedIndex.value = -1 }
     position: relative;
 }
 
-/* ── En-tête ───────────────────────────────────────────── */
 .galaxy-header {
     text-align: center;
     margin-bottom: 4px;
@@ -202,7 +201,6 @@ function closeBadge() { selectedIndex.value = -1 }
     font-weight: 600;
 }
 
-/* ── Canvas ────────────────────────────────────────────── */
 .galaxy-scroll {
     width: 100%;
     overflow-x: auto;
@@ -221,7 +219,6 @@ function closeBadge() { selectedIndex.value = -1 }
     overflow: hidden;
 }
 
-/* ── SVG ───────────────────────────────────────────────── */
 .galaxy-svg {
     position: absolute;
     inset: 0;
@@ -267,7 +264,6 @@ function closeBadge() { selectedIndex.value = -1 }
     to { stroke-dashoffset: -20; }
 }
 
-/* ── Nœuds ─────────────────────────────────────────────── */
 .badge-node {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -321,7 +317,6 @@ function closeBadge() { selectedIndex.value = -1 }
     font-size: 1.85rem;
 }
 
-/* ── Carte détail inline ────────────────────────────────── */
 .badge-detail {
     max-width: 520px;
     width: calc(100% - 40px);
@@ -396,7 +391,6 @@ function closeBadge() { selectedIndex.value = -1 }
 
 .badge-detail__close:hover { color: #fff; }
 
-/* ── Transition slide-up ───────────────────────────────── */
 .slide-up-enter-active { transition: opacity 0.25s ease, transform 0.25s ease; }
 .slide-up-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
 .slide-up-enter-from   { opacity: 0; transform: translateY(12px); }

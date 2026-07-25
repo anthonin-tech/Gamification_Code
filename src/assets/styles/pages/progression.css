@@ -1,4 +1,4 @@
-.page-title {
+﻿.page-title {
   text-align: center;
   padding-top: 44px;
   padding-bottom: 22px;
@@ -24,7 +24,6 @@
   letter-spacing: 0.5px;
 }
 
-/* ── Layout ──────────────────────────────────────────── */
 .progression-page {
   max-width: var(--container, 1100px);
   margin: 0 auto;
@@ -32,7 +31,6 @@
   min-height: 100vh;
 }
 
-/* ── Grille 3 colonnes ───────────────────────────────── */
 .prog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -42,7 +40,6 @@
 @media (max-width: 900px) { .prog-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .prog-grid { grid-template-columns: 1fr; } }
 
-/* ── Carte langage ───────────────────────────────────── */
 .prog-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -59,7 +56,6 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* ── Header carte ────────────────────────────────────── */
 .prog-card__header {
   display: flex;
   align-items: center;
@@ -99,7 +95,6 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* ── Piste de progression ────────────────────────────── */
 .prog-track {
   display: flex;
   flex-direction: column;
@@ -112,7 +107,6 @@
   justify-content: space-between;
 }
 
-/* ── Label section ───────────────────────────────────── */
 .section-label {
   margin: 0 !important;
   font-family: var(--font-mono) !important;
@@ -123,14 +117,12 @@
   color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* ── Compteur ────────────────────────────────────────── */
 .prog-track__count {
   font-size: 13px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* ── Barre ───────────────────────────────────────────── */
 .barre-conteneur {
   width: 100%;
   height: 6px;
@@ -146,7 +138,6 @@
   transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ── Couleurs par langage ────────────────────────────── */
 .card-javascript {
   border-left: 3px solid #f7df1e;
   background: linear-gradient(135deg, rgba(247,223,30,0.08), rgba(240,165,0,0.04));
@@ -219,7 +210,6 @@
 .card-csharp .barre-conteneur { background: rgba(155,77,202,0.15); }
 .card-csharp .barre-remplissage { background: linear-gradient(90deg, #9b4dca, #c084fc); }
 
-/* ── Section cours (dans carte Python) ──────────────── */
 .cours-section {
   margin-top: 20px;
   padding-top: 20px;

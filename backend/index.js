@@ -299,6 +299,11 @@ export async function startBackend(options = {}) {
         return await handleSaveProgress(req, res)
       }
 
+      if (req.method === 'PATCH' && url.pathname === '/api/user/avatar') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleSaveAvatar(req, res)
+      }
+
       return sendJson(res, 404, { error: 'Not found' })
     } catch (error) {
       console.error('Erreur API:', error)
@@ -516,6 +521,20 @@ async function handleGetProgress(req, res) {
   const user = await User.findById(response.id)
   const lessonProgress = Object.fromEntries(user.lessonProgress)
   return sendJson(res, 200, { lessonProgress })
+}
+
+async function handleSaveAvatar(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { avatarCustomization } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $set: { avatarCustomization } })
+  return sendJson(res, 200, { message: 'Avatar sauvegardé' })
 }
 
 async function handleSaveProgress(req, res) {

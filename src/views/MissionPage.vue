@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -161,7 +161,6 @@ function getLessonName(mission: any) {
   padding: 0 16px;
 }
 
-/* ── En-tête page ─────────────────────────────────────── */
 .missions-toprow {
   display: flex;
   align-items: flex-end;
@@ -206,7 +205,6 @@ function getLessonName(mission: any) {
   box-shadow: inset -3px -3px 6px rgba(0,0,0,0.45);
 }
 
-/* ── Filtres ─────────────────────────────────────────── */
 .filters {
   display: flex;
   gap: 10px;
@@ -246,7 +244,6 @@ function getLessonName(mission: any) {
 
 .filter-select option { background: #0f1120; color: #fff; }
 
-/* ── Groupe langage ──────────────────────────────────── */
 .separation-mission {
   margin-bottom: 36px;
 }
@@ -270,14 +267,12 @@ function getLessonName(mission: any) {
   margin-bottom: 16px;
 }
 
-/* ── Grille ──────────────────────────────────────────── */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
 
-/* ── Card ────────────────────────────────────────────── */
 .card {
   position: relative;
   border-radius: 12px;
@@ -296,7 +291,6 @@ function getLessonName(mission: any) {
 .card.moyen:hover     { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25),  0 0 0 1px rgba(255, 215, 0, 0.5); }
 .card.difficile:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(255, 68, 68, 0.25),  0 0 0 1px rgba(255, 68, 68, 0.5); }
 
-/* ── Matrix background ───────────────────────────────── */
 .card-matrix {
   position: absolute;
   inset: 0;
@@ -331,7 +325,6 @@ function getLessonName(mission: any) {
   100% { transform: translateY(0%); }
 }
 
-/* ── Card header ─────────────────────────────────────── */
 .card-header {
   position: relative;
   z-index: 1;
@@ -354,14 +347,12 @@ function getLessonName(mission: any) {
   opacity: 0.85;
 }
 
-/* ── Header droite ───────────────────────────────────── */
 .card-header-right {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-/* ── Badge statut ────────────────────────────────────── */
 .status-badge {
   padding: 2px 8px;
   border-radius: 4px;
@@ -384,7 +375,6 @@ function getLessonName(mission: any) {
   text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
 
-/* ── Badge difficulté ────────────────────────────────── */
 .diff {
   padding: 2px 8px;
   border-radius: 4px;
@@ -398,7 +388,6 @@ function getLessonName(mission: any) {
 .diff.MOYEN     { background: rgba(255, 215, 0, 0.12);  color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4);  text-shadow: 0 0 8px rgba(255, 215, 0, 0.9),  0 0 20px rgba(255, 215, 0, 0.5);  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2) inset; }
 .diff.DIFFICILE { background: rgba(255, 68, 68, 0.12);  color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.4);  text-shadow: 0 0 8px rgba(255, 68, 68, 0.9),  0 0 20px rgba(255, 68, 68, 0.5);  box-shadow: 0 0 10px rgba(255, 68, 68, 0.2) inset; }
 
-/* ── Corps ───────────────────────────────────────────── */
 .card-body {
   position: relative;
   z-index: 1;
@@ -464,7 +453,6 @@ function getLessonName(mission: any) {
   text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.9), 0 0 20px rgba(var(--accent-rgb), 0.5);
 }
 
-/* ── Cadenas hologramme ──────────────────────────────── */
 .card-lock {
   position: absolute;
   inset: 0;
@@ -517,7 +505,6 @@ function getLessonName(mission: any) {
   50%       { opacity: 1; }
 }
 
-/* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 860px) { .cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
 </style>

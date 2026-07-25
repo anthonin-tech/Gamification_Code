@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from "vue"
+﻿import { ref, onMounted, onUnmounted } from "vue"
 import type { Ref } from "vue"
 import { LANGAGES } from "@/data/langages"
 import type { Framework, Langage, SceneGalaxie } from "@/types/langage"
@@ -273,7 +273,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
     const sunR = 54
     const rgb = hexVersRgb(lang.couleur)
 
-    // Halo diffus large
     const halo = ctx!.createRadialGradient(CX, CY, 0, CX, CY, sunR * 5.5)
     halo.addColorStop(0,   `rgba(${rgb},0.28)`)
     halo.addColorStop(0.4, `rgba(${rgb},0.08)`)
@@ -283,7 +282,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
     ctx!.arc(CX, CY, sunR * 5.5, 0, Math.PI * 2)
     ctx!.fill()
 
-    // Anneau atmosphérique pulsant
     const pulsAtmos = 0.12 + 0.08 * Math.sin(temps * 1.8)
     ctx!.globalAlpha = pulsAtmos * opacite.value
     ctx!.strokeStyle = lang.couleur
@@ -300,7 +298,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
 
     dessinerCercleDegrade(CX, CY, sunR, lang.couleur)
 
-    // Symbole centré
     ctx!.globalAlpha = 0.92 * opacite.value
     ctx!.fillStyle = "#ffffff"
     ctx!.textAlign = "center"
@@ -313,7 +310,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
     ctx!.textBaseline = "alphabetic"
     ctx!.globalAlpha = opacite.value
 
-    // Nom + créateur sous la planète
     ctx!.shadowColor = `rgba(${rgb},0.6)`
     ctx!.shadowBlur = 10
     ctx!.globalAlpha = 0.9 * opacite.value
@@ -345,7 +341,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       fw._posY = fy
       fw._rayon = fr
 
-      // Orbite en tirets
       ctx!.globalAlpha = (estActif ? 0.22 : 0.09) * opacite.value
       ctx!.strokeStyle = fw.couleur
       ctx!.lineWidth = estActif ? 0.8 : 0.5
@@ -356,7 +351,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       ctx!.setLineDash([])
       ctx!.globalAlpha = opacite.value
 
-      // Aura autour du framework
       const rgb2 = hexVersRgb(fw.couleur)
       const auraR = fr * (estActif ? 4 : 3)
       const aura = ctx!.createRadialGradient(fx, fy, 0, fx, fy, auraR)
@@ -369,7 +363,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
 
       dessinerCercleDegrade(fx, fy, fr, fw.couleur)
 
-      // Anneau actif / survol
       if (estSurvol || estActif) {
         const intensite = estActif
           ? 0.65 + 0.28 * Math.sin(temps * 4)
@@ -390,7 +383,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
         ctx!.globalAlpha = opacite.value
       }
 
-      // Symbole
       ctx!.globalAlpha = 0.95 * opacite.value
       ctx!.fillStyle = "#ffffff"
       ctx!.textAlign = "center"
@@ -403,7 +395,6 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       ctx!.textBaseline = "alphabetic"
       ctx!.globalAlpha = opacite.value
 
-      // Label du framework
       const labelAlpha = (estSurvol || estActif ? 1 : 0.72) * opacite.value
       ctx!.globalAlpha = labelAlpha
       ctx!.fillStyle = estActif ? fw.couleur : "#ffffff"
@@ -536,7 +527,8 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       } else if (scene.value === "systemes") {
         allerA("solaire", hit as Langage)
       } else if (scene.value === "solaire") {
-        const fw = hit as Framework        frameworkActif.value = frameworkActif.value === fw ? null : fw
+        const fw = hit as Framework
+        frameworkActif.value = frameworkActif.value === fw ? null : fw
       }
     })
   }

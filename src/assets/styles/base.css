@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -160,7 +160,6 @@ input {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* ── Animations globales (README design_handoff_codequest) ── */
 
 @keyframes cqFadeUp {
   from { opacity: 0; transform: translateY(18px); }
@@ -190,7 +189,6 @@ input {
   animation: cqFadeUp 0.5s ease both;
 }
 
-/* ── Sphères planètes (partagées entre pages) ─────────── */
 
 .planet--python {
   background: radial-gradient(circle at 32% 28%, rgba(120,180,255,0.5) 0%, transparent 45%),

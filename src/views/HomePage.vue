@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import { ref, watch } from 'vue'
 import CategoryFilter from '@/components/news/CategoryFilter.vue'
 import ArticleCard from '@/components/news/ArticleCard.vue'
@@ -82,33 +82,27 @@ import { API_BASE_URL } from '@/utils/constants'
       <div class="intro-hero">
         <div class="intro-copy">
 
-          <!-- Badge eyebrow -->
           <div class="hero-badge">
             <span class="hero-badge-pulse"></span>
             APPRENDRE LE CODE EN JOUANT
           </div>
 
-          <!-- Titre principal -->
           <h1 class="page-title">CodeQuest</h1>
 
-          <!-- Accroche courte -->
           <p class="hero-tagline">
             Explore. Apprends. <span class="hero-tagline-accent">Level&nbsp;up.</span>
           </p>
 
-          <!-- Description -->
           <p class="intro-subtitle">
             Chaque langage est une planète. Suis les leçons, accomplis des missions,
             gagne de l'XP et débloque des badges — jusqu'à conquérir toute la galaxie du code.
           </p>
 
-          <!-- CTA -->
           <div class="intro-actions">
             <router-link class="btn btn--primary" to="/language">EXPLORER LA GALAXIE</router-link>
             <router-link class="btn btn--ghost" to="/mission">VOIR LES MISSIONS</router-link>
           </div>
 
-          <!-- Strip de stats -->
           <div class="hero-strip">
             <span class="hero-strip-item">
               <span class="hero-strip-value">9</span> langages
@@ -125,7 +119,6 @@ import { API_BASE_URL } from '@/utils/constants'
 
         </div>
 
-        <!-- Planète hero avec orbites -->
         <div class="hero-visual">
           <div class="hero-orbit hero-orbit--outer">
             <span class="hero-orbit-dot" style="top:-7px;left:50%;width:14px;height:14px;background:#F7DC6F;box-shadow:0 0 12px #F7DC6F;"></span>
@@ -143,7 +136,6 @@ import { API_BASE_URL } from '@/utils/constants'
         </div>
       </div>
 
-      <!-- Section CHOISIS TA PLANÈTE -->
       <section class="choisis-section">
         <div class="choisis-header">
           <h2 class="choisis-title">CHOISIS TA PLANÈTE</h2>

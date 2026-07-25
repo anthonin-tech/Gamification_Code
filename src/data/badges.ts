@@ -1,4 +1,4 @@
-export type BadgeCondition =
+﻿export type BadgeCondition =
   | 'first_lesson'
   | 'lessons_10'
   | 'lessons_50'
@@ -60,7 +60,6 @@ export const BADGES: Badge[] = [
     condition: 'missions_all',
   },
 
-  // Par mission
   {
     id: 101,
     name: 'Décollage : les variables',

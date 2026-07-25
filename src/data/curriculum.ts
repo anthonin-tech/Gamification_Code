@@ -1,4 +1,4 @@
-import type { CourseModule } from '@/types/cours'
+﻿import type { CourseModule } from '@/types/cours'
 
 export const CURRICULUM_PYTHON: CourseModule[] = [
   {

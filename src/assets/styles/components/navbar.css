@@ -1,5 +1,4 @@
-/* ─── NAVBAR ──────────────────────────────────────────────── */
-
+﻿
 .navbar {
   position: sticky;
   top: 0;
@@ -11,7 +10,6 @@
   overflow: visible;
 }
 
-/* Gradient beam along the top edge */
 .navbar::before {
   content: '';
   position: absolute;
@@ -34,7 +32,6 @@
   100% { background-position: -200% 0; }
 }
 
-/* Subtle inner glow at bottom */
 .navbar::after {
   content: '';
   position: absolute;
@@ -54,7 +51,6 @@
   gap: 14px;
 }
 
-/* ─── BRAND ─────────────────────────────────────────────── */
 
 .navbar-brand {
   display: flex;
@@ -127,7 +123,6 @@
 
 .navbar-brand:hover::before { opacity: 1; }
 
-/* ─── LINKS ─────────────────────────────────────────────── */
 
 .navbar-links {
   display: flex;
@@ -179,7 +174,6 @@
   transform: translateY(-1px);
 }
 
-/* ─── USER BLOCK ─────────────────────────────────────────── */
 
 .navbar-user {
   display: flex;
@@ -237,7 +231,6 @@
   display: none;
 }
 
-/* ─── AVATAR / CONNEXION ─────────────────────────────────── */
 
 .navbar-avatar {
   display: flex;
@@ -285,7 +278,6 @@
   box-shadow: 0 6px 22px rgba(124, 58, 237, 0.45);
 }
 
-/* ─── RESPONSIVE ─────────────────────────────────────────── */
 
 @media (max-width: 640px) {
   .navbar-container {

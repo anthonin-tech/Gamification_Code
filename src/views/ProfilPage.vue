@@ -1,9 +1,6 @@
 <script setup lang="ts">
-
 import XpCard               from '@/components/profile/XpCard.vue'
 import StreakCard            from '@/components/profile/StreakCard.vue'
-
-
 import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { useXP } from '@/composables/useXP'
@@ -20,6 +17,7 @@ import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
 import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
 import { useRouter } from 'vue-router'
 import { BADGES } from '@/data/badges'
+import AvatarPreview  from '@/components/profile/AvatarPreview.vue'
 
 const userStore = useUserStore()
 const { currentLevel } = useXP()
@@ -119,11 +117,6 @@ const currentLanguage = computed(() => {
 <div class="profil-layout">
 
       <div class="profil-identity">
-        <div class="profil-avatar-wrap">
-          <div class="profil-orbit-ring"></div>
-          <div class="profil-avatar-placeholder"></div>
-        </div>
-
         <h1 class="profil-header__username">{{ userStore.username }}</h1>
         <p class="profil-header__tag">EXPLORATEUR · NIVEAU {{ currentLevel }}</p>
 
@@ -180,6 +173,15 @@ const currentLanguage = computed(() => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="profil-avatar-col">
+        <div class="profil-avatar-3d-wrap">
+          <div class="profil-avatar-ring profil-avatar-ring--outer"></div>
+          <div class="profil-avatar-ring profil-avatar-ring--inner"></div>
+          <AvatarPreview />
+        </div>
+        <p class="profil-avatar-hint">Personnaliser →</p>
       </div>
 
     </div>

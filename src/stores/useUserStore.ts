@@ -1,4 +1,13 @@
 import { defineStore } from 'pinia'
+import { a } from 'vitest/dist/chunks/suite.B2jumIFP.js'
+
+const DEFAULT_AVATAR: AvatarCustomization = {
+    corpsColor: '#7c4dff',
+    accentColor: '#14a7cc',
+    casqueColor: '#1a1a2e',
+    pattern: 'Aucun',
+    accessories: { fusee: true, lunettes: false, couronne: false, casque: false, systeme: false }
+}
 
 export const useUserStore = defineStore('user', {
     state: (): IUserState => ({
@@ -8,12 +17,13 @@ export const useUserStore = defineStore('user', {
         userXP: 0,
         userLevel: 1,
         userAvatar: null,
-        isLoggedIn: false,
+        isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
         completeMissions: [],
         editorTheme: 'codequest',
         badges: [],
         favoriteLanguages: [],
-        streak: 0
+        streak: 0,
+        avatarCustomization: { ...DEFAULT_AVATAR, accessories: { ...DEFAULT_AVATAR.accessories } }
     }),
     actions: {
         initUser(userData: Partial<IUserState>) {
@@ -23,6 +33,7 @@ export const useUserStore = defineStore('user', {
             this.userLevel = userData.userLevel ?? 1
             this.userAvatar = userData.userAvatar ?? null
             this.isLoggedIn = true
+            localStorage.setItem('isLoggedIn', 'true')
             this.editorTheme = 'codequest'
 
             const savedXP = localStorage.getItem('userXP')
@@ -43,6 +54,9 @@ export const useUserStore = defineStore('user', {
             const savedStreakDay = localStorage.getItem('streak')
             this.streak = userData.streak ?? (savedStreakDay ? JSON.parse(savedStreakDay) : 0)
 
+            const saveAvatarCustomization = localStorage.getItem('avatarcustomization')
+            this.avatarCustomization = userData.avatarCustomization ?? (saveAvatarCustomization ? JSON.parse(saveAvatarCustomization) : this.avatarCustomization)
+
             localStorage.setItem('userXP', String(this.userXP))
             localStorage.setItem('completeMissions', JSON.stringify(this.completeMissions))
             localStorage.setItem('badges', JSON.stringify(this.badges))
@@ -50,6 +64,7 @@ export const useUserStore = defineStore('user', {
             localStorage.setItem('streak', JSON.stringify(this.streak))
         },
         resetUser() {
+            localStorage.removeItem('isLoggedIn')
             this.$reset()
         },
         updateXp(recompenseXP: number) {
@@ -63,9 +78,6 @@ export const useUserStore = defineStore('user', {
                     body: JSON.stringify({ xp: recompenseXP })
                 })
             }
-        },
-        updateAvatar(avatarUrl: string) {
-            this.userAvatar = avatarUrl
         },
         updateMisssion(id: number) {
             if (this.completeMissions) {
@@ -84,17 +96,36 @@ export const useUserStore = defineStore('user', {
                 this.editorTheme = theme
                 localStorage.setItem('editorTheme', JSON.stringify(this.editorTheme))
             }
-        }
-        
+        },
+        saveAvatarCustomization(data: AvatarCustomization) {
+            this.avatarCustomization = data
+           if (this.avatarCustomization != null) {
+                localStorage.setItem('avatarcustomization', JSON.stringify(this.avatarCustomization))
+                fetch('/api/user/avatar', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ avatarCustomization: data })
+                })
+            }
+        },
     },
 })
+
+interface AvatarCustomization {
+    corpsColor: string
+    accentColor: string
+    casqueColor: string
+    pattern: string
+    accessories: { fusee: boolean; lunettes: boolean; couronne: boolean; casque: boolean; systeme: boolean }
+}
 
 interface IUserState {
     userId: number | null
     username: string | null
     useremail: string | null
-    userXP: number 
-    userLevel: number 
+    userXP: number
+    userLevel: number
     userAvatar: string | null
     isLoggedIn: boolean
     completeMissions: number[]
@@ -102,4 +133,5 @@ interface IUserState {
     badges: number[]
     favoriteLanguages: string[]
     streak: number
+    avatarCustomization: AvatarCustomization
 }
