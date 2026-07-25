@@ -17,6 +17,7 @@ import MissionPage from '@/views/MissionPage.vue'
 import MissionDetailPage from '@/views/MissionDetailPage.vue'
 import GalaxyPage from '@/views/GalaxyPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
+import AvatarPage from '@/views/AvatarPage.vue'
 import { useUserStore } from '@/stores/useUserStore'
 
 const router = createRouter({
@@ -31,6 +32,7 @@ const router = createRouter({
     { path: '/mission', name: 'mission', component: MissionPage, meta: { title: 'Mission'} },
     { path: '/login', name: 'connexion', component: LoginPage, meta: { title: 'Connexion'}},
     { path: '/galaxy', name: 'galaxy', component: GalaxyPage, meta: { title: 'Galaxie des succès' }},
+    { path: '/avatar', name: 'avatar', component: AvatarPage, meta: { title: 'Avatar' }},
 
     { path: '/cours/python/learn',     name: 'leconPython',     component: LeçonPython,     meta: { title: 'Leçon Python' } },
     { path: '/cours/javascript/learn', name: 'leconJavaScript', component: LeçonJavaScript, meta: { title: 'Leçon JavaScript' } },

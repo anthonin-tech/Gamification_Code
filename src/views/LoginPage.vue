@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
@@ -20,12 +20,13 @@ async function loadUser() {
     const res = await fetch('/api/auth/profil', { credentials: 'include' })
     if (res.ok) {
         const { user } = await res.json()
-        userStore.initUser({ 
-            username: user.username, 
-            userXP: user.xp, 
-            badges: user.badges, 
+        userStore.initUser({
+            username: user.username,
+            userXP: user.xp,
+            badges: user.badges,
             completeMissions: user.completeMissions,
-            favoriteLanguages: user.favoriteLanguages 
+            favoriteLanguages: user.favoriteLanguages,
+            avatarCustomization: user.avatarCustomization
         })
     }
 }
@@ -73,7 +74,6 @@ async function handleRegister() {
 <template>
     <div class="login-page">
         <div class="login-card">
-            <!-- Logo planète -->
             <div class="login-planet">&lt;/&gt;</div>
 
             <div class="login-header">

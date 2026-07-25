@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { Framework, Langage } from "@/types/langage"
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
@@ -152,7 +152,6 @@ defineEmits<{
 </template>
 
 <style scoped>
-/* ── Favori ────────────────────────────────────────── */
 .lang-panel__name-row {
   display: flex;
   align-items: center;
@@ -177,7 +176,6 @@ defineEmits<{
   color: #fbbf24;
 }
 
-/* ── Fermer / Retour ───────────────────────────────── */
 .lang-panel__close {
   position: sticky;
   top: 0;
@@ -218,7 +216,6 @@ defineEmits<{
   color: rgba(255, 255, 255, 0.95);
 }
 
-/* ── Symbole ───────────────────────────────────────── */
 .lang-panel__sym {
   display: inline-grid;
   place-items: center;
@@ -234,7 +231,6 @@ defineEmits<{
     0 0 22px color-mix(in srgb, var(--lc, #7c3aed) 22%, transparent);
 }
 
-/* ── Nom ───────────────────────────────────────────── */
 .lang-panel__name {
   margin: 0 0 4px;
   font-size: 26px;
@@ -243,7 +239,6 @@ defineEmits<{
   letter-spacing: -0.3px;
 }
 
-/* ── Méta ──────────────────────────────────────────── */
 .lang-panel__meta {
   display: flex;
   align-items: center;
@@ -265,7 +260,6 @@ defineEmits<{
   border: 1px solid color-mix(in srgb, var(--lc, #7c3aed) 45%, transparent);
 }
 
-/* ── Description ───────────────────────────────────── */
 .lang-panel__desc {
   margin: 0 0 16px;
   padding: 14px 16px;
@@ -278,7 +272,6 @@ defineEmits<{
   line-height: 1.8;
 }
 
-/* ── Sections ──────────────────────────────────────── */
 .lang-panel__section {
   margin-top: 10px;
   padding: 14px 16px;
@@ -316,7 +309,6 @@ defineEmits<{
   line-height: 1.65;
 }
 
-/* ── Barre popularité ──────────────────────────────── */
 .lang-panel__bar {
   height: 7px;
   border-radius: 999px;
@@ -335,7 +327,6 @@ defineEmits<{
   font-size: 11.5px;
 }
 
-/* ── CTA cours ─────────────────────────────────────── */
 .lang-panel__cours { margin: 14px 0 0; }
 .lang-panel__cours button {
   width: 100%;
@@ -357,7 +348,6 @@ defineEmits<{
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 14px 40px rgba(124, 58, 237, 0.55);
 }
 
-/* ── Chips frameworks ──────────────────────────────── */
 .lang-panel__frameworks {
   display: flex;
   flex-wrap: wrap;
@@ -393,7 +383,6 @@ defineEmits<{
   font-style: italic;
 }
 
-/* ── Lien site officiel ────────────────────────────── */
 .lang-panel__links {
   display: flex;
   flex-wrap: wrap;

@@ -1,5 +1,4 @@
-/* Supprime le padding top de .page pour que le hero parte du haut */
-.page {
+﻿.page {
     padding-top: 0;
     padding-bottom: 0;
 }
@@ -8,14 +7,12 @@
     position: relative;
 }
 
-/* ── Hero title overrides ───────────────────────────── */
 .home-intro .page-title {
     padding-top: 0;
     padding-bottom: 0;
     text-align: left;
 }
 
-/* ── Hero layout ────────────────────────────────────── */
 .intro-hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -37,7 +34,6 @@
     width: 100%;
 }
 
-/* ── Badge eyebrow ──────────────────────────────────── */
 .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -69,7 +65,6 @@
     50%       { opacity: 0.4; transform: scale(0.75); }
 }
 
-/* ── Tagline ────────────────────────────────────────── */
 .hero-tagline {
     margin: 18px 0 0;
     font-size: clamp(20px, 2.8vw, 30px);
@@ -83,7 +78,6 @@
     font-weight: 600;
 }
 
-/* ── Subtitle ───────────────────────────────────────── */
 .intro-subtitle {
     margin: 22px 0 0;
     text-align: left;
@@ -97,7 +91,6 @@
 .br-desktop { display: block; }
 @media (max-width: 640px) { .br-desktop { display: none; } }
 
-/* ── CTA buttons ────────────────────────────────────── */
 .intro-actions {
     display: flex;
     justify-content: flex-start;
@@ -157,7 +150,6 @@
     color: #e0d4ff;
 }
 
-/* ── Feature strip ──────────────────────────────────── */
 .hero-strip {
     display: flex;
     align-items: center;
@@ -231,7 +223,6 @@
     padding: 40px 0;
 }
 
-/* anciens surcharges carousel supprimés — voir .planet-carousel */
 
 .page-title {
     font-family: var(--font-orbitron);
@@ -717,9 +708,7 @@
     box-shadow: none;
 }
 
-/* ============================================================
-   PLANÈTE DÉCORATIVE — BAS GAUCHE
-   ============================================================ */
+
 
 .deco-planet-wrapper {
     position: fixed;
@@ -751,7 +740,6 @@
         inset -20px -20px 35px rgba(0, 0, 0, 0.55);
 }
 
-/* Anneau style Saturne */
 .deco-planet::before {
     content: '';
     position: absolute;
@@ -765,7 +753,6 @@
     box-shadow: 0 0 14px rgba(255, 170, 70, 0.2);
 }
 
-/* Stries de surface */
 .deco-planet::after {
     content: '';
     position: absolute;
@@ -784,9 +771,7 @@
     }
 }
 
-/* ============================================================
-   HERO — PLANÈTE AVEC ORBITES (colonne droite)
-   ============================================================ */
+
 
 .hero-visual {
     position: relative;
@@ -853,9 +838,7 @@
     z-index: 1;
 }
 
-/* ============================================================
-   SECTION CHOISIS TA PLANÈTE
-   ============================================================ */
+
 
 .choisis-section {
     margin-top: 70px;
@@ -962,9 +945,7 @@
     .planete-grid { grid-template-columns: 1fr; }
 }
 
-/* ============================================================
-   CARROUSEL DE PLANÈTES
-   ============================================================ */
+
 
 .planet-item {
     display: flex;
@@ -1033,7 +1014,6 @@
     100% { transform: rotate(3deg)  scale(1.03); }
 }
 
-/* Anneaux supprimés */
 
 .planet-icon {
     width: 44px;
@@ -1062,7 +1042,6 @@
     line-height: 1.4;
 }
 
-/* ---- Couleurs par langage ---- */
 
 .planet--python {
     --planet-glow: rgba(55, 118, 171, 0.5);
@@ -1148,9 +1127,7 @@
         radial-gradient(circle at 50% 50%, #3178c6 0%, #174a8a 50%, #071830 100%);
 }
 
-/* ============================================================
-   CARROUSEL UNE PLANÈTE À LA FOIS
-   ============================================================ */
+
 
 .planet-carousel {
     display: flex;
@@ -1174,7 +1151,6 @@
     gap: 18px;
 }
 
-/* Agrandir la planète dans le carousel centré */
 .planet-single .planet-orbit {
     width: min(420px, 58vh);
     height: min(420px, 58vh);
@@ -1210,7 +1186,6 @@
     line-height: 1.5;
 }
 
-/* Boutons de navigation */
 .planet-nav {
     width: 48px;
     height: 48px;
@@ -1235,7 +1210,6 @@
     transform: scale(1.08);
 }
 
-/* Points de navigation */
 .planet-dots {
     display: flex;
     justify-content: center;
@@ -1259,7 +1233,6 @@
     transform: scale(1.35);
 }
 
-/* Transition entre planètes */
 .planet-fade-enter-active,
 .planet-fade-leave-active {
     transition: opacity 0.25s ease, transform 0.25s ease;

@@ -15,7 +15,8 @@ onMounted(async () => {
       username: data.user.username,
       badges: data.user.badges,
       completeMissions: data.user.completeMissions,
-      favoriteLanguages: data.user.favoriteLanguages
+      favoriteLanguages: data.user.favoriteLanguages,
+      avatarCustomization: data.user.avatarCustomization
     })
     const res = await fetch('/api/profil/streak', { method: 'POST', credentials: 'include'})
     const data_streak = await res.json()

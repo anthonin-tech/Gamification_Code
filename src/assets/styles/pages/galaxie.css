@@ -1,4 +1,4 @@
-.galaxie-page {
+﻿.galaxie-page {
   position: relative;
   height: 100vh;
   overflow: hidden;
@@ -155,7 +155,6 @@
 .type--langage   { color: #a78bfa; background: rgba(167, 139, 250, 0.12); border: 1px solid rgba(167, 139, 250, 0.25); }
 .type--framework { color: #60a5fa; background: rgba(96, 165, 250, 0.12);  border: 1px solid rgba(96, 165, 250, 0.25); }
 
-/* ── Hint texte ─────────────────────────────────────────── */
 .galaxie-hint {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -165,7 +164,6 @@
   margin: 0;
 }
 
-/* ── Scene dots ─────────────────────────────────────────── */
 .galaxie-scene-dots {
   display: flex;
   gap: 6px;
@@ -186,7 +184,6 @@
   box-shadow: 0 0 8px rgba(167, 139, 250, 0.6);
 }
 
-/* ── Panel wrapper ──────────────────────────────────── */
 .lang-panel {
   position: absolute;
   top: 16px;
@@ -220,7 +217,6 @@
   opacity: 0;
 }
 
-/* ── Transitions ────────────────────────────────────────── */
 .fade-enter-active  { transition: opacity 0.2s ease; }
 .fade-leave-active  { transition: opacity 0.15s ease; }
 .fade-enter-from,

@@ -1,4 +1,4 @@
-.lecon-page {
+﻿.lecon-page {
   --cyan:   #06d6a0;
   --gold:   #ffd166;
   --red:    #ff6b6b;
@@ -466,7 +466,6 @@
 }
 .btn-next-lesson:hover { transform: translateY(-2px); }
 
-/* ── Bottom bar ──────────────────────────────────────────── */
 .lecon-bottom-bar {
   display: flex;
   align-items: center;

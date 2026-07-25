@@ -1,5 +1,4 @@
-/* ─── COURS PAGE ──────────────────────────────────────────── */
-
+﻿
 .cp {
   max-width: var(--container, 1100px);
   margin: 0 auto;
@@ -9,7 +8,6 @@
   gap: 14px;
 }
 
-/* ─── SWITCHER ────────────────────────────────────────────── */
 
 .switcher {
   display: flex;
@@ -88,7 +86,6 @@
   box-shadow: 0 0 8px var(--lc);
 }
 
-/* ─── HERO ───────────────────────────────────────────────── */
 
 .hero {
   display: grid;
@@ -216,7 +213,6 @@
 }
 .hero-meta strong { color: rgba(255,255,255,.85); font-weight: 700; }
 
-/* ─── PLANET SCENE ────────────────────────────────────────── */
 
 .hero-right {
   display: flex;
@@ -324,7 +320,6 @@
   to   { transform: translateX(-50%) rotate(-360deg); }
 }
 
-/* ─── STATS BAR ──────────────────────────────────────────── */
 
 .stats-bar {
   display: grid;
@@ -376,7 +371,6 @@
   color: rgba(255,255,255,.38);
 }
 
-/* ─── MISSIONS ───────────────────────────────────────────── */
 
 .missions { display: flex; flex-direction: column; gap: 14px; }
 
@@ -405,7 +399,6 @@
 }
 .missions-link:hover { color: rgba(255,255,255,.75); }
 
-/* ─── CARDS ──────────────────────────────────────────────── */
 
 .cards {
   display: grid;
@@ -525,7 +518,6 @@
   100% { opacity: 1; }
 }
 
-/* ─── HEADER CARD ─────────────────────────────────────────── */
 
 .cp-header {
   display: flex;
@@ -621,7 +613,6 @@
   box-shadow: 0 10px 30px rgba(124,58,237,.55);
 }
 
-/* ─── MODULE LIST ─────────────────────────────────────────── */
 
 .cp-modules {
   display: flex;
@@ -745,7 +736,6 @@
   border: 1px solid rgba(255,255,255,.07);
 }
 
-/* ─── RESPONSIVE ─────────────────────────────────────────── */
 
 @media (max-width: 640px) {
   .cp-header {

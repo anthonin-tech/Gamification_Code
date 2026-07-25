@@ -51,6 +51,16 @@ const UserSchema = new Schema (
             type: Map,
             of: [String],
             default: []
+        },
+        avatarCustomization: {
+            type: Object,
+            default: () => ({
+                corpsColor: '#7c4dff',
+                accentColor: '#14a7cc',
+                casqueColor: '#1a1a2e',
+                pattern: 'Aucun',
+                accessories: { fusee: true, lunettes: false, couronne: false, casque: false, systeme: false }
+            })
         }
     }
 )

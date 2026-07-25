@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { useRoute } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
@@ -130,10 +130,8 @@ const TempsFormate = computed(() => {
 </script>
 
 <template>
-  <!-- MISSION DÉVERROUILLÉE -->
   <div v-if="mission && IsDelock" class="mission-detail">
 
-    <!-- TOP BAR -->
     <div class="md-topbar">
       <router-link to="/mission" class="md-back">← Missions</router-link>
       <span class="md-signal">
@@ -151,7 +149,6 @@ const TempsFormate = computed(() => {
       </div>
     </div>
 
-    <!-- BANNER CARD -->
     <div class="md-banner">
       <span class="md-banner__planet" :class="`planet--${mission.langage}`">
         {{ mission.langage.slice(0,2).toUpperCase() }}
@@ -166,13 +163,10 @@ const TempsFormate = computed(() => {
       <span class="md-xp">+{{ mission.xpRecompense }} XP</span>
     </div>
 
-    <!-- GRILLE 2 COLONNES -->
     <div class="md-grid">
 
-      <!-- GAUCHE : Objectifs + Indices -->
       <div class="md-left">
 
-        <!-- Objectifs -->
         <section class="md-section">
           <div class="md-section__header">
             <span class="md-section__label">● OBJECTIFS</span>
@@ -189,7 +183,6 @@ const TempsFormate = computed(() => {
           </ul>
         </section>
 
-        <!-- Indices -->
         <section class="md-section">
           <div class="md-section__header">
             <span class="md-section__label md-section__label--gold">♦ INDICES</span>
@@ -211,7 +204,7 @@ const TempsFormate = computed(() => {
                   <CodeEditor :langage="mission.langage" @submit="ManageSubmission" />
                 </div>
                 <button v-else class="md-indice__btn" @click="DeLockIndice(indice.xpCout, indice.niveau)">
-                  <span>🔒 Indice {{ indice.niveau }}</span>
+                  <span>Indice {{ indice.niveau }}</span>
                   <span class="md-indice__cost">débloquer · -{{ indice.xpCout }} XP</span>
                 </button>
               </div>
@@ -221,7 +214,6 @@ const TempsFormate = computed(() => {
 
       </div>
 
-      <!-- DROITE : Éditeur + Bouton -->
       <div class="md-right">
         <div class="editor-wrapper">
           <CodeEditor :langage="mission.langage" @submit="ManageSubmission" />
@@ -253,7 +245,6 @@ const TempsFormate = computed(() => {
     </div>
   </div>
 
-  <!-- MISSION VERROUILLÉE -->
   <div v-else-if="mission" class="mission-locked">
     <div class="locked-icon">
       <svg class="holo-lock" viewBox="0 0 64 76" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -272,12 +263,10 @@ const TempsFormate = computed(() => {
     </router-link>
   </div>
 
-  <!-- INTROUVABLE -->
   <div v-else class="mission-not-found">
     <p>Mission introuvable.</p>
   </div>
 
-  <!-- XP ANIMATION -->
   <Teleport to="body">
     <div v-if="flyingXp" class="xp-fly" :style="flyStyle">
       +{{ mission?.xpRecompense }} XP
@@ -286,14 +275,12 @@ const TempsFormate = computed(() => {
 </template>
 
 <style scoped>
-/* ── Wrapper ─────────────────────────────────────────── */
 .mission-detail {
   max-width: 1100px;
   margin: 0 auto;
   padding-bottom: 60px;
 }
 
-/* ── Top bar ─────────────────────────────────────────── */
 .md-topbar {
   display: flex;
   align-items: center;
@@ -353,7 +340,6 @@ const TempsFormate = computed(() => {
   letter-spacing: 2px;
 }
 
-/* ── Banner card ─────────────────────────────────────── */
 .md-banner {
   display: flex;
   align-items: center;
@@ -426,7 +412,6 @@ const TempsFormate = computed(() => {
   flex-shrink: 0;
 }
 
-/* ── Grille 2 colonnes ───────────────────────────────── */
 .md-grid {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -435,7 +420,6 @@ const TempsFormate = computed(() => {
   align-items: stretch;
 }
 
-/* ── Colonne gauche ──────────────────────────────────── */
 .md-left {
   display: flex;
   flex-direction: column;
@@ -476,7 +460,6 @@ const TempsFormate = computed(() => {
   color: rgba(255, 255, 255, 0.35);
 }
 
-/* Barre de progression */
 .md-prog-bar {
   height: 4px;
   background: rgba(255, 255, 255, 0.07);
@@ -492,7 +475,6 @@ const TempsFormate = computed(() => {
   transition: width 0.35s ease;
 }
 
-/* Tâches */
 .md-tasks {
   list-style: none;
   margin: 0;
@@ -553,7 +535,6 @@ const TempsFormate = computed(() => {
   transform: rotate(45deg);
 }
 
-/* Indices */
 .md-indices {
   display: flex;
   flex-direction: column;
@@ -620,7 +601,6 @@ const TempsFormate = computed(() => {
   letter-spacing: 0.5px;
 }
 
-/* ── Colonne droite ──────────────────────────────────── */
 .md-right {
   display: flex;
   flex-direction: column;
@@ -628,7 +608,6 @@ const TempsFormate = computed(() => {
   height: 100%;
 }
 
-/* Loading overlay éditeur */
 .editor-wrapper {
   position: relative;
   display: flex;
@@ -675,7 +654,6 @@ const TempsFormate = computed(() => {
   50%       { opacity: 1; }
 }
 
-/* Bouton valider */
 .md-btn-valider {
   width: 100%;
   padding: 14px 20px;
@@ -712,7 +690,6 @@ const TempsFormate = computed(() => {
   transform: none !important;
 }
 
-/* ── Mission verrouillée ─────────────────────────────── */
 .mission-locked {
   max-width: 500px;
   margin: 80px auto;
@@ -780,14 +757,12 @@ const TempsFormate = computed(() => {
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
 }
 
-/* ── Not found ───────────────────────────────────────── */
 .mission-not-found {
   text-align: center;
   padding: 80px 16px;
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 860px) {
   .md-grid { grid-template-columns: 1fr; }
   .md-banner { margin: 0 12px 16px; }
@@ -797,7 +772,6 @@ const TempsFormate = computed(() => {
 </style>
 
 <style>
-/* Non scoped — l'élément est téléporté dans <body> */
 .xp-fly {
   position: fixed;
   transform: translate(-50%, -50%);
