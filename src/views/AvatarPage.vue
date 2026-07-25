@@ -15,7 +15,7 @@ const { currentLevel } = useXP()
 const { state: casqueState } = useGLTF('/personnage-codequest.glb')
 const casqueGLBScene = computed(() => casqueState.value?.scene ?? null)
 
-const camPosition   = new Vector3(0, 4, 9)
+const camPosition   = new Vector3(0, 4, 13)
 const lightPosition = new Vector3(0, 6, 4)
 let isDragging = false
 let prevX = 0
@@ -282,7 +282,7 @@ function handleAccClick(acc: typeof ACC_LIST[number]) {
                 @mousemove="onMouseMove"
                 @mouseup="onMouseUp"
             >
-                <TresPerspectiveCamera :position="camPosition" />
+                <TresPerspectiveCamera :position="camPosition" :look-at="[0, 3, 0]" />
                 <TresAmbientLight :intensity="1" />
                 <TresPointLight :position="lightPosition" :intensity="30" color="#ffffff" />
                 <primitive :object="starsRef" />
