@@ -33,31 +33,67 @@
   position: relative;
   width: 300px;
   height: 480px;
-  animation: cqGlow 4s ease-in-out infinite;
   border-radius: 20px;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  background: #070b18;
+  animation: profil-border-glow 3.5s ease-in-out infinite;
+  overflow: hidden;
 }
 
-.profil-avatar-ring {
+.profil-avatar-3d-wrap::before {
+  content: '';
   position: absolute;
-  border-radius: 50%;
-  border-style: dashed;
+  width: 160%;
+  height: 160%;
+  top: -30%;
+  left: -30%;
+  background:
+    radial-gradient(ellipse 55% 45% at 35% 60%, rgba(124, 58, 237, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 55% at 70% 35%, rgba(20, 167, 204, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 55% 75%, rgba(255, 93, 143, 0.06) 0%, transparent 60%);
+  animation: profil-nebula 10s ease-in-out infinite alternate;
   pointer-events: none;
-  animation: cqSpin linear infinite;
+  z-index: 0;
 }
 
-.profil-avatar-ring--outer {
-  inset: -22px;
-  border-width: 1.5px;
-  border-color: rgba(167, 139, 250, 0.25);
-  animation-duration: 28s;
+.profil-avatar-3d-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(124, 58, 237, 0.05) 45%,
+    rgba(20, 167, 204, 0.05) 55%,
+    transparent 100%
+  );
+  animation: profil-scan 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
-.profil-avatar-ring--inner {
-  inset: -10px;
-  border-width: 1px;
-  border-color: rgba(0, 212, 255, 0.2);
-  animation-duration: 16s;
-  animation-direction: reverse;
+@keyframes profil-nebula {
+  0%   { transform: scale(1)    rotate(0deg);  opacity: 0.7; }
+  50%  { transform: scale(1.08) rotate(6deg);  opacity: 1;   }
+  100% { transform: scale(0.95) rotate(-4deg); opacity: 0.8; }
+}
+
+@keyframes profil-border-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.25), 0 0 60px rgba(124, 58, 237, 0.08);
+    border-color: rgba(124, 58, 237, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(20, 167, 204, 0.4), 0 0 80px rgba(20, 167, 204, 0.15);
+    border-color: rgba(20, 167, 204, 0.5);
+  }
+}
+
+@keyframes profil-scan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
 }
 
 .profil-avatar-hint {

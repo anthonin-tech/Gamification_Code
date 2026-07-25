@@ -181,19 +181,50 @@ export function buildStarfield(): Points {
 
 export function buildSocle(): Group {
     const g = new Group()
-    const disc = new Mesh(new CylinderGeometry(1.9, 2.2, 0.28, 64),
-        new MeshStandardMaterial({ color: '#12132a', metalness: 0.85, roughness: 0.18 }))
-    disc.position.y = -0.14
-    g.add(disc)
-    const ringTop = new Mesh(new TorusGeometry(1.9, 0.06, 16, 64),
-        new MeshStandardMaterial({ color: '#7c4dff', emissive: '#7c4dff' as any, emissiveIntensity: 1.2 }))
-    ringTop.rotation.x = Math.PI / 2
-    g.add(ringTop)
-    const ringOuter = new Mesh(new TorusGeometry(2.2, 0.035, 12, 64),
-        new MeshStandardMaterial({ color: '#14a7cc', emissive: '#14a7cc' as any, emissiveIntensity: 0.6 }))
-    ringOuter.rotation.x = Math.PI / 2
-    ringOuter.position.y = -0.14
-    g.add(ringOuter)
+
+    const metalMat = (color: string) => new MeshStandardMaterial({ color, metalness: 0.96, roughness: 0.08 })
+
+    const base = new Mesh(new CylinderGeometry(2.7, 2.8, 0.08, 64), metalMat('#888888'))
+    base.position.y = -0.46; g.add(base)
+
+    const body = new Mesh(new CylinderGeometry(2.4, 2.65, 0.36, 64), metalMat('#a0a0a0'))
+    body.position.y = -0.22; g.add(body)
+
+    const cap = new Mesh(new CylinderGeometry(2.25, 2.4, 0.1, 64), metalMat('#b8b8b8'))
+    cap.position.y = -0.01; g.add(cap)
+
+    for (let i = 0; i < 7; i++) {
+        const groove = new Mesh(
+            new TorusGeometry(2.42, 0.01, 8, 64),
+            new MeshStandardMaterial({ color: '#d0d0d0', metalness: 0.99, roughness: 0.02 })
+        )
+        groove.rotation.x = Math.PI / 2
+        groove.position.y = -0.06 - i * 0.055
+        g.add(groove)
+    }
+
+    const neon = new Mesh(
+        new TorusGeometry(2.52, 0.065, 24, 128),
+        new MeshStandardMaterial({ color: '#00d4ff', emissive: '#00d4ff' as any, emissiveIntensity: 4.0 })
+    )
+    neon.rotation.x = Math.PI / 2
+    neon.position.y = -0.28
+    g.add(neon)
+
+    const accent = new Mesh(
+        new TorusGeometry(2.42, 0.016, 12, 128),
+        new MeshStandardMaterial({ color: '#cceeff', emissive: '#cceeff' as any, emissiveIntensity: 2.5 })
+    )
+    accent.rotation.x = Math.PI / 2
+    accent.position.y = -0.06
+    g.add(accent)
+
+    const top = new Mesh(
+        new CylinderGeometry(2.23, 2.23, 0.005, 64),
+        new MeshStandardMaterial({ color: '#14a7cc', emissive: '#14a7cc' as any, emissiveIntensity: 0.4, transparent: true, opacity: 0.15 })
+    )
+    top.position.y = 0.045; g.add(top)
+
     g.position.y = 0.1
     return g
 }

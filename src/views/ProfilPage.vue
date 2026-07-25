@@ -177,8 +177,6 @@ const currentLanguage = computed(() => {
 
       <div class="profil-avatar-col">
         <div class="profil-avatar-3d-wrap">
-          <div class="profil-avatar-ring profil-avatar-ring--outer"></div>
-          <div class="profil-avatar-ring profil-avatar-ring--inner"></div>
           <AvatarPreview />
         </div>
         <p class="profil-avatar-hint">Personnaliser →</p>

@@ -132,7 +132,7 @@ onUnmounted(() => cancelAnimationFrame(frameId))
 
 <template>
     <div class="avatar-preview" @click="router.push('/avatar')">
-        <TresCanvas>
+        <TresCanvas :renderer-options="{ alpha: true }">
             <TresPerspectiveCamera :position="camPosition" />
             <TresAmbientLight :intensity="1.2" />
             <TresPointLight :position="lightPosition" :intensity="25" />
@@ -146,7 +146,5 @@ onUnmounted(() => cancelAnimationFrame(frameId))
     width: 100%;
     height: 100%;
     cursor: pointer;
-    border-radius: 50%;
-    overflow: hidden;
 }
 </style>
