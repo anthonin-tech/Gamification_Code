@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { a } from 'vitest/dist/chunks/suite.B2jumIFP.js'
 
 const DEFAULT_AVATAR: AvatarCustomization = {
     corpsColor: '#7c4dff',
@@ -37,13 +36,13 @@ export const useUserStore = defineStore('user', {
             this.editorTheme = 'codequest'
 
             const savedXP = localStorage.getItem('userXP')
-            this.userXP = savedXP ? Number(savedXP) : (userData.userXP ?? 0)
-            
+            this.userXP = userData.userXP ?? (savedXP ? Number(savedXP) : 0)
+
             const savedMission = localStorage.getItem('completeMissions')
-            this.completeMissions = savedMission ? JSON.parse(savedMission) : (userData.completeMissions ?? [])
+            this.completeMissions = userData.completeMissions ?? (savedMission ? JSON.parse(savedMission) : [])
 
             const savedEditorTheme = localStorage.getItem('editorTheme')
-            this.editorTheme = savedEditorTheme ? JSON.parse(savedEditorTheme) : 'codequest'
+            this.editorTheme = userData.editorTheme ?? (savedEditorTheme ? JSON.parse(savedEditorTheme) : 'codequest')
 
             const savedBadge = localStorage.getItem('badges')
             this.badges = userData.badges ?? (savedBadge ? JSON.parse(savedBadge) : [])
@@ -65,6 +64,16 @@ export const useUserStore = defineStore('user', {
         },
         resetUser() {
             localStorage.removeItem('isLoggedIn')
+            localStorage.removeItem('userXP')
+            localStorage.removeItem('completeMissions')
+            localStorage.removeItem('badges')
+            localStorage.removeItem('favoriteLanguages')
+            localStorage.removeItem('streak')
+            localStorage.removeItem('avatarcustomization')
+            localStorage.removeItem('editorTheme')
+            for (const lang of ['python','javascript','typescript','java','php','go','cpp','rust','csharp']) {
+                localStorage.removeItem(`codequest_${lang}_progress`)
+            }
             this.$reset()
         },
         updateXp(recompenseXP: number) {

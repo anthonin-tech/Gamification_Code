@@ -104,9 +104,10 @@ async function handleGetArticles(url, res) {
   if (category && category !== 'Tous') filter.category = category
 
   if (search) {
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     filter.$or = [
-      { title: { $regex: search, $options: 'i' } },
-      { summary: { $regex: search, $options: 'i' } },
+      { title: { $regex: escaped, $options: 'i' } },
+      { summary: { $regex: escaped, $options: 'i' } },
     ]
   }
 
@@ -133,7 +134,11 @@ async function handleGetArticles(url, res) {
   })
 }
 
-async function handleScrape(res) {
+async function handleScrape(req, res) {
+  const secret = req.headers['x-scrape-secret']
+  if (secret !== process.env.SCRAPE_SECRET) {
+    return sendJson(res, 401, {error: 'Non autorisé'})
+  }
   console.log('Scraping manuel déclenché')
   scrapeAllSources().catch(console.error)
   return sendJson(res, 202, { message: 'Scraping démarré en arrière-plan' })
@@ -221,7 +226,7 @@ export async function startBackend(options = {}) {
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
         }
-        return await handleScrape(res)
+        return await handleScrape(req, res)
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/register') {
@@ -348,10 +353,32 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
 async function handleRegister(req, res) {
   const { username, email, password } = await parseBody(req)
+
+  if (!username || username.trim().length < 3 || username.trim().length > 30) {
+    return sendJson(res, 400, { error: 'Nom d\'utilisateur : 3 à 30 caractères requis'})
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!email || !emailRegex.test(email)) {
+    return sendJson(res, 400, { error: 'Adresse email invalide'})
+  }
+
+  if (!password || password.length < 8) {
+    return sendJson(res, 400, { error: 'Mot de Passe invalide'})
+  }
+
+  if (await User.findOne({email})) {
+    return sendJson(res, 409, { error: 'utilisateur existe déjà'})
+  }
+
+  if (await User.findOne({username})) {
+    return sendJson(res, 409, { error: 'utilisateur existe déjà'})
+  }
+
   const userInfo = new User({ username, email, password })
   await userInfo.save()
   const token = jwt.sign( {id: userInfo._id, username }, process.env.JWT_SECRET , { expiresIn: '7d' })
-  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Strict`)
   sendJson(res, 201, { message: 'Compte créé' })
 }
 
@@ -365,8 +392,8 @@ async function handleLogin(req, res) {
     if (!isValid) {
     return sendJson(res, 401, { error: 'Mauvais mot de passe' })
   }
-  const token = jwt.sign( {id: user._id, username: user.username }, process.env.JWT_SECRET , { expiresIn: '7d' })
-  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' })
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Strict`)
   sendJson(res, 200, { message: 'Connecté' })
 }
 
@@ -381,7 +408,7 @@ async function handleMe(req, res) {
     } catch (error) {
       return sendJson(res, 401, { message: 'Token invalide'})
     }
-    const user = await User.findById(response.id)
+    const user = await User.findById(response.id).select('-password')
     sendJson(res, 200, { user })
 }
 
@@ -491,6 +518,13 @@ async function handleUpdateXP(req, res) {
     return sendJson(res, 401, { message: 'Token invalide' })
   }
   const { xp } = await parseBody(req)
+  if (typeof xp !== 'number') {
+    return sendJson(res, 400, {error: 'xp n\'est pas un number'})
+  }
+
+  if (!xp || xp < 1 || xp > 500) {
+    return sendJson(res, 400, {error: 'xp ne correspond à l\'exp habituelle'})
+  }
   await User.findByIdAndUpdate(response.id, { $inc: { xp } })
   return sendJson(res, 200, { message: 'XP mis à jour' })
 }
