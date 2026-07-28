@@ -198,7 +198,8 @@ defineEmits<{
 }
 
 .lang-panel__back-fw {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;

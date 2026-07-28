@@ -293,8 +293,8 @@ function answerQuiz(si: number, oi: number, step: LessonStep) {
 
 function runChallenge(si: number, step: LessonStep) {
   const code = codeInputs[si] ?? step.starter ?? ''
-  let output = '$ python main.py\n'
-  const prints = [...code.matchAll(/print\s*\(([^)]+)\)/g)]
+  let output = '$ javac Main.java && java Main\n'
+  const prints = [...code.matchAll(/System\.out\.println\s*\(([^)]+)\)/g)]
   for (const m of prints) {
     const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
     output += raw + '\n'

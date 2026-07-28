@@ -25,30 +25,30 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'home', component: HomePage, meta: { title: 'Accueil' } },
     { path: '/profile', name: 'profile', component: ProfilePage, meta: { title: 'Mon Profil', requiresAuth: true } },
-    { path: '/progression', name: 'progression', component: ProgressionPage, meta: { title: 'Ma Progression' } },
+    { path: '/progression', name: 'progression', component: ProgressionPage, meta: { title: 'Ma Progression', requiresAuth: true } },
     { path: '/language', name: 'language', component: LanguagePage, meta: { title: 'Langages' } },
-    { path: '/cours/:slug', name: 'cours', component: CoursPage, meta: { title: 'Cours' } },
+    { path: '/cours/:slug', name: 'cours', component: CoursPage, meta: { title: 'Cours', requiresAuth: true } },
     { path: '/cours', redirect: '/cours/javascript' },
-    { path: '/mission', name: 'mission', component: MissionPage, meta: { title: 'Mission'} },
-    { path: '/login', name: 'connexion', component: LoginPage, meta: { title: 'Connexion'}},
-    { path: '/galaxy', name: 'galaxy', component: GalaxyPage, meta: { title: 'Galaxie des succès' }},
-    { path: '/avatar', name: 'avatar', component: AvatarPage, meta: { title: 'Avatar' }},
+    { path: '/mission', name: 'mission', component: MissionPage, meta: { title: 'Mission', requiresAuth: true } },
+    { path: '/login', name: 'connexion', component: LoginPage, meta: { title: 'Connexion' } },
+    { path: '/galaxy', name: 'galaxy', component: GalaxyPage, meta: { title: 'Galaxie des succès', requiresAuth: true } },
+    { path: '/avatar', name: 'avatar', component: AvatarPage, meta: { title: 'Avatar', requiresAuth: true } },
 
-    { path: '/cours/python/learn',     name: 'leconPython',     component: LeçonPython,     meta: { title: 'Leçon Python' } },
-    { path: '/cours/javascript/learn', name: 'leconJavaScript', component: LeçonJavaScript, meta: { title: 'Leçon JavaScript' } },
-    { path: '/cours/typescript/learn', name: 'leconTypeScript', component: LeçonTypeScript, meta: { title: 'Leçon TypeScript' } },
-    { path: '/cours/java/learn',       name: 'leconJava',       component: LeçonJava,       meta: { title: 'Leçon Java' } },
-    { path: '/cours/php/learn',        name: 'leconPHP',        component: LeçonPHP,        meta: { title: 'Leçon PHP' } },
-    { path: '/cours/go/learn',         name: 'leconGo',         component: LeçonGo,         meta: { title: 'Leçon Go' } },
-    { path: '/cours/cpp/learn',        name: 'leconCPP',        component: LeçonCPP,        meta: { title: 'Leçon C++' } },
-    { path: '/cours/rust/learn',       name: 'leconRust',       component: LeçonRust,       meta: { title: 'Leçon Rust' } },
-    { path: '/cours/csharp/learn',     name: 'leconCSharp',     component: LeçonCSharp,     meta: { title: 'Leçon C#' } },
+    { path: '/cours/python/learn',     name: 'leconPython',     component: LeçonPython,     meta: { title: 'Leçon Python',     requiresAuth: true } },
+    { path: '/cours/javascript/learn', name: 'leconJavaScript', component: LeçonJavaScript, meta: { title: 'Leçon JavaScript', requiresAuth: true } },
+    { path: '/cours/typescript/learn', name: 'leconTypeScript', component: LeçonTypeScript, meta: { title: 'Leçon TypeScript', requiresAuth: true } },
+    { path: '/cours/java/learn',       name: 'leconJava',       component: LeçonJava,       meta: { title: 'Leçon Java',       requiresAuth: true } },
+    { path: '/cours/php/learn',        name: 'leconPHP',        component: LeçonPHP,        meta: { title: 'Leçon PHP',        requiresAuth: true } },
+    { path: '/cours/go/learn',         name: 'leconGo',         component: LeçonGo,         meta: { title: 'Leçon Go',         requiresAuth: true } },
+    { path: '/cours/cpp/learn',        name: 'leconCPP',        component: LeçonCPP,        meta: { title: 'Leçon C++',        requiresAuth: true } },
+    { path: '/cours/rust/learn',       name: 'leconRust',       component: LeçonRust,       meta: { title: 'Leçon Rust',       requiresAuth: true } },
+    { path: '/cours/csharp/learn',     name: 'leconCSharp',     component: LeçonCSharp,     meta: { title: 'Leçon C#',         requiresAuth: true } },
 
     {
       path: '/mission/:id',
       name: 'missionDetail',
       component: MissionDetailPage,
-      meta: { title: 'Detail' }
+      meta: { title: 'Detail', requiresAuth: true }
     }
   ]
 })

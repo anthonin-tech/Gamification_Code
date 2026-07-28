@@ -3,16 +3,7 @@ import { MISSIONS } from '@/data/missions'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
-import { MissionIsLock } from '@/composables/useMissionLock'
-import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
-import { CURRICULUM_PYTHON } from '@/data/curriculum'
-import { CURRICULUM_JAVA } from '@/data/curriculum-java'
-import { CURRICULUM_CPP } from '@/data/curriculum-cpp'
-import { CURRICULUM_GO } from '@/data/curriculum-go'
-import { CURRICULUM_PHP } from '@/data/curriculum-php'
-import { CURRICULUM_RUST } from '@/data/curriculum-rust'
-import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
-import { CURRICULUM_CSHARP } from '@/data/curriculum-csharp'
+import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
 
 const filtreLangage = ref('')
 const filtreDifficulte = ref('')
@@ -35,27 +26,8 @@ const missionParLangue = computed(() => {
     }))
 })
 
-const curriculums: Record<string, any> = {
-  javascript: CURRICULUM_JAVASCRIPT,
-  python: CURRICULUM_PYTHON,
-  java: CURRICULUM_JAVA,
-  typescript: CURRICULUM_TYPESCRIPT,
-  rust: CURRICULUM_RUST,
-  csharp: CURRICULUM_CSHARP,
-  go: CURRICULUM_GO,
-  cpp: CURRICULUM_CPP,
-  php: CURRICULUM_PHP
-}
-
 function AllerMission(id: number) {
   router.push(`/mission/${id}`)
-}
-
-function getLessonName(mission: any) {
-  const curriculum = curriculums[mission.langage]
-  const AllLesson = curriculum.flatMap((l: any) => l.lessons)
-  const lessonRequired = AllLesson[mission.minLecons - 1]
-  return lessonRequired.title 
 }
 </script>
 

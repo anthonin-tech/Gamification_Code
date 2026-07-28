@@ -15,7 +15,7 @@ const { currentLevel } = useXP()
 const { state: casqueState } = useGLTF('/personnage-codequest.glb')
 const casqueGLBScene = computed(() => casqueState.value?.scene ?? null)
 
-const camPosition   = new Vector3(0, 4, 13)
+const camPosition   = new Vector3(0, 4, 10)
 const lightPosition = new Vector3(0, 6, 4)
 let isDragging = false
 let prevX = 0
