@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { Framework, Langage } from "@/types/langage"
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
@@ -7,14 +7,22 @@ import { useUserStore } from "@/stores/useUserStore"
 const router = useRouter()
 const userStore = useUserStore()
 
-const isFavorite = computed(() => props.language?.slug === userStore.userFavoriteLanguage )
+const isFavorite = computed(() => !!props.language && userStore.favoriteLanguages.includes(props.language.slug))
 
-function toggleFavorite() {
-  if ( isFavorite.value ) {
-    userStore.updateFavoriteLanguage(null)
-  } else {
-    userStore.updateFavoriteLanguage(props.language!.slug)
+async function toggleFavorite() {
+  if (!props.language) return
+  const slug = props.language.slug
+  if (isFavorite.value) {
+    userStore.favoriteLanguages = userStore.favoriteLanguages.filter(s => s !== slug)
+  } else if (userStore.favoriteLanguages.length < 3) {
+    userStore.favoriteLanguages.push(slug)
   }
+  await fetch('/api/profil/favorites', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ favoriteLanguages: userStore.favoriteLanguages })
+  })
 }
 
 function allerAuCours(langage: Langage) {
@@ -105,11 +113,17 @@ defineEmits<{
           <p class="lang-panel__stat">{{ language.popularite }}% des devs l'utilisent</p>
         </div>
 
-        <div class="lang-panel__cours">
-          <button @click="allerAuCours(language)">
-            Accéder au cours
-          </button>
+        <div class="lang-panel__section">
+          <span class="lang-panel__label">Difficulté</span>
+          <div class="lang-panel__bar">
+            <div
+              class="lang-panel__bar-fill"
+              :style="{ width: language.difficulte + '%', background: 'linear-gradient(90deg, #34d399, #fbbf24 50%, #ef4444)' }"
+            />
+          </div>
+          <p class="lang-panel__stat">{{ language.difficulte }}/100</p>
         </div>
+
         <div v-if="language.frameworks.length" class="lang-panel__section">
           <span class="lang-panel__label">Frameworks ({{ language.frameworks.length }})</span>
           <div class="lang-panel__frameworks">
@@ -125,6 +139,12 @@ defineEmits<{
           </div>
           <p class="lang-panel__hint">Cliquez sur une planète pour explorer un framework</p>
         </div>
+
+        <div class="lang-panel__cours">
+          <button @click="allerAuCours(language)">
+            COMMENCER LE COURS →
+          </button>
+        </div>
       </template>
 
     </aside>
@@ -132,7 +152,6 @@ defineEmits<{
 </template>
 
 <style scoped>
-/* ── Favori ────────────────────────────────────────── */
 .lang-panel__name-row {
   display: flex;
   align-items: center;
@@ -157,7 +176,6 @@ defineEmits<{
   color: #fbbf24;
 }
 
-/* ── Fermer / Retour ───────────────────────────────── */
 .lang-panel__close {
   position: sticky;
   top: 0;
@@ -180,7 +198,8 @@ defineEmits<{
 }
 
 .lang-panel__back-fw {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
@@ -198,7 +217,6 @@ defineEmits<{
   color: rgba(255, 255, 255, 0.95);
 }
 
-/* ── Symbole ───────────────────────────────────────── */
 .lang-panel__sym {
   display: inline-grid;
   place-items: center;
@@ -214,7 +232,6 @@ defineEmits<{
     0 0 22px color-mix(in srgb, var(--lc, #7c3aed) 22%, transparent);
 }
 
-/* ── Nom ───────────────────────────────────────────── */
 .lang-panel__name {
   margin: 0 0 4px;
   font-size: 26px;
@@ -223,7 +240,6 @@ defineEmits<{
   letter-spacing: -0.3px;
 }
 
-/* ── Méta ──────────────────────────────────────────── */
 .lang-panel__meta {
   display: flex;
   align-items: center;
@@ -245,7 +261,6 @@ defineEmits<{
   border: 1px solid color-mix(in srgb, var(--lc, #7c3aed) 45%, transparent);
 }
 
-/* ── Description ───────────────────────────────────── */
 .lang-panel__desc {
   margin: 0 0 16px;
   padding: 14px 16px;
@@ -258,7 +273,6 @@ defineEmits<{
   line-height: 1.8;
 }
 
-/* ── Sections ──────────────────────────────────────── */
 .lang-panel__section {
   margin-top: 10px;
   padding: 14px 16px;
@@ -296,7 +310,6 @@ defineEmits<{
   line-height: 1.65;
 }
 
-/* ── Barre popularité ──────────────────────────────── */
 .lang-panel__bar {
   height: 7px;
   border-radius: 999px;
@@ -315,36 +328,27 @@ defineEmits<{
   font-size: 11.5px;
 }
 
-/* ── CTA cours ─────────────────────────────────────── */
-.lang-panel__cours { margin: 12px 0 0; }
+.lang-panel__cours { margin: 14px 0 0; }
 .lang-panel__cours button {
   width: 100%;
-  padding: 13px 20px;
+  padding: 14px 20px;
   border-radius: 12px;
   border: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  font-family: var(--font-orbitron);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #0b1020;
   cursor: pointer;
-  background: linear-gradient(
-    135deg,
-    var(--lc, #7c3aed) 0%,
-    color-mix(in srgb, var(--lc, #7c3aed) 60%, #3b82f6) 100%
-  );
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-    0 8px 28px color-mix(in srgb, var(--lc, #7c3aed) 35%, transparent);
-  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+  background: linear-gradient(90deg, #a78bfa, #60a5fa);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset, 0 8px 28px rgba(124, 58, 237, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 .lang-panel__cours button:hover {
   transform: translateY(-2px);
-  filter: brightness(1.12);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.10) inset,
-    0 14px 40px color-mix(in srgb, var(--lc, #7c3aed) 50%, transparent);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 14px 40px rgba(124, 58, 237, 0.55);
 }
 
-/* ── Chips frameworks ──────────────────────────────── */
 .lang-panel__frameworks {
   display: flex;
   flex-wrap: wrap;
@@ -380,7 +384,6 @@ defineEmits<{
   font-style: italic;
 }
 
-/* ── Lien site officiel ────────────────────────────── */
 .lang-panel__links {
   display: flex;
   flex-wrap: wrap;

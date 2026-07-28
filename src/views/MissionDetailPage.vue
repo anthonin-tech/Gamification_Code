@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { useRoute } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
@@ -16,11 +16,11 @@ const userStore = useUserStore()
 
 const termineMissionBtn = ref<HTMLElement | null>(null)
 const btnRect = ref<DOMRect | null>(null)
-const xpBar = document.querySelector('.navbar-xpbar')
 const flyingXp = ref(false)
 const flyStyle = ref({})
 
 async function terminerMission() {
+  const xpBar = document.querySelector('.navbar-xpbar')
   if (!xpBar || !termineMissionBtn.value || !mission) return
 
   const xpBarRect = xpBar.getBoundingClientRect()
@@ -46,7 +46,7 @@ async function terminerMission() {
   userStore.updateMisssion(mission.missionId)
 
   const { checkAndUnlock } = useBadge()
-  
+
   await checkAndUnlock(100 + mission.missionId, mission.missionId)
   await checkAndUnlock(5, userStore.completeMissions.length)
   await checkAndUnlock(6, userStore.completeMissions.length)
@@ -58,14 +58,12 @@ async function terminerMission() {
   pause.value = true
 }
 
-const missionTermine = computed(() => 
+const missionTermine = computed(() =>
   userStore.completeMissions.includes(mission?.missionId ?? - 1)
 )
-const IsDelock = computed (() => 
+const IsDelock = computed (() =>
   MissionIsLock(mission ?? { minLecons: 999, langage: ''} as any)
 )
-
-const ongletActif = ref("missions")
 
 const TableTask = ref<number[]>([])
 const ProgressTask = computed(() => {
@@ -84,22 +82,6 @@ function DeLockIndice(indiceXP: number, indiceNiv: number) {
   IndiceLock.value.push(indiceNiv)
   localStorage.setItem(`codequest_mission_${mission?.missionId}_indices`, JSON.stringify(IndiceLock.value))
 }
-
-const ValidationCriteria = [
-  "Mon code fonctionne sans erreur",
-  "J'ai testé mon code avec différents cas",
-  "Mon code est le plus simple et concis possible",
-  "Je n'ai pas utilisé l'IA pour écrire mon code",
-  "Je suis content du résultat"
-]
-const ValidationCase = ref([])
-const ValidationLink = ref<string>('')
-const ValidationCheck = computed(() => {
-  if (ValidationCase.value.length === ValidationCriteria.length) {
-    return true
-  }
-  return false
-})
 
 const isVerifying = ref<boolean>(false)
 
@@ -120,7 +102,7 @@ onMounted(() => {
   SecondElapsed.value = SecondElapsed.value = Number(localStorage.getItem(`codequest_mission_${mission?.missionId}_time`) ?? 0)
   TimerIntervale = setInterval(() => {
       if (!pause.value) {
-        SecondElapsed.value ++ 
+        SecondElapsed.value ++
       }
   }, 1000)
 })
@@ -148,140 +130,121 @@ const TempsFormate = computed(() => {
 </script>
 
 <template>
-  <div 
-      v-if="mission && IsDelock" 
-      class="mission-detail"
-  >
-    <div class="mission-banner" :class="mission.difficulte">
-      <img :src="mission.image" :alt="mission.missionTitre" class="mission-banner__img" />
-      <div class="mission-banner__overlay">
-        <h1 class="mission-banner__title">{{ mission.missionTitre }}</h1>
-        <span class="mission-banner__diff" :class="mission.difficulte">{{ mission.difficulte }}</span>
-        <p class="mission-banner__meta">{{ mission.langage }} · {{ mission.taches.length }} tâches · +{{ mission.xpRecompense }} XP</p>
+  <div v-if="mission && IsDelock" class="mission-detail">
+
+    <div class="md-topbar">
+      <router-link to="/mission" class="md-back">← Missions</router-link>
+      <span class="md-signal">
+        <svg width="12" height="10" viewBox="0 0 14 10" fill="currentColor">
+          <rect x="0" y="6" width="2" height="4" rx="0.5"/>
+          <rect x="4" y="4" width="2" height="6" rx="0.5"/>
+          <rect x="8" y="2" width="2" height="8" rx="0.5"/>
+          <rect x="12" y="0" width="2" height="10" rx="0.5"/>
+        </svg>
+        {{ mission.langage.slice(0,2).toUpperCase() }}-{{ String(mission.missionId).padStart(2, '0') }}
+      </span>
+      <div v-if="!missionTermine" class="md-timer">
+        <span>⏱</span>
+        <span class="md-timer__display">{{ TempsFormate }}</span>
       </div>
     </div>
 
-    <div class="mission-tabs">
-      <button @click="ongletActif = 'missions'" :class="{ active: ongletActif === 'missions' }">Missions</button>
-      <button @click="ongletActif = 'indices'" :class="{ active: ongletActif === 'indices' }">Indices</button>
-      <button @click="ongletActif = 'validation'" :class="{ active: ongletActif === 'validation' }">Validations</button>
-      <button @click="ongletActif = 'récompenses'" :class="{ active: ongletActif === 'récompenses' }">Récompenses</button>
+    <div class="md-banner">
+      <span class="md-banner__planet" :class="`planet--${mission.langage}`">
+        {{ mission.langage.slice(0,2).toUpperCase() }}
+      </span>
+      <div class="md-banner__info">
+        <h1 class="md-banner__title">{{ mission.missionTitre }}</h1>
+        <p class="md-banner__meta">
+          SECTEUR {{ mission.langage.toUpperCase() }} · Briefing : {{ mission.description }}
+        </p>
+      </div>
+      <span class="md-diff" :class="mission.difficulte.toLowerCase()">{{ mission.difficulte }}</span>
+      <span class="md-xp">+{{ mission.xpRecompense }} XP</span>
     </div>
 
-    <div v-if="!missionTermine" class="timer-bar">
-      <span class="timer-display">{{ TempsFormate }}</span>
-      <button class="btn-pause" :class="{ 'btn-pause--active': pause }" @click="pause = !pause">
-        {{ pause ? '▶ Reprendre' : '⏸ Pause' }}
-      </button>
-    </div>
+    <div class="md-grid">
 
-    <div v-if="ongletActif === 'missions'" class="mission-content">
+      <div class="md-left">
 
-      <div class="editor-wrapper">
-        <CodeEditor :langage="mission.langage" @submit="ManageSubmission"/>
-        <div v-if="isVerifying" class="editor-verifying">
-          <div class="verifying-scene">
-            <video
-              class="verifying-video"
-              src="/Loading Coder.mp4"
-              autoplay
-              loop
-              muted
-              playsinline
-            />
-            <span class="verifying-label">Vérification en cours…</span>
+        <section class="md-section">
+          <div class="md-section__header">
+            <span class="md-section__label">● OBJECTIFS</span>
+            <span class="md-section__count">{{ TableTask.length }} / {{ mission.taches.length }}</span>
           </div>
-        </div>
+          <div class="md-prog-bar">
+            <div class="md-prog-bar__fill" :style="{ width: ProgressTask + '%' }"></div>
+          </div>
+          <ul class="md-tasks">
+            <li v-for="tache in mission.taches" :key="tache.taskId" class="md-task">
+              <input type="checkbox" :checked="TableTask.includes(tache.taskId)" disabled>
+              {{ tache.taskTitre }}
+            </li>
+          </ul>
+        </section>
+
+        <section class="md-section">
+          <div class="md-section__header">
+            <span class="md-section__label md-section__label--gold">♦ INDICES</span>
+          </div>
+          <div class="md-indices">
+            <div v-for="indice in mission.indices" :key="indice.niveau">
+              <div
+                v-if="indice.niveau === 1 || IndiceLock.includes(indice.niveau - 1)"
+                class="md-indice"
+                :class="{ 'md-indice--unlocked': IndiceLock.includes(indice.niveau) }"
+              >
+                <div v-if="IndiceLock.includes(indice.niveau) && indice.niveau != 3">
+                  <span class="md-indice__num">Indice {{ indice.niveau }}</span>
+                  <p class="md-indice__text">{{ indice.texte }}</p>
+                </div>
+                <div v-else-if="indice.niveau === 3">
+                  <span class="md-indice__num">Indice {{ indice.niveau }}</span>
+                  <p class="md-indice__text">{{ indice.texte }}</p>
+                  <CodeEditor :langage="mission.langage" @submit="ManageSubmission" />
+                </div>
+                <button v-else class="md-indice__btn" @click="DeLockIndice(indice.xpCout, indice.niveau)">
+                  <span>Indice {{ indice.niveau }}</span>
+                  <span class="md-indice__cost">débloquer · -{{ indice.xpCout }} XP</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
 
-      <section class="mission-section">
-        <h2 class="mission-section__title">Description</h2>
-        <p class="mission-section__text">{{ mission.description }}</p>
-      </section>
-
-      <section class="mission-section">
-        <div class="task-progress">
-          <div class="task-progress__label">
-            <span>Progression</span>
-            <span>{{ TableTask.length }} / {{ mission.taches.length }}</span>
-          </div>
-          <div class="task-progress__bar">
-            <div class="task-progress__fill" :style="{ width: ProgressTask + '%' }"></div>
+      <div class="md-right">
+        <div class="editor-wrapper">
+          <CodeEditor :langage="mission.langage" @submit="ManageSubmission" />
+          <div v-if="isVerifying" class="editor-verifying">
+            <div class="verifying-scene">
+              <video
+                class="verifying-video"
+                src="/Loading Coder.mp4"
+                autoplay loop muted playsinline
+              />
+              <span class="verifying-label">Vérification en cours…</span>
+            </div>
           </div>
         </div>
-        <h2 class="mission-section__title">Tâches</h2>
-        <ul class="mission-tasks">
-          <li v-for="tache in mission.taches" :key="tache.taskId" class="mission-task">
-            <input type="checkbox" :checked="TableTask.includes(tache.taskId)" disabled>
-            <span class="mission-task__dot" />
-            {{ tache.taskTitre }}
-          </li>
-        </ul>
-      </section>
 
-      <button
-        @click="terminerMission()"
-        ref="termineMissionBtn"
-        class="btn-terminer"
-        :class="{ 'btn-terminer--done': missionTermine }"
-        :disabled="missionTermine || TableTask.length < mission.taches.length"
-      >
-        {{ missionTermine ? '✓ Mission terminée' : `Terminer la mission · +${mission.xpRecompense} XP` }}
-      </button>
-    </div>
-  
-    <div v-if="ongletActif === 'indices'" class="mission-indice">
-      <div v-for="indice in mission.indices" :key="indice.niveau">
-        <div
-          v-if="indice.niveau === 1 || IndiceLock.includes(indice.niveau - 1)"
-          class="indice-card"
-          :class="{ 'indice-card--unlocked': IndiceLock.includes(indice.niveau) }"
+        <button
+          @click="terminerMission()"
+          ref="termineMissionBtn"
+          class="md-btn-valider"
+          :class="{ 'md-btn-valider--done': missionTermine }"
+          :disabled="missionTermine || TableTask.length < mission.taches.length"
         >
-          <div class="indice-header">
-            <span class="indice-niveau">Indice {{ indice.niveau }}</span>
-          </div>
-          <div v-if="IndiceLock.includes(indice.niveau) && indice.niveau != 3">
-            <p class="indice-texte">{{ indice.texte }}</p>
-          </div>
-          <div v-else-if="indice.niveau === 3">
-            <p class="indice-texte">{{ indice.texte }}</p>
-            <CodeEditor :langage="mission.langage" @submit="ManageSubmission">
-            </CodeEditor>
-          </div>
-          <div v-else>
-            <button class="btn-debloquer" @click="DeLockIndice(indice.xpCout, indice.niveau)">
-              Débloquer · moins {{ indice.xpCout }} XP
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="ongletActif === 'validation'" class="mission-validation">
-      <ul class="validation-list">
-        <li v-for="(critere, index) in ValidationCriteria" :key="index" class="validation-item">
-          <input type="checkbox" v-model="ValidationCase" :value="index">
-          {{ critere }}
-        </li>
-      </ul>
-      <input type="text" v-model="ValidationLink" placeholder="Lien GitHub...">
-      <div v-if="ValidationCheck === true">
-        <p class="validation-ready">Prêt à être validé</p>
-      </div>
-      <div v-else>
-        <p class="validation-pending">Vous n'avez pas tout validé</p>
+          {{ missionTermine
+            ? '✓ Mission terminée'
+            : `COCHE LES ${mission.taches.length} OBJECTIFS POUR VALIDER` }}
+        </button>
       </div>
 
-    </div>
-
-    <div v-if="ongletActif === 'récompenses'" class="mission-recompenses">
-      <div class="recompense-temps">
-        <span class="recompense-temps__label">Temps passé</span>
-        <span class="recompense-temps__value">{{ TempsFormate }}</span>
-        <span class="recompense-temps__hint">Temps total passé sur cette mission</span>
-      </div>
     </div>
   </div>
+
   <div v-else-if="mission" class="mission-locked">
     <div class="locked-icon">
       <svg class="holo-lock" viewBox="0 0 64 76" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -312,9 +275,345 @@ const TempsFormate = computed(() => {
 </template>
 
 <style scoped>
-/* ── Loading overlay éditeur ─────────────────────────── */
+.mission-detail {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+.md-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 16px;
+}
+
+.md-back {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.7), rgba(59, 130, 246, 0.5));
+  border: 1px solid rgba(124, 58, 237, 0.5);
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: box-shadow 0.2s;
+}
+
+.md-back:hover {
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+
+.md-signal {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.md-timer {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+}
+
+.md-timer__display {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 2px;
+}
+
+.md-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 24px 16px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  flex-wrap: wrap;
+}
+
+.md-banner__planet {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-orbitron);
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.7);
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), inset 0 -4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.md-banner__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.md-banner__title {
+  margin: 0 0 5px;
+  font-family: var(--font-orbitron);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.md-banner__meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.5;
+}
+
+.md-diff {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.md-diff.facile    { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35); }
+.md-diff.moyen     { background: rgba(251, 191, 36, 0.15);  color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); }
+.md-diff.difficile { background: rgba(239, 68, 68, 0.15);   color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); }
+
+.md-xp {
+  font-family: var(--font-orbitron);
+  font-size: 15px;
+  font-weight: 800;
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  flex-shrink: 0;
+}
+
+.md-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 0 24px 40px;
+  align-items: stretch;
+}
+
+.md-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: start;
+}
+
+.md-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.md-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.md-section__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(124, 58, 237, 0.9);
+}
+
+.md-section__label--gold {
+  color: rgba(251, 191, 36, 0.85);
+}
+
+.md-section__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.md-prog-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.md-prog-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.9), rgba(59, 130, 246, 0.8));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.md-tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.md-task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12.5px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.md-task:has(input:checked) {
+  background: rgba(124, 58, 237, 0.07);
+  border-color: rgba(124, 58, 237, 0.25);
+  color: rgba(255, 255, 255, 0.38);
+  text-decoration: line-through;
+}
+
+.md-task input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.md-task input[type="checkbox"]:checked {
+  border-color: rgba(124, 58, 237, 0.8);
+  background: rgba(124, 58, 237, 0.25);
+}
+
+.md-task input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  width: 5px;
+  height: 8px;
+  border: 2px solid rgba(167, 139, 250, 1);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.md-indices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.md-indice {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.md-indice--unlocked {
+  border-color: rgba(124, 58, 237, 0.35);
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.md-indice__num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(167, 139, 250, 0.8);
+  padding: 10px 12px 4px;
+}
+
+.md-indice__text {
+  margin: 0;
+  padding: 0 12px 12px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+}
+
+.md-indice__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s, background 0.2s;
+}
+
+.md-indice__btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.md-indice__cost {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(251, 191, 36, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.md-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
 .editor-wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .editor-verifying {
@@ -355,604 +654,42 @@ const TempsFormate = computed(() => {
   50%       { opacity: 1; }
 }
 
-.mission-detail {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 0 60px;
-}
-
-/* ── Bannière ────────────────────────────────────────── */
-.mission-banner {
-  position: relative;
-  height: 320px;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 24px 24px 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-}
-
-.mission-banner__img {
+.md-btn-valider {
   width: 100%;
-  height: 120%;
-  object-fit: cover;
-  display: block;
-  transform: translateY(-10%);
-  transition: transform 0.4s ease;
-}
-
-.mission-banner:hover .mission-banner__img {
-  transform: translateY(-5%);
-}
-
-.mission-banner__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.92) 0%,
-    rgba(0,0,0,0.5) 45%,
-    rgba(0,0,0,0.15) 100%
-  );
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 28px 32px;
-  gap: 8px;
-}
-
-.mission-banner__diff {
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  width: fit-content;
-}
-
-.mission-banner__diff.FACILE   { background: rgba(52,211,153,0.2); color: #34d399; border: 1px solid rgba(52,211,153,0.4); }
-.mission-banner__diff.MOYEN    { background: rgba(251,191,36,0.2);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); }
-.mission-banner__diff.DIFFICILE { background: rgba(239,68,68,0.2);  color: #ef4444; border: 1px solid rgba(239,68,68,0.4); }
-
-.mission-banner__title {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.3px;
-}
-
-.mission-banner__meta {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
-  text-transform: capitalize;
-}
-
-/* ── Onglets ─────────────────────────────────────────── */
-.mission-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 0 24px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.mission-tabs button {
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: -1px;
-  transition: color 0.2s, border-color 0.2s;
-  letter-spacing: 0.3px;
-}
-
-.mission-tabs button:hover {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.mission-tabs button.active {
-  color: #fff;
-  border-bottom-color: rgba(124, 58, 237, 0.9);
-}
-
-/* ── Contenu ─────────────────────────────────────────── */
-.mission-content {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.mission-section__title {
-  margin: 0 0 12px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.45);
-  font-family: var(--font-pixel);
-}
-
-.mission-section__text {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 14px;
-  line-height: 1.8;
-  padding: 16px;
+  padding: 14px 20px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-left: 3px solid rgba(124, 58, 237, 0.6);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* ── Barre de progression ────────────────────────────── */
-.task-progress {
-  margin-bottom: 20px;
-}
-
-.task-progress__label {
-  display: flex;
-  justify-content: space-between;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-orbitron);
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 8px;
-}
-
-.task-progress__bar {
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.task-progress__fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.9), rgba(59, 130, 246, 0.8));
-  transition: width 0.35s ease;
-}
-
-/* ── Tâches ──────────────────────────────────────────── */
-.mission-tasks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mission-task {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13.5px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.mission-task:has(input:checked) {
-  background: rgba(124, 58, 237, 0.08);
-  border-color: rgba(124, 58, 237, 0.3);
-  color: rgba(255, 255, 255, 0.45);
-  text-decoration: line-through;
-}
-
-.mission-task input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative;
-}
-
-.mission-task input[type="checkbox"]:checked {
-  border-color: rgba(124, 58, 237, 0.8);
-  background: rgba(124, 58, 237, 0.25);
-}
-
-.mission-task input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid rgba(167, 139, 250, 1);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
-
-.mission-task__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(124, 58, 237, 0.8);
-  box-shadow: 0 0 8px rgba(124, 58, 237, 0.6);
-  flex-shrink: 0;
-}
-
-/* ── Bouton terminer ─────────────────────────────────── */
-.btn-terminer {
-  align-self: flex-start;
-  padding: 14px 28px;
-  border-radius: 14px;
-  border: 1px solid rgba(124, 58, 237, 0.5);
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(59, 130, 246, 0.15));
-  color: #fff;
-  font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.btn-terminer:hover:not(:disabled) {
-  border-color: rgba(124, 58, 237, 0.8);
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
+.md-btn-valider:not(:disabled) {
+  background: linear-gradient(90deg, #a78bfa, #60a5fa);
+  color: #0b1020;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
+}
+
+.md-btn-valider:not(:disabled):hover {
+  box-shadow: 0 10px 32px rgba(124, 58, 237, 0.6);
   transform: translateY(-2px);
 }
 
-.btn-terminer--done {
-  border-color: rgba(52, 211, 153, 0.5);
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(16, 185, 129, 0.1));
-  color: #34d399;
-  cursor: default;
-  opacity: 0.85;
+.md-btn-valider--done {
+  background: linear-gradient(90deg, #34d399, #10b981) !important;
+  color: #0b1020 !important;
+  box-shadow: 0 6px 24px rgba(52, 211, 153, 0.35) !important;
+  cursor: default !important;
+  transform: none !important;
 }
 
-/* ── Onglet Indices ──────────────────────────────────── */
-.mission-indice {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.indice-card {
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.02);
-  overflow: hidden;
-  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
-  position: relative;
-}
-
-.indice-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.indice-card--unlocked {
-  border-color: rgba(124, 58, 237, 0.4);
-  background: rgba(124, 58, 237, 0.05);
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(167, 139, 250, 0.1);
-}
-
-.indice-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px 12px;
-}
-
-.indice-niveau {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(124, 58, 237, 0.15);
-  color: rgba(167, 139, 250, 1);
-  border: 1px solid rgba(124, 58, 237, 0.35);
-}
-
-.indice-card--unlocked .indice-niveau {
-  background: rgba(124, 58, 237, 0.25);
-  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
-}
-
-.indice-cout {
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(251, 191, 36, 0.6);
-}
-
-.indice-card--unlocked .indice-cout {
-  color: rgba(52, 211, 153, 0.7);
-}
-
-.indice-texte {
-  padding: 0 20px 18px;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 14px;
-}
-
-.indice-lock {
-  padding: 4px 20px 20px;
-}
-
-.btn-debloquer {
-  padding: 12px 24px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(245, 158, 11, 0.08));
-  color: #fbbf24;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-  width: 100%;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(251, 191, 36, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.btn-debloquer::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  pointer-events: none;
-}
-
-.btn-debloquer:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(251, 191, 36, 0.25), 0 8px 24px rgba(251, 191, 36, 0.15);
-}
-
-.btn-debloquer:active {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.btn-debloquer:hover {
-  border-color: rgba(251, 191, 36, 0.65);
-  box-shadow: 0 0 16px rgba(251, 191, 36, 0.2);
-}
-
-/* ── Onglet Validation ───────────────────────────────── */
-.mission-validation {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.validation-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.validation-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13.5px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.validation-item:has(input:checked) {
-  background: rgba(52, 211, 153, 0.08);
-  border-color: rgba(52, 211, 153, 0.3);
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.validation-item input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative;
-}
-
-.validation-item input[type="checkbox"]:checked {
-  border-color: rgba(52, 211, 153, 0.8);
-  background: rgba(52, 211, 153, 0.25);
-}
-
-.validation-item input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid rgba(110, 231, 183, 1);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
-
-.mission-validation input[type="text"] {
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  color: #fff;
-  font-size: 13.5px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.mission-validation input[type="text"]::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.mission-validation input[type="text"]:focus {
-  border-color: rgba(124, 58, 237, 0.5);
-}
-
-.mission-validation .btn-debloquer:disabled,
-.validation-ready {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  margin: 0;
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(52, 211, 153, 0.35);
-  background: rgba(52, 211, 153, 0.08);
-  color: #34d399;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.validation-pending {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.4);
-  font-style: italic;
-}
-
-/* ── Timer bar ───────────────────────────────────────── */
-.timer-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 24px 20px;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.timer-display {
-  font-family: 'Courier New', monospace;
-  font-size: 18px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 2px;
-}
-
-.btn-pause {
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-
-.btn-pause:hover {
-  border-color: rgba(124, 58, 237, 0.4);
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(124, 58, 237, 0.08);
-}
-
-.btn-pause--active {
-  border-color: rgba(251, 191, 36, 0.4);
-  color: #fbbf24;
-  background: rgba(251, 191, 36, 0.06);
-}
-
-.btn-pause--active:hover {
-  border-color: rgba(251, 191, 36, 0.7);
-  background: rgba(251, 191, 36, 0.1);
-}
-
-/* ── Récompenses ─────────────────────────────────────── */
-.mission-recompenses {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.recompense-temps {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 32px 24px;
-  border-radius: 16px;
-  border: 1px solid rgba(124, 58, 237, 0.2);
-  background: rgba(124, 58, 237, 0.04);
-}
-
-.recompense-temps__label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.recompense-temps__value {
-  font-family: 'Courier New', monospace;
-  font-size: 42px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 4px;
-  text-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
-}
-
-.recompense-temps__hint {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.3);
-  font-style: italic;
-}
-
-/* ── Not found ───────────────────────────────────────── */
-.mission-not-found {
-  text-align: center;
-  padding: 80px 16px;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* ── Mission verrouillée ─────────────────────────────── */
 .mission-locked {
   max-width: 500px;
   margin: 80px auto;
@@ -1019,10 +756,22 @@ const TempsFormate = computed(() => {
   border-color: rgba(0, 212, 255, 0.7);
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
 }
+
+.mission-not-found {
+  text-align: center;
+  padding: 80px 16px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 860px) {
+  .md-grid { grid-template-columns: 1fr; }
+  .md-banner { margin: 0 12px 16px; }
+  .md-topbar { padding: 12px 16px; }
+  .md-grid { padding: 0 12px 40px; }
+}
 </style>
 
 <style>
-/* Non scoped — l'élément est téléporté dans <body> */
 .xp-fly {
   position: fixed;
   transform: translate(-50%, -50%);

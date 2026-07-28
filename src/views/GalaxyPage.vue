@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { BADGES } from '@/data/badges'
 import { useUserStore } from '@/stores/useUserStore'
 import { computed, ref } from 'vue'
@@ -15,36 +15,29 @@ const completionPercentage = computed(() =>
     Math.round(userStore.badges.length / BADGES.length * 100)
 )
 
-// Parcours : badge 1 au centre, badges 2/3/4 en orbite (120° d'écart, rayon 120)
-// Missions : badge 5 au centre, badges 6 + 101–109 en orbite (36° d'écart, rayon 155)
 const NODE_POSITIONS: Record<number, { x: number; y: number }> = {
-    // Parcours — hub au centre
-    1: { x: 240, y: 225 },  // centre
-    2: { x: 240, y: 105 },  // -90°
-    3: { x: 344, y: 285 },  //  30°
-    4: { x: 136, y: 285 },  // 150°
+    1: { x: 240, y: 225 },
+    2: { x: 240, y: 105 },
+    3: { x: 344, y: 285 },
+    4: { x: 136, y: 285 },
 
-    // Missions — hub au centre
     5:   { x: 780, y: 225 },
-    // orbite (360°/10 = 36°, départ -90°)
-    6:   { x: 780, y:  70 },  // -90°
-    101: { x: 871, y: 100 },  // -54°
-    102: { x: 927, y: 177 },  // -18°
-    103: { x: 927, y: 273 },  //  18°
-    104: { x: 871, y: 350 },  //  54°
-    105: { x: 780, y: 380 },  //  90°
-    106: { x: 689, y: 350 },  // 126°
-    107: { x: 633, y: 273 },  // 162°
-    108: { x: 633, y: 177 },  // 198°
-    109: { x: 689, y: 100 },  // 234°
+    6:   { x: 780, y:  70 },
+    101: { x: 871, y: 100 },
+    102: { x: 927, y: 177 },
+    103: { x: 927, y: 273 },
+    104: { x: 871, y: 350 },
+    105: { x: 780, y: 380 },
+    106: { x: 689, y: 350 },
+    107: { x: 633, y: 273 },
+    108: { x: 633, y: 177 },
+    109: { x: 689, y: 100 },
 }
 
 const CONNECTIONS = [
-    // Parcours — rayons depuis le hub
     { from: 1, to: 2 },
     { from: 1, to: 3 },
     { from: 1, to: 4 },
-    // Missions — rayons depuis le hub
     { from: 5, to: 6   },
     { from: 5, to: 101 },
     { from: 5, to: 102 },
@@ -84,20 +77,23 @@ const selectedBadge = computed(() =>
 )
 
 function selectBadge(badge: BadgeWithStatus) {
-    selectedIndex.value = badgesWithStats.value.findIndex(b => b.id === badge.id)
+    const idx = badgesWithStats.value.findIndex(b => b.id === badge.id)
+    selectedIndex.value = selectedIndex.value === idx ? -1 : idx
 }
 
 function closeBadge() { selectedIndex.value = -1 }
-function prevBadge()  { if (selectedIndex.value > 0) selectedIndex.value-- }
-function nextBadge()  { if (selectedIndex.value < badgesWithStats.value.length - 1) selectedIndex.value++ }
-
-const hasPrev = computed(() => selectedIndex.value > 0)
-const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.length - 1)
 </script>
 
 <template>
     <div class="galaxy-page">
-        <h1 class="galaxy-title">✦ Galaxie des succès ✦</h1>
+
+        <div class="galaxy-header">
+            <h1 class="galaxy-title">✦ GALAXIE DES SUCCÈS ✦</h1>
+            <p class="galaxy-subtitle">
+                {{ userStore.badges.length }} badges débloqués ·
+                <span class="galaxy-pct">{{ completionPercentage }}%</span> de la constellation
+            </p>
+        </div>
 
         <div class="galaxy-scroll">
             <div class="galaxy-canvas">
@@ -112,15 +108,12 @@ const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.lengt
                         </filter>
                     </defs>
 
-                    <!-- Cercles guides -->
-                    <circle cx="240" cy="225" r="120" class="circle-guide" />
-                    <circle cx="780" cy="225" r="155" class="circle-guide" />
+                    <circle cx="240" cy="225" r="120" class="circle-guide circle-guide--parcours" />
+                    <circle cx="780" cy="225" r="155" class="circle-guide circle-guide--missions" />
 
-                    <!-- Labels familles -->
-                    <text x="240" y="26" text-anchor="middle" class="family-text">PARCOURS</text>
-                    <text x="780" y="26" text-anchor="middle" class="family-text">MISSIONS</text>
+                    <text x="240" y="40" text-anchor="middle" class="family-text family-text--parcours">PARCOURS</text>
+                    <text x="780" y="40" text-anchor="middle" class="family-text family-text--missions">MISSIONS</text>
 
-                    <!-- Connexions -->
                     <line
                         v-for="(conn, i) in connectionsWithStatus"
                         :key="i"
@@ -148,68 +141,66 @@ const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.lengt
             </div>
         </div>
 
-        <!-- Vue hologramme -->
-        <Transition name="zoom">
-            <div v-if="selectedBadge" class="badge-overlay" @click.self="closeBadge">
-                <button class="nav-btn nav-btn--left" :disabled="!hasPrev" @click="prevBadge">‹</button>
-
-                <div class="holo-stage">
-                    <button class="holo-close" @click="closeBadge">✕</button>
-
-                    <div class="holo-badge" :class="{ 'holo-badge--locked': !selectedBadge.valide }">
-                        <div class="holo-scanlines" />
-                        <span class="holo-icon">{{ selectedBadge.icon }}</span>
-                        <div class="holo-ring" />
-                    </div>
-
-                    <div class="holo-pedestal">
-                        <div class="holo-pedestal__neck" />
-                        <div class="holo-pedestal__base" />
-                        <div class="holo-pedestal__glow" />
-                    </div>
-
-                    <div class="holo-info">
-                        <p class="holo-name">{{ selectedBadge.name }}</p>
-                        <p class="holo-desc">{{ selectedBadge.description }}</p>
-                        <span
-                            class="holo-status"
-                            :class="selectedBadge.valide ? 'status--done' : 'status--locked'"
-                        >
-                            {{ selectedBadge.valide ? '✓ Débloqué' : '🔒 Pas encore débloqué' }}
-                        </span>
-                    </div>
+        <Transition name="slide-up">
+            <div v-if="selectedBadge" class="badge-detail">
+                <span
+                    class="badge-detail__icon"
+                    :class="{ 'badge-detail__icon--locked': !selectedBadge.valide }"
+                >{{ selectedBadge.icon }}</span>
+                <div class="badge-detail__info">
+                    <h3 class="badge-detail__name">{{ selectedBadge.name }}</h3>
+                    <p class="badge-detail__desc">{{ selectedBadge.description }}</p>
+                    <p class="badge-detail__status" :class="selectedBadge.valide ? 'status--done' : 'status--locked'">
+                        {{ selectedBadge.valide ? '✓ DÉBLOQUÉ' : '🔒 PAS ENCORE DÉBLOQUÉ' }}
+                    </p>
                 </div>
-
-                <button class="nav-btn nav-btn--right" :disabled="!hasNext" @click="nextBadge">›</button>
+                <button class="badge-detail__close" @click="closeBadge">✕</button>
             </div>
         </Transition>
 
-        <div class="completion-counter">{{ completionPercentage }}%</div>
     </div>
 </template>
 
 <style scoped>
 .galaxy-page {
-    padding: 40px 0 100px;
+    padding: 40px 0 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 14px;
     position: relative;
 }
 
-.galaxy-title {
-    font-family: var(--font-pixel);
-    font-size: clamp(0.72rem, 1.6vw, 0.9rem);
+.galaxy-header {
     text-align: center;
-    background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    margin-bottom: 4px;
+}
+
+.galaxy-title {
+    font-family: var(--font-orbitron);
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-align: center;
+    background: linear-gradient(90deg, #ffffff 20%, #a78bfa 55%, #60a5fa 90%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin: 0 0 28px;
-    letter-spacing: 3px;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 8px;
 }
 
-/* ── Canvas ────────────────────────────────────────────── */
+.galaxy-subtitle {
+    margin: 0;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.galaxy-pct {
+    color: #a78bfa;
+    font-weight: 600;
+}
+
 .galaxy-scroll {
     width: 100%;
     overflow-x: auto;
@@ -222,9 +213,12 @@ const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.lengt
     width: 980px;
     height: 440px;
     margin: 0 auto;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    overflow: hidden;
 }
 
-/* ── SVG ───────────────────────────────────────────────── */
 .galaxy-svg {
     position: absolute;
     inset: 0;
@@ -235,32 +229,41 @@ const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.lengt
 
 .circle-guide {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.05);
     stroke-width: 1;
-    stroke-dasharray: 5 10;
+    stroke-dasharray: 4 6;
 }
+
+.circle-guide--parcours { stroke: rgba(167, 139, 250, 0.2); }
+.circle-guide--missions  { stroke: rgba(96, 165, 250, 0.2); }
 
 .family-text {
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 3px;
-    fill: rgba(255, 255, 255, 0.18);
-    font-family: var(--font-pixel, monospace);
+    letter-spacing: 4px;
+    font-family: var(--font-orbitron, sans-serif);
 }
 
+.family-text--parcours { fill: rgba(167, 139, 250, 0.6); }
+.family-text--missions  { fill: rgba(96, 165, 250, 0.6); }
+
 .galaxy-line {
-    stroke: rgba(255, 255, 255, 0.06);
+    stroke: rgba(167, 139, 250, 0.12);
     stroke-width: 1.5;
     stroke-linecap: round;
+    stroke-dasharray: 5 5;
+    animation: cqDash 1.4s linear infinite;
 }
 
 .galaxy-line--active {
-    stroke: rgba(124, 58, 237, 0.5);
+    stroke: rgba(124, 58, 237, 0.65);
     stroke-width: 2;
     filter: url(#glow-line);
 }
 
-/* ── Nœuds ─────────────────────────────────────────────── */
+@keyframes cqDash {
+    to { stroke-dashoffset: -20; }
+}
+
 .badge-node {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -314,247 +317,82 @@ const hasNext = computed(() => selectedIndex.value < badgesWithStats.value.lengt
     font-size: 1.85rem;
 }
 
-/* ── Overlay ───────────────────────────────────────────── */
-.badge-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(10px);
+.badge-detail {
+    max-width: 520px;
+    width: calc(100% - 40px);
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    border-radius: 18px;
+    padding: 20px 24px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 40px;
-    z-index: 200;
+    gap: 18px;
+    animation: cqFadeUp 0.3s ease;
 }
 
-.nav-btn {
+.badge-detail__icon {
+    font-size: 3.5rem;
+    line-height: 1;
     flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 212, 255, 0.25);
-    background: rgba(0, 212, 255, 0.06);
-    color: rgba(0, 212, 255, 0.8);
-    font-size: 2rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    filter:
+        drop-shadow(0 0 10px rgba(167, 139, 250, 0.8))
+        drop-shadow(0 0 24px rgba(167, 139, 250, 0.4));
 }
 
-.nav-btn:not(:disabled):hover {
-    background: rgba(0, 212, 255, 0.14);
-    border-color: rgba(0, 212, 255, 0.6);
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+.badge-detail__icon--locked {
+    filter: grayscale(1);
+    opacity: 0.3;
 }
 
-.nav-btn:disabled {
-    opacity: 0.15;
-    cursor: not-allowed;
-}
-
-/* ── Hologramme ────────────────────────────────────────── */
-.holo-stage {
-    position: relative;
+.badge-detail__info {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 4px;
 }
 
-.holo-close {
-    position: absolute;
-    top: -36px;
-    right: -16px;
+.badge-detail__name {
+    font-family: var(--font-orbitron);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0 0 4px;
+    color: #fff;
+}
+
+.badge-detail__desc {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.badge-detail__status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin: 6px 0 0;
+}
+
+.status--done   { color: #4ade80; }
+.status--locked { color: rgba(255, 255, 255, 0.35); }
+
+.badge-detail__close {
+    flex-shrink: 0;
+    align-self: flex-start;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 16px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 18px;
     cursor: pointer;
+    padding: 2px 6px;
     transition: color 0.2s;
-    padding: 4px 8px;
 }
 
-.holo-close:hover { color: rgba(255, 255, 255, 0.7); }
+.badge-detail__close:hover { color: #fff; }
 
-.holo-badge {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.holo-icon {
-    font-size: 6rem;
-    position: relative;
-    z-index: 2;
-    filter:
-        drop-shadow(0 0 16px rgba(0, 212, 255, 1))
-        drop-shadow(0 0 40px rgba(0, 212, 255, 0.7))
-        drop-shadow(0 0 80px rgba(0, 212, 255, 0.3));
-    animation: holo-float 3.5s ease-in-out infinite;
-}
-
-.holo-badge--locked .holo-icon {
-    filter: grayscale(1) drop-shadow(0 0 6px rgba(255,255,255,0.1));
-    opacity: 0.3;
-    animation: none;
-}
-
-.holo-scanlines {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent 0px,
-        transparent 3px,
-        rgba(0, 212, 255, 0.022) 3px,
-        rgba(0, 212, 255, 0.022) 4px
-    );
-    z-index: 3;
-    pointer-events: none;
-    border-radius: 50%;
-    animation: scan-move 6s linear infinite;
-}
-
-.holo-ring {
-    position: absolute;
-    inset: 8px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 212, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
-    animation: ring-pulse 3.5s ease-in-out infinite;
-    z-index: 1;
-}
-
-.holo-badge--locked .holo-ring { display: none; }
-
-.holo-pedestal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: -8px;
-}
-
-.holo-pedestal__neck {
-    width: 88px;
-    height: 20px;
-    background: linear-gradient(to bottom, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.06));
-    clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
-}
-
-.holo-pedestal__base {
-    width: 136px;
-    height: 12px;
-    background: linear-gradient(to bottom, rgba(0, 212, 255, 0.14), rgba(0, 212, 255, 0.04));
-    border-radius: 2px;
-}
-
-.holo-pedestal__glow {
-    width: 180px;
-    height: 10px;
-    background: radial-gradient(ellipse, rgba(0, 212, 255, 0.35) 0%, transparent 70%);
-    border-radius: 50%;
-    margin-top: 2px;
-    animation: base-glow 3.5s ease-in-out infinite;
-}
-
-.holo-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 20px;
-    text-align: center;
-}
-
-.holo-name {
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-    margin: 0;
-    text-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-}
-
-.holo-desc {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.65;
-    max-width: 260px;
-    margin: 0;
-}
-
-.holo-status {
-    margin-top: 4px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    border-radius: 999px;
-}
-
-.status--done {
-    color: #34d399;
-    background: rgba(52, 211, 153, 0.08);
-    border: 1px solid rgba(52, 211, 153, 0.3);
-}
-
-.status--locked {
-    color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* ── Compteur ──────────────────────────────────────────── */
-.completion-counter {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    font-family: var(--font-pixel);
-    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(59, 130, 246, 0.85));
-    color: #fff;
-    padding: 10px 22px;
-    border-radius: 999px;
-    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.45);
-    letter-spacing: 1.5px;
-}
-
-/* ── Animations ────────────────────────────────────────── */
-@keyframes holo-float {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-14px); }
-}
-
-@keyframes ring-pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50%       { opacity: 0.9; transform: scale(1.04); }
-}
-
-@keyframes base-glow {
-    0%, 100% { opacity: 0.5; }
-    50%       { opacity: 1; }
-}
-
-@keyframes scan-move {
-    0%   { background-position: 0 0; }
-    100% { background-position: 0 80px; }
-}
-
-/* ── Transition ────────────────────────────────────────── */
-.zoom-enter-active { transition: opacity 0.25s ease; }
-.zoom-leave-active { transition: opacity 0.2s ease; }
-.zoom-enter-from, .zoom-leave-to { opacity: 0; }
-
-.zoom-enter-active .holo-stage {
-    animation: stage-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes stage-in {
-    from { transform: scale(0.65); opacity: 0; }
-    to   { transform: scale(1);    opacity: 1; }
-}
+.slide-up-enter-active { transition: opacity 0.25s ease, transform 0.25s ease; }
+.slide-up-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
+.slide-up-enter-from   { opacity: 0; transform: translateY(12px); }
+.slide-up-leave-to     { opacity: 0; transform: translateY(6px); }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import NavBar from './components/layout/NavBar.vue';
+import GalaxyBackground from './components/home/GalaxyBackground.vue';
 import { useUserStore } from './stores/useUserStore';
 
 const userStore = useUserStore()
@@ -14,7 +15,8 @@ onMounted(async () => {
       username: data.user.username,
       badges: data.user.badges,
       completeMissions: data.user.completeMissions,
-      favoriteLanguages: data.user.favoriteLanguages
+      favoriteLanguages: data.user.favoriteLanguages,
+      avatarCustomization: data.user.avatarCustomization
     })
     const res = await fetch('/api/profil/streak', { method: 'POST', credentials: 'include'})
     const data_streak = await res.json()
@@ -25,6 +27,7 @@ onMounted(async () => {
 
 <template>
   <div class="app-shell">
+    <GalaxyBackground />
     <NavBar />
     <div class="app-main">
       <router-view />

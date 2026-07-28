@@ -87,7 +87,7 @@ function sendJson(res, statusCode, payload) {
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Max-Age', '86400')
@@ -104,9 +104,10 @@ async function handleGetArticles(url, res) {
   if (category && category !== 'Tous') filter.category = category
 
   if (search) {
+    const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     filter.$or = [
-      { title: { $regex: search, $options: 'i' } },
-      { summary: { $regex: search, $options: 'i' } },
+      { title: { $regex: escaped, $options: 'i' } },
+      { summary: { $regex: escaped, $options: 'i' } },
     ]
   }
 
@@ -133,7 +134,11 @@ async function handleGetArticles(url, res) {
   })
 }
 
-async function handleScrape(res) {
+async function handleScrape(req, res) {
+  const secret = req.headers['x-scrape-secret']
+  if (secret !== process.env.SCRAPE_SECRET) {
+    return sendJson(res, 401, {error: 'Non autorisé'})
+  }
   console.log('Scraping manuel déclenché')
   scrapeAllSources().catch(console.error)
   return sendJson(res, 202, { message: 'Scraping démarré en arrière-plan' })
@@ -221,7 +226,7 @@ export async function startBackend(options = {}) {
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
         }
-        return await handleScrape(res)
+        return await handleScrape(req, res)
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/register') {
@@ -262,14 +267,46 @@ export async function startBackend(options = {}) {
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
         }
-        return await handleExcute(req, res)
+        return await handleUpdateStreak(req, res)
       }
 
       if (req.method === 'POST' && url.pathname === '/api/execute'){
         if (!mongoConnected) {
           return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
         }
-        return await handleUpdateStreak(req, res)
+        return await handleExcute(req, res)
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/profil/favorites'){
+        if (!mongoConnected) {
+          return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)'})
+        }
+        return await handleFavoriteLanguages(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/xp') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleUpdateXP(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/missions') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleUpdateMissions(req, res)
+      }
+
+      if (req.method === 'GET' && url.pathname === '/api/user/progress') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleGetProgress(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/progress') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleSaveProgress(req, res)
+      }
+
+      if (req.method === 'PATCH' && url.pathname === '/api/user/avatar') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleSaveAvatar(req, res)
       }
 
       return sendJson(res, 404, { error: 'Not found' })
@@ -316,10 +353,32 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
 async function handleRegister(req, res) {
   const { username, email, password } = await parseBody(req)
+
+  if (!username || username.trim().length < 3 || username.trim().length > 30) {
+    return sendJson(res, 400, { error: 'Nom d\'utilisateur : 3 à 30 caractères requis'})
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!email || !emailRegex.test(email)) {
+    return sendJson(res, 400, { error: 'Adresse email invalide'})
+  }
+
+  if (!password || password.length < 8) {
+    return sendJson(res, 400, { error: 'Mot de Passe invalide'})
+  }
+
+  if (await User.findOne({email})) {
+    return sendJson(res, 409, { error: 'utilisateur existe déjà'})
+  }
+
+  if (await User.findOne({username})) {
+    return sendJson(res, 409, { error: 'utilisateur existe déjà'})
+  }
+
   const userInfo = new User({ username, email, password })
   await userInfo.save()
   const token = jwt.sign( {id: userInfo._id, username }, process.env.JWT_SECRET , { expiresIn: '7d' })
-  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Strict`)
   sendJson(res, 201, { message: 'Compte créé' })
 }
 
@@ -333,8 +392,8 @@ async function handleLogin(req, res) {
     if (!isValid) {
     return sendJson(res, 401, { error: 'Mauvais mot de passe' })
   }
-  const token = jwt.sign( {id: user._id, username: user.username }, process.env.JWT_SECRET , { expiresIn: '7d' })
-  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`)
+  const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' })
+  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Strict`)
   sendJson(res, 200, { message: 'Connecté' })
 }
 
@@ -349,7 +408,7 @@ async function handleMe(req, res) {
     } catch (error) {
       return sendJson(res, 401, { message: 'Token invalide'})
     }
-    const user = await User.findById(response.id)
+    const user = await User.findById(response.id).select('-password')
     sendJson(res, 200, { user })
 }
 
@@ -409,10 +468,10 @@ async function handleFavoriteLanguages(req, res) {
     return sendJson(res, 401, { message: 'Token invalide'})
   }
   const favoritelangage = await parseBody(req)
-  if (favoritelangage > 3) {
+  if (favoritelangage.favoriteLanguages?.length > 3) {
     return sendJson(res, 401, { message: 'Trop de Favorite Language' })
   }
-  await findByIdAndUpdate(favoritelangage)
+  await User.findByIdAndUpdate(response.id, { favoriteLanguages: favoritelangage.favoriteLanguages })
   return sendJson(res, 200, { message: 'Favorite Language ✓' })
 }
 
@@ -445,6 +504,83 @@ async function handleUpdateStreak(req, res) {
   }
 
   user.lastActivityDate = today
-  await user.save() 
-  return sendJson(res, 200, { streak: user.streak }) 
+  await user.save()
+  return sendJson(res, 200, { streak: user.streak })
+}
+
+async function handleUpdateXP(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { xp } = await parseBody(req)
+  if (typeof xp !== 'number') {
+    return sendJson(res, 400, {error: 'xp n\'est pas un number'})
+  }
+
+  if (!xp || xp < 1 || xp > 500) {
+    return sendJson(res, 400, {error: 'xp ne correspond à l\'exp habituelle'})
+  }
+  await User.findByIdAndUpdate(response.id, { $inc: { xp } })
+  return sendJson(res, 200, { message: 'XP mis à jour' })
+}
+
+async function handleUpdateMissions(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { missionId } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $addToSet: { completeMissions: missionId } })
+  return sendJson(res, 200, { message: 'Mission enregistrée' })
+}
+
+async function handleGetProgress(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const user = await User.findById(response.id)
+  const lessonProgress = Object.fromEntries(user.lessonProgress)
+  return sendJson(res, 200, { lessonProgress })
+}
+
+async function handleSaveAvatar(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { avatarCustomization } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $set: { avatarCustomization } })
+  return sendJson(res, 200, { message: 'Avatar sauvegardé' })
+}
+
+async function handleSaveProgress(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté' })
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { langage, completedLessons } = await parseBody(req)
+  await User.findByIdAndUpdate(response.id, { $set: { [`lessonProgress.${langage}`]: completedLessons } })
+  return sendJson(res, 200, { message: 'Leçon mise à jour'})
 }

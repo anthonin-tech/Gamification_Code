@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import SpaceBackground      from '@/components/profile/SpaceBackground.vue'
-import CharacterPanel       from '@/components/profile/CharacterPanel.vue'
 import XpCard               from '@/components/profile/XpCard.vue'
 import StreakCard            from '@/components/profile/StreakCard.vue'
-import FavoriteLanguages    from '@/components/profile/FavoriteLanguages.vue'
 import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { useXP } from '@/composables/useXP'
 import { computed } from 'vue'
+import { XP_PER_LEVEL } from '@/utils/constants'
 import { CURRICULUM_PYTHON }     from '@/data/curriculum'
 import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
 import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
@@ -19,6 +17,7 @@ import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
 import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
 import { useRouter } from 'vue-router'
 import { BADGES } from '@/data/badges'
+import AvatarPreview  from '@/components/profile/AvatarPreview.vue'
 
 const userStore = useUserStore()
 const { currentLevel } = useXP()
@@ -66,104 +65,124 @@ const RecentBadges = computed(() => {
 
 const selectedLanguages = computed(() => userStore.favoriteLanguages)
 
-const favLangsDisplay = computed(() =>
-  selectedLanguages.value.map(slug => ({
-    name:  slug,
-    icon:  LANG_META[slug]?.icon  ?? '',
-    color: LANG_META[slug]?.color ?? '#fff',
-    glow:  LANG_META[slug]?.glow  ?? 'rgba(255,255,255,0.2)',
-  }))
-)
+
 
 async function toggleLanguage(slug: string) {
   if (selectedLanguages.value.includes(slug)) {
     userStore.favoriteLanguages = userStore.favoriteLanguages.filter(s => s !== slug)
-  }
-  else if (selectedLanguages.value.length < 3) {
+  } else if (selectedLanguages.value.length < 3) {
     userStore.favoriteLanguages.push(slug)
   }
-  return await fetch('/api/profil/favorites', {
+  await fetch('/api/profil/favorites', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify({ favoriteLanguages: userStore.favoriteLanguages })
   })
 }
 
+const CURRICULUM_MAP: Record<string, any[]> = {
+  python: CURRICULUM_PYTHON, javascript: CURRICULUM_JAVASCRIPT,
+  typescript: CURRICULUM_TYPESCRIPT, java: CURRICULUM_JAVA,
+  php: CURRICULUM_PHP, go: CURRICULUM_GO,
+  cpp: CURRICULUM_CPP, rust: CURRICULUM_RUST, csharp: CURRICULUM_CSHARP,
+}
+
 const currentLanguage = computed(() => {
   const best = progressionLangages.value.reduce((meilleur, actuel) => actuel.completed/actuel.total > meilleur.completed/meilleur.total ? actuel : meilleur)
+  const saved = localStorage.getItem(`codequest_${best.langage}_progress`)
+  const completedSet = new Set<string>(saved ? JSON.parse(saved).completedLessons ?? [] : [])
+  const curriculum = CURRICULUM_MAP[best.langage] ?? []
+  let nextLesson = ''
+  outer: for (let mi = 0; mi < curriculum.length; mi++) {
+    for (let li = 0; li < curriculum[mi].lessons.length; li++) {
+      if (!completedSet.has(`${mi}-${li}`)) {
+        nextLesson = curriculum[mi].lessons[li].title
+        break outer
+      }
+    }
+  }
   return {
     name:     best.langage,
     icon:     LANG_META[best.langage]?.icon  ?? '',
     color:    LANG_META[best.langage]?.color ?? '#fff',
     progress: best.total > 0 ? Math.round(best.completed / best.total * 100) : 0,
-    mission:  ''
-  } 
+    mission:  nextLesson
+  }
 })
 </script>
 
 <template>
   <div class="profil-page">
-    <SpaceBackground />
-    <div class="profil-layout">
+<div class="profil-layout">
 
-      <CharacterPanel
-        :avatar-url="userStore.userAvatar ?? ''"
-        :level="currentLevel"
-      />
+      <div class="profil-identity">
+        <h1 class="profil-header__username">{{ userStore.username }}</h1>
+        <p class="profil-header__tag">EXPLORATEUR · NIVEAU {{ currentLevel }}</p>
 
-      <section class="profil-info">
-        <header>
-          <span class="profil-header__tag">PROFIL</span>
-          <h1 class="profil-header__username">{{ userStore.username }}</h1>
-          <p class="profil-header__title">Cosmic Developer</p>
-        </header>
+        <div class="profil-xp-wrap">
+          <XpCard
+            :xp="userStore.userXP % XP_PER_LEVEL"
+            :xp-to-next="XP_PER_LEVEL"
+            :level="currentLevel"
+          />
+        </div>
 
-        <XpCard
-          :xp="userStore.userXP % 500
-          "
-          :xp-to-next="500"
-          :level="currentLevel"
-        />
-
-        <section class="stat">
-          <span class="stat__value">{{ userStore.completeMissions.length }}</span>
-          <span class="stat__label">Missions terminées</span>
-        </section>
-
-        <section class="langages">
-          <div 
-            v-for="{ langage, completed, total } in progressionLangages"
-            @click="toggleLanguage(langage)"
-            :class="{ 'lang-selected': selectedLanguages.includes(langage) }"
-          >
-            <img :src="LANG_META[langage]?.icon" />
-            {{ langage }}
-            <div class="lang-bar">
-              <div class="lang-bar__fill" :style="{ width: (total > 0 ? Math.round(completed/total * 100) : 0) + '%' }" />
-            </div>
-          </div>
-        </section>
-
-        <FavoriteLanguages :languages="favLangsDisplay" />
-        
         <StreakCard :streak="userStore.streak" />
 
+        <div class="profil-stat-box profil-stat-box--full">
+          <span class="profil-stat-box__value">{{ userStore.badges.length }}</span>
+          <span class="profil-stat-box__label">badges gagnés</span>
+        </div>
+
+        <button class="profil-logout" @click="logout">DÉCONNEXION</button>
+      </div>
+
+      <div class="profil-content">
         <CurrentLanguageCard :language="currentLanguage" />
 
-        <section class="badges">
-          <h2>Badges récents</h2>
-          <span v-for="badges in RecentBadges"
-            :key="badges?.id" 
-          >
-            {{ badges?.icon }}
-          </span>
-          <RouterLink to="/galaxy">Voir tous</RouterLink>
-        </section>
-      </section>
-    </div>
+        <div class="profil-card">
+          <div class="profil-fav-header">
+            <p class="profil-section-label">LANGAGES FAVORIS</p>
+            <span class="profil-fav-hint">max 3</span>
+          </div>
+          <div class="profil-fav-chips">
+            <button
+              v-for="slug in Object.keys(LANG_META)"
+              :key="slug"
+              class="profil-fav-chip"
+              :class="{ 'profil-fav-chip--active': selectedLanguages.includes(slug) }"
+              :style="{ '--lang-color': LANG_META[slug]?.color ?? '#fff' }"
+              @click="toggleLanguage(slug)"
+            >
+              <span class="profil-fav-chip__dot" :style="{ background: LANG_META[slug]?.color }"></span>
+              {{ slug }}
+            </button>
+          </div>
+        </div>
 
-    <button @click="logout">Se déconnecter</button>
+        <div class="profil-card">
+          <div class="profil-badges-header">
+            <p class="profil-section-label">DERNIERS BADGES</p>
+            <RouterLink to="/galaxy" class="profil-badges-link">Voir la constellation →</RouterLink>
+          </div>
+          <div class="profil-badges-grid">
+            <div v-for="badge in RecentBadges" :key="badge?.id" class="profil-badge-item">
+              <span class="profil-badge-icon">{{ badge?.icon }}</span>
+              <span class="profil-badge-name">{{ badge?.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profil-avatar-col">
+        <div class="profil-avatar-3d-wrap">
+          <AvatarPreview />
+        </div>
+        <p class="profil-avatar-hint">Personnaliser →</p>
+      </div>
+
+    </div>
   </div>
 </template>
 

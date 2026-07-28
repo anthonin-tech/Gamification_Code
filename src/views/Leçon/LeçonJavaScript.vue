@@ -4,9 +4,11 @@ import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
 import { XP_PER_LEVEL }      from '@/utils/constants'
 import type { CourseModule }  from '@/types/cours'
 import { useBadge } from '@/composables/useBadge'
+import { useUserStore } from '@/stores/useUserStore'
 import '@/assets/styles/pages/lecon.css'
 
 const LS_KEY = 'codequest_javascript_progress'
+const LANGAGE = 'javascript'
 const LESSON_STATUS_BADGES = {
   inProgress: '↩ Reprise en cours',
   completed: '✓ Terminée',
@@ -25,7 +27,6 @@ type LessonSnapshot = {
 
 type PersistedProgress = {
   totalXP?: number
-  streak?: number
   completedLessons?: string[]
   currentModule?: number
   currentLesson?: number
@@ -39,11 +40,13 @@ type LessonStep = any
 
 const curriculum: CourseModule[] = CURRICULUM_JAVASCRIPT
 
+const userStore = useUserStore()
+
 const starCanvas = ref<HTMLCanvasElement | null>(null)
 let animFrame = 0
 
 const totalXP = ref(0)
-const streak = ref(3)
+const streak = computed(() => userStore.streak)
 const completedLessons = ref<Set<string>>(new Set())
 const sidebarOpen = ref(false)
 const activeModule = ref(0)
@@ -126,7 +129,6 @@ function saveProgress() {
 
   const data = {
     totalXP: totalXP.value,
-    streak: streak.value,
     completedLessons: [...completedLessons.value],
     currentModule: currentModule.value,
     currentLesson: currentLesson.value,
@@ -144,7 +146,6 @@ function loadProgress() {
   try {
     const data: PersistedProgress = JSON.parse(raw)
     totalXP.value = data.totalXP ?? 0
-    streak.value = data.streak ?? 3
     completedLessons.value = new Set(data.completedLessons ?? [])
     currentModule.value = data.currentModule ?? 0
     currentLesson.value = data.currentLesson ?? 0
@@ -257,6 +258,13 @@ async function completeLesson() {
   const key = lessonKey.value
   if (!completedLessons.value.has(key)) {
     completedLessons.value.add(key)
+    fetch('/api/user/progress', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ langage: LANGAGE, completedLessons: [...completedLessons.value] })
+    })
+    userStore.updateXp(activeLesson.value?.xp ?? 0)
     totalXP.value += activeLesson.value?.xp ?? 0
     await checkAndUnlock(2, completedLessons.value.size)
     await checkAndUnlock(3, completedLessons.value.size)
@@ -275,6 +283,15 @@ function goNextLesson() {
   }
 }
 
+function goPrevLesson() {
+  if (currentLesson.value > 0) {
+    goLesson(currentModule.value, currentLesson.value - 1)
+  } else if (currentModule.value > 0) {
+    const prevMod = curriculum[currentModule.value - 1]
+    goLesson(currentModule.value - 1, prevMod.lessons.length - 1)
+  }
+}
+
 function answerQuiz(si: number, oi: number, step: LessonStep) {
   if (quizAnswered[si]) return
   quizSelected[si] = oi
@@ -285,8 +302,8 @@ function answerQuiz(si: number, oi: number, step: LessonStep) {
 
 function runChallenge(si: number, step: LessonStep) {
   const code = codeInputs[si] ?? step.starter ?? ''
-  let output = '$ python main.py\n'
-  const prints = [...code.matchAll(/print\s*\(([^)]+)\)/g)]
+  let output = '$ node main.js\n'
+  const prints = [...code.matchAll(/console\.log\s*\(([^)]+)\)/g)]
   for (const m of prints) {
     const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
     output += raw + '\n'
@@ -332,10 +349,22 @@ function resetAllProgress() {
   location.reload()
 }
 
+async function syncFromBackend() {
+  if (!userStore.isLoggedIn) return
+  try {
+    const res = await fetch('/api/user/progress', { credentials: 'include' })
+    const { lessonProgress } = await res.json()
+    const backendLessons: string[] = lessonProgress?.[LANGAGE] ?? []
+    backendLessons.forEach(key => completedLessons.value.add(key))
+    if (backendLessons.length > 0) saveProgress()
+  } catch {}
+}
+
 onMounted(() => {
   initStars()
   window.addEventListener('resize', initStars)
   loadProgress()
+  syncFromBackend()
 })
 
 onUnmounted(() => {
@@ -349,44 +378,23 @@ onUnmounted(() => {
     <canvas ref="starCanvas" class="star-canvas"></canvas>
 
     <aside class="lecon-sidebar" :class="{ 'sidebar-open': sidebarOpen }">
-      <div class="sidebar-top">
-        <div class="lang-pill">
-          <span class="lang-emoji">🟨</span>
-          <span class="lang-name">JavaScript</span>
-          <span class="lang-level">Zéro → Expert</span>
-        </div>
-        <button class="sidebar-close" @click="sidebarOpen = false">✕</button>
-      </div>
-
-      <div class="xp-section">
-        <div class="xp-top-row">
-          <span class="xp-total">⚡ {{ totalXP }} XP</span>
-          <span class="xp-level">Niveau {{ playerLevel }}</span>
-        </div>
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-fill" :style="{ width: levelPercent + '%' }"></div>
-        </div>
-        <div class="xp-streak">🔥 {{ streak }} jours · {{ completedLessons.size }} leçons</div>
-      </div>
 
       <nav class="module-nav">
         <div v-for="(mod, mi) in curriculum" :key="mi" class="module-group">
-          <button
+          <div
             class="module-header"
             :class="{
-              'mod-active':   activeModule === mi,
               'mod-complete': isModuleComplete(mi),
               'mod-locked':   isModuleLocked(mi)
             }"
-            @click="toggleModule(mi)"
           >
+            <span class="mod-num">M{{ mi + 1 }}</span>
             <span class="mod-icon">{{ mod.icon }}</span>
             <span class="mod-title">{{ mod.title }}</span>
             <span class="mod-badge">{{ modProgress(mi) }}/{{ mod.lessons.length }}</span>
-            <span class="mod-arrow" :class="{ rotated: activeModule === mi }">›</span>
-          </button>
+          </div>
 
-          <div class="lesson-list" v-if="activeModule === mi">
+          <div class="lesson-list">
             <button
               v-for="(lesson, li) in mod.lessons"
               :key="li"
@@ -398,10 +406,12 @@ onUnmounted(() => {
               }"
               @click="goLesson(mi, li)"
             >
-              <span class="lesson-dot"></span>
+              <span class="lesson-dot">
+                <span v-if="isLessonCompleted(mi, li)">✓</span>
+                <span v-else-if="currentModule === mi && currentLesson === li">▶</span>
+                <span v-else-if="isLessonLocked(mi, li)">🔒</span>
+              </span>
               <span>{{ lesson.title }}</span>
-              <span v-if="hasSavedProgress(mi, li) && !isLessonCompleted(mi, li)">↩</span>
-              <span v-else>{{ lessonTypeIcon(lesson.type) }}</span>
             </button>
           </div>
         </div>
@@ -418,41 +428,25 @@ onUnmounted(() => {
     <div class="lecon-main">
 
       <div class="topbar">
-        <button class="menu-btn" @click="sidebarOpen = true">☰</button>
+        <router-link to="/cours/javascript" class="topbar-back">← Cours</router-link>
         <div class="breadcrumb">
-          <span>{{ curriculum[currentModule]?.title }}</span>
+          <span>JavaScript</span>
           <span class="bc-sep">›</span>
           <span class="bc-lesson">{{ curriculum[currentModule]?.lessons[currentLesson]?.title }}</span>
         </div>
-        <span
-          v-if="hasSavedLesson && !isCurrentLessonCompleted"
-          style="font-size:11px;color:rgba(251,191,36,0.8);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);padding:3px 10px;border-radius:99px;"
-        >{{ currentLessonStatus }}</span>
-        <div class="topbar-xp">⚡ {{ totalXP }}</div>
+        <div class="topbar-xp">⚡ +{{ activeLesson?.xp ?? 0 }} XP à la clé</div>
       </div>
 
       <div v-if="activeLesson">
 
         <div class="lesson-hero">
-          <div class="lesson-hero-meta">
-            <span class="hero-type-badge">
-              {{ lessonTypeIcon(activeLesson.type) }} {{ lessonTypeLabel(activeLesson.type) }}
+          <div class="lesson-hero-top">
+            <h1 class="lesson-title-big">{{ activeLesson.title }}</h1>
+            <span class="lesson-status-badge" :class="isCurrentLessonCompleted ? 'badge--done' : 'badge--active'">
+              {{ isCurrentLessonCompleted ? 'TERMINÉ' : 'EN COURS' }}
             </span>
-            <span class="hero-xp-badge">+{{ activeLesson.xp }} XP</span>
-            <span class="hero-time">⏱ {{ activeLesson.time }}</span>
-            <span
-              v-if="isCurrentLessonCompleted"
-              style="font-size:11px;color:#06d6a0;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.3);padding:3px 10px;border-radius:99px;"
-            >{{ currentLessonStatus }}</span>
           </div>
-          <h1 class="lesson-title-big">{{ activeLesson.title }}</h1>
           <p class="lesson-subtitle">{{ activeLesson.subtitle }}</p>
-          <div class="lesson-progress-bar">
-            <div
-              class="lesson-progress-fill"
-              :style="{ width: (currentStep / Math.max(activeLesson.steps.length - 1, 1)) * 100 + '%' }"
-            ></div>
-          </div>
         </div>
 
         <div class="steps-wrap">
@@ -483,7 +477,7 @@ onUnmounted(() => {
             </div>
 
             <div v-if="step.type === 'quiz'" class="step-quiz">
-              <div class="step-tag">⚡ Quiz</div>
+              <div class="step-tag step-tag--quiz">◆ QUIZ RAPIDE</div>
               <p class="quiz-q">{{ step.question }}</p>
               <div class="quiz-opts">
                 <button
@@ -505,16 +499,15 @@ onUnmounted(() => {
             </div>
 
             <div v-if="step.type === 'code-challenge'" class="step-challenge">
-              <div class="step-tag">💻 Défi Code</div>
-              <div class="challenge-instructions">
-                <p>{{ step.instructions }}</p>
-                <div v-if="step.hint" class="callout callout-tip">💡 {{ step.hint }}</div>
+              <div class="step-challenge-header">
+                <div class="step-tag step-tag--challenge">▸ DÉFI DE CODE — {{ step.instructions }}</div>
+                <button class="run-btn run-btn--top" @click="runChallenge(si, step)">▶ EXÉCUTER</button>
               </div>
+              <div v-if="step.hint" class="callout callout-tip">💡 {{ step.hint }}</div>
               <div class="editor-wrap">
                 <div class="editor-header">
                   <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
                   <span>{{ step.filename ?? 'main.py' }}</span>
-                  <button class="run-btn" @click="runChallenge(si, step)">▶ Run</button>
                 </div>
                 <textarea
                   v-model="codeInputs[si]"
@@ -567,7 +560,7 @@ onUnmounted(() => {
                 <div class="editor-header">
                   <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
                   <span>{{ step.filename }}</span>
-                  <button class="run-btn" @click="runChallenge(si, step)">▶ Run</button>
+                  <button class="run-btn" @click="runChallenge(si, step)">▶ EXÉCUTER</button>
                 </div>
                 <textarea v-model="codeInputs[si]" class="code-textarea large" spellcheck="false">{{ step.starter }}</textarea>
               </div>
@@ -595,6 +588,19 @@ onUnmounted(() => {
           <button class="btn-next-lesson" @click="goNextLesson">Leçon suivante →</button>
         </div>
 
+      </div>
+
+      <div class="lecon-bottom-bar" v-if="activeLesson">
+        <button
+          class="bottom-btn bottom-btn--prev"
+          :disabled="currentModule === 0 && currentLesson === 0"
+          @click="goPrevLesson"
+        >← Leçon précédente</button>
+        <button
+          class="bottom-btn bottom-btn--validate"
+          :class="{ 'bottom-btn--done': isCurrentLessonCompleted }"
+          @click="completeLesson"
+        >{{ isCurrentLessonCompleted ? 'LEÇON VALIDÉE ✓' : `VALIDER LA LEÇON · +${activeLesson?.xp ?? 0} XP ✓` }}</button>
       </div>
     </div>
 

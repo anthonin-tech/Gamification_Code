@@ -4,9 +4,11 @@ import { CURRICULUM_CPP } from '@/data/curriculum-cpp'
 import { XP_PER_LEVEL }      from '@/utils/constants'
 import type { CourseModule }  from '@/types/cours'
 import { useBadge } from '@/composables/useBadge'
+import { useUserStore } from '@/stores/useUserStore'
 import '@/assets/styles/pages/lecon.css'
 
 const LS_KEY = 'codequest_cpp_progress'
+const LANGAGE = 'cpp'
 const LESSON_STATUS_BADGES = {
   inProgress: '↩ Reprise en cours',
   completed: '✓ Terminée',
@@ -25,7 +27,6 @@ type LessonSnapshot = {
 
 type PersistedProgress = {
   totalXP?: number
-  streak?: number
   completedLessons?: string[]
   currentModule?: number
   currentLesson?: number
@@ -39,11 +40,13 @@ type LessonStep = any
 
 const curriculum: CourseModule[] = CURRICULUM_CPP
 
+const userStore = useUserStore()
+
 const starCanvas = ref<HTMLCanvasElement | null>(null)
 let animFrame = 0
 
 const totalXP = ref(0)
-const streak = ref(3)
+const streak = computed(() => userStore.streak)
 const completedLessons = ref<Set<string>>(new Set())
 const sidebarOpen = ref(false)
 const activeModule = ref(0)
@@ -126,7 +129,6 @@ function saveProgress() {
 
   const data = {
     totalXP: totalXP.value,
-    streak: streak.value,
     completedLessons: [...completedLessons.value],
     currentModule: currentModule.value,
     currentLesson: currentLesson.value,
@@ -144,7 +146,6 @@ function loadProgress() {
   try {
     const data: PersistedProgress = JSON.parse(raw)
     totalXP.value = data.totalXP ?? 0
-    streak.value = data.streak ?? 3
     completedLessons.value = new Set(data.completedLessons ?? [])
     currentModule.value = data.currentModule ?? 0
     currentLesson.value = data.currentLesson ?? 0
@@ -257,6 +258,13 @@ async function completeLesson() {
   const key = lessonKey.value
   if (!completedLessons.value.has(key)) {
     completedLessons.value.add(key)
+    fetch('/api/user/progress', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ langage: LANGAGE, completedLessons: [...completedLessons.value] })
+    })
+    userStore.updateXp(activeLesson.value?.xp ?? 0)
     totalXP.value += activeLesson.value?.xp ?? 0
     await checkAndUnlock(2, completedLessons.value.size)
     await checkAndUnlock(3, completedLessons.value.size)
@@ -285,8 +293,8 @@ function answerQuiz(si: number, oi: number, step: LessonStep) {
 
 function runChallenge(si: number, step: LessonStep) {
   const code = codeInputs[si] ?? step.starter ?? ''
-  let output = '$ python main.py\n'
-  const prints = [...code.matchAll(/print\s*\(([^)]+)\)/g)]
+  let output = '$ g++ main.cpp -o main && ./main\n'
+  const prints = [...code.matchAll(/cout\s*<<\s*"([^"]+)"/g)]
   for (const m of prints) {
     const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
     output += raw + '\n'
@@ -332,10 +340,22 @@ function resetAllProgress() {
   location.reload()
 }
 
+async function syncFromBackend() {
+  if (!userStore.isLoggedIn) return
+  try {
+    const res = await fetch('/api/user/progress', { credentials: 'include' })
+    const { lessonProgress } = await res.json()
+    const backendLessons: string[] = lessonProgress?.[LANGAGE] ?? []
+    backendLessons.forEach(key => completedLessons.value.add(key))
+    if (backendLessons.length > 0) saveProgress()
+  } catch {}
+}
+
 onMounted(() => {
   initStars()
   window.addEventListener('resize', initStars)
   loadProgress()
+  syncFromBackend()
 })
 
 onUnmounted(() => {

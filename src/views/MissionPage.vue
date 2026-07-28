@@ -1,18 +1,9 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { MISSIONS } from '@/data/missions'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
-import { MissionIsLock } from '@/composables/useMissionLock'
-import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
-import { CURRICULUM_PYTHON } from '@/data/curriculum'
-import { CURRICULUM_JAVA } from '@/data/curriculum-java'
-import { CURRICULUM_CPP } from '@/data/curriculum-cpp'
-import { CURRICULUM_GO } from '@/data/curriculum-go'
-import { CURRICULUM_PHP } from '@/data/curriculum-php'
-import { CURRICULUM_RUST } from '@/data/curriculum-rust'
-import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
-import { CURRICULUM_CSHARP } from '@/data/curriculum-csharp'
+import { MissionIsLock, getLessonName } from '@/composables/useMissionLock'
 
 const filtreLangage = ref('')
 const filtreDifficulte = ref('')
@@ -35,57 +26,44 @@ const missionParLangue = computed(() => {
     }))
 })
 
-const curriculums: Record<string, any> = {
-  javascript: CURRICULUM_JAVASCRIPT,
-  python: CURRICULUM_PYTHON,
-  java: CURRICULUM_JAVA,
-  typescript: CURRICULUM_TYPESCRIPT,
-  rust: CURRICULUM_RUST,
-  csharp: CURRICULUM_CSHARP,
-  go: CURRICULUM_GO,
-  cpp: CURRICULUM_CPP,
-  php: CURRICULUM_PHP
-}
-
 function AllerMission(id: number) {
   router.push(`/mission/${id}`)
-}
-
-function getLessonName(mission: any) {
-  const curriculum = curriculums[mission.langage]
-  const AllLesson = curriculum.flatMap((l: any) => l.lessons)
-  const lessonRequired = AllLesson[mission.minLecons - 1]
-  return lessonRequired.title 
 }
 </script>
 
 <template>
   <div class="missions-page">
-    <div class="filters">
-      <select v-model="filtreDifficulte" class="filter-select">
-        <option value="">Toutes les difficultés</option>
-        <option value="FACILE">Facile</option>
-        <option value="MOYEN">Moyen</option>
-        <option value="DIFFICILE">Difficile</option>
-      </select>
-      <select v-model="filtreLangage" class="filter-select">
-        <option value="">Tous les langages</option>
-        <option value="python">Python</option>
-        <option value="javascript">JavaScript</option>
-        <option value="typescript">TypeScript</option>
-        <option value="rust">Rust</option>
-        <option value="go">Go</option>
-        <option value="java">Java</option>
-        <option value="csharp">C#</option>
-        <option value="c++">C++</option>
-      </select>
+    <div class="missions-toprow">
+      <div class="missions-header">
+        <h1 class="missions-page-title">CENTRE DE MISSIONS</h1>
+        <p class="missions-page-sub">Des défis de code pour gagner de l'XP et débloquer des badges.</p>
+      </div>
+      <div class="filters">
+        <select v-model="filtreDifficulte" class="filter-select">
+          <option value="">Toutes les difficultés</option>
+          <option value="FACILE">Facile</option>
+          <option value="MOYEN">Moyen</option>
+          <option value="DIFFICILE">Difficile</option>
+        </select>
+        <select v-model="filtreLangage" class="filter-select">
+          <option value="">Tous les langages</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="rust">Rust</option>
+          <option value="go">Go</option>
+          <option value="java">Java</option>
+          <option value="csharp">C#</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
     </div>
 
     <div 
         v-for="groupe in missionParLangue"
         :key="groupe.langage"
         class="separation-mission">
-        <h2>{{ groupe.langage }}</h2>
+        <h2><span class="lang-planet-dot" :class="`planet--${groupe.langage}`"></span>{{ groupe.langage }}</h2>
         <div class="barre-separation"></div>
         <div class="cards">
         <article
@@ -114,7 +92,7 @@ function getLessonName(mission: any) {
                 <path d="M29 52 L29 59 Q29 61 32 61 Q35 61 35 59 L35 52 Z" fill="currentColor" opacity="0.8"/>
               </svg>
             </div>
-            <span class="lock-label"><span class="lesson-namz">{{ getLessonName(mission )}} </span> leçons requises</span>
+            <span class="lock-label"><span class="lesson-name">{{ getLessonName(mission )}} </span> leçons requises</span>
           </div>
           <div class="card-header">
             <span class="card-signal">
@@ -155,12 +133,55 @@ function getLessonName(mission: any) {
   padding: 0 16px;
 }
 
-/* ── Filtres ─────────────────────────────────────────── */
+.missions-toprow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.missions-header {
+  margin-bottom: 0;
+}
+
+.missions-page-title {
+  margin: 0 0 6px;
+  font-family: var(--font-orbitron);
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ffffff 30%, #a78bfa 60%, #60a5fa 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.missions-page-sub {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.5px;
+}
+
+.lang-planet-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.45);
+}
+
 .filters {
   display: flex;
   gap: 10px;
-  margin-bottom: 24px;
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .filter-select {
@@ -195,19 +216,21 @@ function getLessonName(mission: any) {
 
 .filter-select option { background: #0f1120; color: #fff; }
 
-/* ── Groupe langage ──────────────────────────────────── */
 .separation-mission {
   margin-bottom: 36px;
 }
 
 .separation-mission h2 {
   margin: 0 0 10px;
-  font-size: 13px;
+  font-family: var(--font-orbitron);
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-pixel);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .barre-separation {
@@ -216,14 +239,12 @@ function getLessonName(mission: any) {
   margin-bottom: 16px;
 }
 
-/* ── Grille ──────────────────────────────────────────── */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
 
-/* ── Card ────────────────────────────────────────────── */
 .card {
   position: relative;
   border-radius: 12px;
@@ -242,7 +263,6 @@ function getLessonName(mission: any) {
 .card.moyen:hover     { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25),  0 0 0 1px rgba(255, 215, 0, 0.5); }
 .card.difficile:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(255, 68, 68, 0.25),  0 0 0 1px rgba(255, 68, 68, 0.5); }
 
-/* ── Matrix background ───────────────────────────────── */
 .card-matrix {
   position: absolute;
   inset: 0;
@@ -277,7 +297,6 @@ function getLessonName(mission: any) {
   100% { transform: translateY(0%); }
 }
 
-/* ── Card header ─────────────────────────────────────── */
 .card-header {
   position: relative;
   z-index: 1;
@@ -300,14 +319,12 @@ function getLessonName(mission: any) {
   opacity: 0.85;
 }
 
-/* ── Header droite ───────────────────────────────────── */
 .card-header-right {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-/* ── Badge statut ────────────────────────────────────── */
 .status-badge {
   padding: 2px 8px;
   border-radius: 4px;
@@ -330,7 +347,6 @@ function getLessonName(mission: any) {
   text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
 
-/* ── Badge difficulté ────────────────────────────────── */
 .diff {
   padding: 2px 8px;
   border-radius: 4px;
@@ -344,7 +360,6 @@ function getLessonName(mission: any) {
 .diff.MOYEN     { background: rgba(255, 215, 0, 0.12);  color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4);  text-shadow: 0 0 8px rgba(255, 215, 0, 0.9),  0 0 20px rgba(255, 215, 0, 0.5);  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2) inset; }
 .diff.DIFFICILE { background: rgba(255, 68, 68, 0.12);  color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.4);  text-shadow: 0 0 8px rgba(255, 68, 68, 0.9),  0 0 20px rgba(255, 68, 68, 0.5);  box-shadow: 0 0 10px rgba(255, 68, 68, 0.2) inset; }
 
-/* ── Corps ───────────────────────────────────────────── */
 .card-body {
   position: relative;
   z-index: 1;
@@ -410,7 +425,6 @@ function getLessonName(mission: any) {
   text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.9), 0 0 20px rgba(var(--accent-rgb), 0.5);
 }
 
-/* ── Cadenas hologramme ──────────────────────────────── */
 .card-lock {
   position: absolute;
   inset: 0;
@@ -463,7 +477,6 @@ function getLessonName(mission: any) {
   50%       { opacity: 1; }
 }
 
-/* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 860px) { .cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
 </style>

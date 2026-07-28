@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 .sixth
+.claude
+
+# Variables d'environnement
+.env
+.env.*
+!.env.example

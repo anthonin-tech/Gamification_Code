@@ -15,8 +15,9 @@
 }
 
 .cours-hero-label {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--lang-color);
@@ -24,9 +25,11 @@
 }
 
 .cours-hero-title {
-  font-size: clamp(22px, 3vw, 32px);
+  font-family: var(--font-orbitron);
+  font-size: clamp(20px, 3vw, 30px);
   font-weight: 800;
   line-height: 1.2;
+  letter-spacing: 1px;
   margin: 0 0 12px;
   color: var(--text);
 }
@@ -75,7 +78,11 @@
 .cours-btn--primary {
   background: var(--gradient);
   border-color: transparent;
-  color: #fff;
+  color: #0b1020;
+  font-family: var(--font-orbitron);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
 }
 
 .cours-btn--primary:hover {
@@ -204,6 +211,7 @@
 
 .cours-stat-val {
   display: block;
+  font-family: var(--font-orbitron);
   font-size: 22px;
   font-weight: 800;
   color: var(--lang-color);
@@ -212,9 +220,10 @@
 }
 
 .cours-stat-label {
+  font-family: var(--font-mono);
   display: block;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--muted);
@@ -233,16 +242,20 @@
 }
 
 .cours-section-tag {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--lang-color);
 }
 
 .cours-section-title {
-  font-size: 22px;
+  font-family: var(--font-orbitron);
+  font-size: 18px;
   font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin: 0;
   flex: 1;
   color: var(--text);
@@ -399,8 +412,10 @@
 }
 
 .cours-cta-title {
-  font-size: 26px;
+  font-family: var(--font-orbitron);
+  font-size: 22px;
   font-weight: 800;
+  letter-spacing: 1px;
   margin: 0 0 10px;
   color: var(--text);
   position: relative;

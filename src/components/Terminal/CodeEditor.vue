@@ -56,6 +56,10 @@
         UserStore.updateEditorTheme(nameTheme)
         view?.dispatch({ effects: themeCompartment.reconfigure(editorThemes[UserStore.editorTheme] ?? themeCodeQuest) })
     }
+
+    function submitCode() {
+        emit('submit', view?.state.doc.toString())
+    }
 </script>
 
 <template>
@@ -69,6 +73,9 @@
                 <option value="matrix">Matrix</option>
                 <option value="sunset">Sunset</option>
             </select>
+            <button class="run-btn" @click="submitCode()">
+                ▶ Exécuter <kbd>Ctrl+Enter</kbd>
+            </button>
         </div>
         <div ref="editeur" class="code-editor-mount" />
     </div>
@@ -79,11 +86,41 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-height: 0;
 }
 
 .code-editor-toolbar {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.run-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 58, 237, 0.45);
+    background: rgba(124, 58, 237, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.run-btn:hover {
+    background: rgba(124, 58, 237, 0.3);
+    border-color: rgba(124, 58, 237, 0.7);
+}
+
+.run-btn kbd {
+    font-size: 10px;
+    opacity: 0.55;
+    font-family: inherit;
 }
 
 .theme-select {
@@ -120,6 +157,7 @@
 }
 
 .code-editor-mount {
+    flex: 1;
     min-height: 200px;
 }
 
