@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LANGAGES } from '@/data/langages'
 import { COURS_DATA } from '@/data/cours'
@@ -12,7 +12,9 @@ const slug    = computed(() => (route.params.slug as string).toLowerCase())
 const langage = computed(() => LANGAGES.find(l => l.slug === slug.value) ?? null)
 const cours   = computed(() => COURS_DATA.find(c => c.slug === slug.value) ?? null)
 
-if (!langage.value) router.replace('/cours/javascript')
+onMounted(() => {
+  if (!langage.value) router.replace('/cours/javascript')
+})
 </script>
 
 <template>

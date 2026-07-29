@@ -86,7 +86,7 @@ function sendJson(res, statusCode, payload) {
 }
 
 function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:5173')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -289,6 +289,11 @@ export async function startBackend(options = {}) {
         return await handleUpdateXP(req, res)
       }
 
+      if (req.method === 'PATCH' && url.pathname === '/api/user/editorTheme') {
+        if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
+        return await handleUpdateEditor(req, res)
+      }
+
       if (req.method === 'PATCH' && url.pathname === '/api/user/missions') {
         if (!mongoConnected) return sendJson(res, 503, { error: 'MongoDB indisponible (mode dégradé)' })
         return await handleUpdateMissions(req, res)
@@ -469,7 +474,7 @@ async function handleFavoriteLanguages(req, res) {
   }
   const favoritelangage = await parseBody(req)
   if (favoritelangage.favoriteLanguages?.length > 3) {
-    return sendJson(res, 401, { message: 'Trop de Favorite Language' })
+    return sendJson(res, 422, { message: 'Trop de Favorite Language' })
   }
   await User.findByIdAndUpdate(response.id, { favoriteLanguages: favoritelangage.favoriteLanguages })
   return sendJson(res, 200, { message: 'Favorite Language ✓' })
@@ -487,13 +492,9 @@ async function handleUpdateStreak(req, res) {
     return sendJson(res, 401, { message: 'Token invalide'})
   }
   const user = await User.findById(response.id)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const last = user.lastActivityDate ? new Date(user.lastActivityDate) : null
-  if (last) {
-    last.setHours(0, 0, 0, 0)
-  }
-  const diffDays = last ? (today - last) / (1000 * 60 * 60 * 24) : null
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const lastStr = user.lastActivityDate ? new Date(user.lastActivityDate).toISOString().slice(0, 10) : null
+  const diffDays = lastStr ? (new Date(todayStr) - new Date(lastStr)) / (1000 * 60 * 60 * 24) : null
 
   if (diffDays === 0) {
     return sendJson(res, 200, { streak: user.streak })
@@ -503,7 +504,7 @@ async function handleUpdateStreak(req, res) {
     user.streak = 1
   }
 
-  user.lastActivityDate = today
+  user.lastActivityDate = todayStr
   await user.save()
   return sendJson(res, 200, { streak: user.streak })
 }
@@ -527,6 +528,23 @@ async function handleUpdateXP(req, res) {
   }
   await User.findByIdAndUpdate(response.id, { $inc: { xp } })
   return sendJson(res, 200, { message: 'XP mis à jour' })
+}
+
+async function handleUpdateEditor(req, res) {
+  const cookie = parseCookies(req)
+  if (!cookie.token) return sendJson(res, 401, { error: 'Non connecté'})
+  let response
+  try {
+    response = jwt.verify(cookie.token, process.env.JWT_SECRET)
+  } catch {
+    return sendJson(res, 401, { message: 'Token invalide' })
+  }
+  const { editorTheme } = await parseBody(req)
+  if (typeof editorTheme !== 'string' || !editorTheme.trim()) {
+    return sendJson(res, 400, { error: 'string vide'})
+  }
+  await User.findByIdAndUpdate(response.id, {editorTheme})
+  return sendJson(res, 200, { message: 'editorTheme mise à jour'})
 }
 
 async function handleUpdateMissions(req, res) {

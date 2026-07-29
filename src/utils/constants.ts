@@ -39,13 +39,6 @@ export const DIFFICULTY_LABELS = {
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-export const API_ENDPOINTS = {
-  PROFILE: '/api/profile',
-  LANGUAGES: '/api/languages',
-  PROGRESSION: '/api/progression',
-  ACHIEVEMENTS: '/api/achievements'
-} as const
-
 export const STORAGE_KEYS = {
   PROFILE: 'codequest_profile',
   PREFERENCES: 'codequest_preferences',

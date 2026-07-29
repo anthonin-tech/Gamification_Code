@@ -1,14 +1,40 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
-import { CURRICULUM_CPP } from '@/data/curriculum-cpp'
-import { XP_PER_LEVEL }      from '@/utils/constants'
-import type { CourseModule }  from '@/types/cours'
-import { useBadge } from '@/composables/useBadge'
-import { useUserStore } from '@/stores/useUserStore'
+import { useRoute } from 'vue-router'
+import { CURRICULUM_PYTHON }     from '@/data/curriculum'
+import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
+import { CURRICULUM_TYPESCRIPT } from '@/data/curriculum-typescript'
+import { CURRICULUM_JAVA }       from '@/data/curriculum-java'
+import { CURRICULUM_PHP }        from '@/data/curriculum-php'
+import { CURRICULUM_GO }         from '@/data/curriculum-go'
+import { CURRICULUM_CPP }        from '@/data/curriculum-cpp'
+import { CURRICULUM_RUST }       from '@/data/curriculum-rust'
+import { CURRICULUM_CSHARP }     from '@/data/curriculum-csharp'
+import { XP_PER_LEVEL }          from '@/utils/constants'
+import type { CourseModule }      from '@/types/cours'
+import { useBadge }               from '@/composables/useBadge'
+import { useUserStore }           from '@/stores/useUserStore'
 import '@/assets/styles/pages/lecon.css'
 
-const LS_KEY = 'codequest_cpp_progress'
-const LANGAGE = 'cpp'
+type LangConfig = {
+  curriculum: CourseModule[]
+  cmd: string
+  printPattern: string
+  label: string
+}
+
+const LANG_CONFIG: Record<string, LangConfig> = {
+  python:     { curriculum: CURRICULUM_PYTHON,     cmd: '$ python main.py\n',                 printPattern: 'print\\s*\\(([^)]+)\\)',                label: 'Python'     },
+  javascript: { curriculum: CURRICULUM_JAVASCRIPT, cmd: '$ node main.js\n',                   printPattern: 'console\\.log\\s*\\(([^)]+)\\)',        label: 'JavaScript' },
+  typescript: { curriculum: CURRICULUM_TYPESCRIPT, cmd: '$ ts-node main.ts\n',                printPattern: 'console\\.log\\s*\\(([^)]+)\\)',        label: 'TypeScript' },
+  java:       { curriculum: CURRICULUM_JAVA,       cmd: '$ javac Main.java && java Main\n',   printPattern: 'System\\.out\\.println\\s*\\(([^)]+)\\)', label: 'Java'     },
+  php:        { curriculum: CURRICULUM_PHP,        cmd: '$ php main.php\n',                   printPattern: 'echo\\s+([^\\n;]+)',                    label: 'PHP'        },
+  go:         { curriculum: CURRICULUM_GO,         cmd: '$ go run main.go\n',                 printPattern: 'fmt\\.Println\\s*\\(([^)]+)\\)',        label: 'Go'         },
+  cpp:        { curriculum: CURRICULUM_CPP,        cmd: '$ g++ main.cpp -o main && ./main\n', printPattern: 'cout\\s*<<\\s*"([^"]+)"',               label: 'C++'        },
+  rust:       { curriculum: CURRICULUM_RUST,       cmd: '$ cargo run\n',                      printPattern: 'println!\\s*\\(([^)]+)\\)',             label: 'Rust'       },
+  csharp:     { curriculum: CURRICULUM_CSHARP,     cmd: '$ dotnet run\n',                     printPattern: 'Console\\.WriteLine\\s*\\(([^)]+)\\)', label: 'C#'         },
+}
+
 const LESSON_STATUS_BADGES = {
   inProgress: '↩ Reprise en cours',
   completed: '✓ Terminée',
@@ -38,7 +64,11 @@ type PersistedProgress = {
 type InteractiveStore = Record<string, unknown>
 type LessonStep = any
 
-const curriculum: CourseModule[] = CURRICULUM_CPP
+const route = useRoute()
+const lang = computed(() => (route.params.lang as string) ?? 'python')
+const config = computed(() => LANG_CONFIG[lang.value] ?? LANG_CONFIG.python)
+const curriculum = computed(() => config.value.curriculum)
+const LS_KEY = computed(() => `codequest_${lang.value}_progress`)
 
 const userStore = useUserStore()
 
@@ -67,7 +97,7 @@ const fillResults = reactive<Record<number, boolean | null>>({})
 
 const playerLevel = computed(() => Math.floor(totalXP.value / XP_PER_LEVEL) + 1)
 const levelPercent = computed(() => (totalXP.value % XP_PER_LEVEL) / (XP_PER_LEVEL / 100))
-const activeLesson = computed(() => curriculum[currentModule.value]?.lessons[currentLesson.value])
+const activeLesson = computed(() => curriculum.value[currentModule.value]?.lessons[currentLesson.value])
 const lessonKey = computed(() => getLessonKey(currentModule.value, currentLesson.value))
 const hasSavedLesson = computed(() => !!savedLessonData.value[lessonKey.value])
 const isCurrentLessonCompleted = computed(() => completedLessons.value.has(lessonKey.value))
@@ -94,6 +124,7 @@ function clearStore(store: InteractiveStore) {
 }
 
 function initStars() {
+  cancelAnimationFrame(animFrame)
   const c = starCanvas.value
   if (!c) return
   const ctx = c.getContext('2d')!
@@ -136,11 +167,11 @@ function saveProgress() {
     activeModule: activeModule.value,
     savedLessonData: savedLessonData.value,
   }
-  localStorage.setItem(LS_KEY, JSON.stringify(data))
+  localStorage.setItem(LS_KEY.value, JSON.stringify(data))
 }
 
 function loadProgress() {
-  const raw = localStorage.getItem(LS_KEY)
+  const raw = localStorage.getItem(LS_KEY.value)
   if (!raw) return
 
   try {
@@ -155,7 +186,7 @@ function loadProgress() {
 
     restoreLessonData(data.currentModule ?? 0, data.currentLesson ?? 0)
   } catch {
-    localStorage.removeItem(LS_KEY)
+    localStorage.removeItem(LS_KEY.value)
   }
 }
 
@@ -203,7 +234,7 @@ function lessonTypeLabel(type: string) {
   return ({ theory: 'Cours', quiz: 'Quiz', project: 'Projet', challenge: 'Défi' } as Record<string, string>)[type] ?? 'Leçon'
 }
 function isModuleComplete(mi: number) {
-  return curriculum[mi].lessons.every((_, li) => isLessonCompleted(mi, li))
+  return curriculum.value[mi].lessons.every((_, li) => isLessonCompleted(mi, li))
 }
 function isModuleLocked(mi: number) {
   if (mi === 0) return false
@@ -215,7 +246,7 @@ function isLessonLocked(mi: number, li: number) {
   return !isLessonCompleted(mi, li - 1)
 }
 function modProgress(mi: number) {
-  return curriculum[mi].lessons.filter((_, li) => isLessonCompleted(mi, li)).length
+  return curriculum.value[mi].lessons.filter((_, li) => isLessonCompleted(mi, li)).length
 }
 function toggleModule(mi: number) {
   activeModule.value = activeModule.value === mi ? -1 : mi
@@ -262,7 +293,7 @@ async function completeLesson() {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ langage: LANGAGE, completedLessons: [...completedLessons.value] })
+      body: JSON.stringify({ langage: lang.value, completedLessons: [...completedLessons.value] })
     })
     userStore.updateXp(activeLesson.value?.xp ?? 0)
     totalXP.value += activeLesson.value?.xp ?? 0
@@ -274,12 +305,21 @@ async function completeLesson() {
 }
 
 function goNextLesson() {
-  const mod = curriculum[currentModule.value]
+  const mod = curriculum.value[currentModule.value]
   if (currentLesson.value < mod.lessons.length - 1) {
     goLesson(currentModule.value, currentLesson.value + 1)
-  } else if (currentModule.value < curriculum.length - 1) {
+  } else if (currentModule.value < curriculum.value.length - 1) {
     goLesson(currentModule.value + 1, 0)
     activeModule.value = currentModule.value
+  }
+}
+
+function goPrevLesson() {
+  if (currentLesson.value > 0) {
+    goLesson(currentModule.value, currentLesson.value - 1)
+  } else if (currentModule.value > 0) {
+    const prevMod = curriculum.value[currentModule.value - 1]
+    goLesson(currentModule.value - 1, prevMod.lessons.length - 1)
   }
 }
 
@@ -293,8 +333,8 @@ function answerQuiz(si: number, oi: number, step: LessonStep) {
 
 function runChallenge(si: number, step: LessonStep) {
   const code = codeInputs[si] ?? step.starter ?? ''
-  let output = '$ g++ main.cpp -o main && ./main\n'
-  const prints = [...code.matchAll(/cout\s*<<\s*"([^"]+)"/g)]
+  let output = config.value.cmd
+  const prints = [...code.matchAll(new RegExp(config.value.printPattern, 'g'))]
   for (const m of prints) {
     const raw = m[1].trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n')
     output += raw + '\n'
@@ -335,8 +375,8 @@ async function copyCode(src: string) {
 }
 
 function resetAllProgress() {
-  if (!confirm('Réinitialiser toute ta progression C++ ?')) return
-  localStorage.removeItem(LS_KEY)
+  if (!confirm(`Réinitialiser toute ta progression ${config.value.label} ?`)) return
+  localStorage.removeItem(LS_KEY.value)
   location.reload()
 }
 
@@ -345,7 +385,7 @@ async function syncFromBackend() {
   try {
     const res = await fetch('/api/user/progress', { credentials: 'include' })
     const { lessonProgress } = await res.json()
-    const backendLessons: string[] = lessonProgress?.[LANGAGE] ?? []
+    const backendLessons: string[] = lessonProgress?.[lang.value] ?? []
     backendLessons.forEach(key => completedLessons.value.add(key))
     if (backendLessons.length > 0) saveProgress()
   } catch {}
@@ -369,44 +409,23 @@ onUnmounted(() => {
     <canvas ref="starCanvas" class="star-canvas"></canvas>
 
     <aside class="lecon-sidebar" :class="{ 'sidebar-open': sidebarOpen }">
-      <div class="sidebar-top">
-        <div class="lang-pill">
-          <span class="lang-emoji">⚡</span>
-          <span class="lang-name">C++</span>
-          <span class="lang-level">Zéro → Expert</span>
-        </div>
-        <button class="sidebar-close" @click="sidebarOpen = false">✕</button>
-      </div>
-
-      <div class="xp-section">
-        <div class="xp-top-row">
-          <span class="xp-total">⚡ {{ totalXP }} XP</span>
-          <span class="xp-level">Niveau {{ playerLevel }}</span>
-        </div>
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-fill" :style="{ width: levelPercent + '%' }"></div>
-        </div>
-        <div class="xp-streak">🔥 {{ streak }} jours · {{ completedLessons.size }} leçons</div>
-      </div>
 
       <nav class="module-nav">
         <div v-for="(mod, mi) in curriculum" :key="mi" class="module-group">
-          <button
+          <div
             class="module-header"
             :class="{
-              'mod-active':   activeModule === mi,
               'mod-complete': isModuleComplete(mi),
               'mod-locked':   isModuleLocked(mi)
             }"
-            @click="toggleModule(mi)"
           >
+            <span class="mod-num">M{{ mi + 1 }}</span>
             <span class="mod-icon">{{ mod.icon }}</span>
             <span class="mod-title">{{ mod.title }}</span>
             <span class="mod-badge">{{ modProgress(mi) }}/{{ mod.lessons.length }}</span>
-            <span class="mod-arrow" :class="{ rotated: activeModule === mi }">›</span>
-          </button>
+          </div>
 
-          <div class="lesson-list" v-if="activeModule === mi">
+          <div class="lesson-list">
             <button
               v-for="(lesson, li) in mod.lessons"
               :key="li"
@@ -418,10 +437,12 @@ onUnmounted(() => {
               }"
               @click="goLesson(mi, li)"
             >
-              <span class="lesson-dot"></span>
+              <span class="lesson-dot">
+                <span v-if="isLessonCompleted(mi, li)">✓</span>
+                <span v-else-if="currentModule === mi && currentLesson === li">▶</span>
+                <span v-else-if="isLessonLocked(mi, li)">🔒</span>
+              </span>
               <span>{{ lesson.title }}</span>
-              <span v-if="hasSavedProgress(mi, li) && !isLessonCompleted(mi, li)">↩</span>
-              <span v-else>{{ lessonTypeIcon(lesson.type) }}</span>
             </button>
           </div>
         </div>
@@ -438,41 +459,25 @@ onUnmounted(() => {
     <div class="lecon-main">
 
       <div class="topbar">
-        <button class="menu-btn" @click="sidebarOpen = true">☰</button>
+        <router-link :to="'/cours/' + lang" class="topbar-back">← Cours</router-link>
         <div class="breadcrumb">
-          <span>{{ curriculum[currentModule]?.title }}</span>
+          <span>{{ config.label }}</span>
           <span class="bc-sep">›</span>
           <span class="bc-lesson">{{ curriculum[currentModule]?.lessons[currentLesson]?.title }}</span>
         </div>
-        <span
-          v-if="hasSavedLesson && !isCurrentLessonCompleted"
-          style="font-size:11px;color:rgba(251,191,36,0.8);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);padding:3px 10px;border-radius:99px;"
-        >{{ currentLessonStatus }}</span>
-        <div class="topbar-xp">⚡ {{ totalXP }}</div>
+        <div class="topbar-xp">⚡ +{{ activeLesson?.xp ?? 0 }} XP à la clé</div>
       </div>
 
       <div v-if="activeLesson">
 
         <div class="lesson-hero">
-          <div class="lesson-hero-meta">
-            <span class="hero-type-badge">
-              {{ lessonTypeIcon(activeLesson.type) }} {{ lessonTypeLabel(activeLesson.type) }}
+          <div class="lesson-hero-top">
+            <h1 class="lesson-title-big">{{ activeLesson.title }}</h1>
+            <span class="lesson-status-badge" :class="isCurrentLessonCompleted ? 'badge--done' : 'badge--active'">
+              {{ isCurrentLessonCompleted ? 'TERMINÉ' : 'EN COURS' }}
             </span>
-            <span class="hero-xp-badge">+{{ activeLesson.xp }} XP</span>
-            <span class="hero-time">⏱ {{ activeLesson.time }}</span>
-            <span
-              v-if="isCurrentLessonCompleted"
-              style="font-size:11px;color:#06d6a0;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.3);padding:3px 10px;border-radius:99px;"
-            >{{ currentLessonStatus }}</span>
           </div>
-          <h1 class="lesson-title-big">{{ activeLesson.title }}</h1>
           <p class="lesson-subtitle">{{ activeLesson.subtitle }}</p>
-          <div class="lesson-progress-bar">
-            <div
-              class="lesson-progress-fill"
-              :style="{ width: (currentStep / Math.max(activeLesson.steps.length - 1, 1)) * 100 + '%' }"
-            ></div>
-          </div>
         </div>
 
         <div class="steps-wrap">
@@ -503,7 +508,7 @@ onUnmounted(() => {
             </div>
 
             <div v-if="step.type === 'quiz'" class="step-quiz">
-              <div class="step-tag">⚡ Quiz</div>
+              <div class="step-tag step-tag--quiz">◆ QUIZ RAPIDE</div>
               <p class="quiz-q">{{ step.question }}</p>
               <div class="quiz-opts">
                 <button
@@ -525,16 +530,15 @@ onUnmounted(() => {
             </div>
 
             <div v-if="step.type === 'code-challenge'" class="step-challenge">
-              <div class="step-tag">💻 Défi Code</div>
-              <div class="challenge-instructions">
-                <p>{{ step.instructions }}</p>
-                <div v-if="step.hint" class="callout callout-tip">💡 {{ step.hint }}</div>
+              <div class="step-challenge-header">
+                <div class="step-tag step-tag--challenge">▸ DÉFI DE CODE — {{ step.instructions }}</div>
+                <button class="run-btn run-btn--top" @click="runChallenge(si, step)">▶ EXÉCUTER</button>
               </div>
+              <div v-if="step.hint" class="callout callout-tip">💡 {{ step.hint }}</div>
               <div class="editor-wrap">
                 <div class="editor-header">
                   <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
                   <span>{{ step.filename ?? 'main.py' }}</span>
-                  <button class="run-btn" @click="runChallenge(si, step)">▶ Run</button>
                 </div>
                 <textarea
                   v-model="codeInputs[si]"
@@ -555,7 +559,7 @@ onUnmounted(() => {
                 🔄 Pas tout à fait… Relis la consigne et réessaie !
               </div>
             </div>
-            
+
             <div v-if="step.type === 'fill-blank'" class="step-fill">
               <div class="step-tag">✏️ Complète le code</div>
               <p>{{ step.instructions }}</p>
@@ -587,7 +591,7 @@ onUnmounted(() => {
                 <div class="editor-header">
                   <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
                   <span>{{ step.filename }}</span>
-                  <button class="run-btn" @click="runChallenge(si, step)">▶ Run</button>
+                  <button class="run-btn" @click="runChallenge(si, step)">▶ EXÉCUTER</button>
                 </div>
                 <textarea v-model="codeInputs[si]" class="code-textarea large" spellcheck="false">{{ step.starter }}</textarea>
               </div>
@@ -616,9 +620,8 @@ onUnmounted(() => {
         </div>
 
       </div>
+
     </div>
 
   </main>
 </template>
-
-
