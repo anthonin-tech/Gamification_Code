@@ -18,11 +18,13 @@ const termineMissionBtn = ref<HTMLElement | null>(null)
 const btnRect = ref<DOMRect | null>(null)
 const flyingXp = ref(false)
 const flyStyle = ref({})
+const isSubmitting = ref(false)
 
 async function terminerMission() {
   const xpBar = document.querySelector('.navbar-xpbar')
-  if (!xpBar || !termineMissionBtn.value || !mission) return
+  if (!xpBar || !termineMissionBtn.value || !mission || isSubmitting.value) return
 
+  isSubmitting.value = true
   const xpBarRect = xpBar.getBoundingClientRect()
   btnRect.value = termineMissionBtn.value.getBoundingClientRect()
   if (!btnRect.value) return
@@ -56,6 +58,8 @@ async function terminerMission() {
 
   localStorage.removeItem(`codequest_mission_${mission?.missionId}_time`)
   pause.value = true
+
+  isSubmitting.value = false
 }
 
 const missionTermine = computed(() =>
@@ -91,6 +95,18 @@ async function ManageSubmission (code: string) {
   const results = await Verification(mission, code, mission.langage)
   isVerifying.value = false
   TableTask.value = results.filter(resultat => resultat.valide).map(resultat => resultat.taskId)
+}
+
+const indiceSuccess = ref(false)
+
+async function ManageIndiceChallenge(code: string) {
+  if (!mission) return
+  const results = await Verification(mission, code, mission.langage)
+  const anyPassed = results.some(r => r.valide)
+  if (anyPassed) {
+    DeLockIndice(0, 3)
+    indiceSuccess.value = true
+  }
 }
 
 const SecondElapsed = ref<number>(0)
@@ -201,7 +217,7 @@ const TempsFormate = computed(() => {
                 <div v-else-if="indice.niveau === 3">
                   <span class="md-indice__num">Indice {{ indice.niveau }}</span>
                   <p class="md-indice__text">{{ indice.texte }}</p>
-                  <CodeEditor :langage="mission.langage" @submit="ManageSubmission" />
+                  <CodeEditor :langage="mission.langage" @submit="ManageIndiceChallenge" />
                 </div>
                 <button v-else class="md-indice__btn" @click="DeLockIndice(indice.xpCout, indice.niveau)">
                   <span>Indice {{ indice.niveau }}</span>
@@ -234,7 +250,7 @@ const TempsFormate = computed(() => {
           ref="termineMissionBtn"
           class="md-btn-valider"
           :class="{ 'md-btn-valider--done': missionTermine }"
-          :disabled="missionTermine || TableTask.length < mission.taches.length"
+          :disabled="missionTermine || TableTask.length < mission.taches.length || isSubmitting"
         >
           {{ missionTermine
             ? '✓ Mission terminée'

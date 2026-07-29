@@ -12,7 +12,9 @@ export function useBadge() {
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         })
-        useUser.badges.push(badgeId)
+        if (response.ok) {
+            useUser.badges.push(badgeId)
+        }
         return response
     }
 
