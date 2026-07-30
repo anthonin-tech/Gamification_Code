@@ -25,16 +25,16 @@ export function useBadge() {
             case 'lessons_10':      return value >= 10
             case 'lessons_50':      return value >= 50
             case 'first_mission':   return value >= 1
-            case 'missions_all':    return value >= 9
-            case 'mission_1':       return value === 1
-            case 'mission_2':       return value === 2
-            case 'mission_3':       return value === 3
-            case 'mission_4':       return value === 4
-            case 'mission_5':       return value === 5
-            case 'mission_6':       return value === 6
-            case 'mission_7':       return value === 7
-            case 'mission_8':       return value === 8
-            case 'mission_9':       return value === 9
+            case 'missions_all':    return value >= 90
+            case 'mission_10':      return value === 10
+            case 'mission_20':      return value === 20
+            case 'mission_30':      return value === 30
+            case 'mission_40':      return value === 40
+            case 'mission_50':      return value === 50
+            case 'mission_60':      return value === 60
+            case 'mission_70':      return value === 70
+            case 'mission_80':      return value === 80
+            case 'mission_90':      return value === 90
             default:                return false
         }
     }
