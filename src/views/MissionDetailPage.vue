@@ -49,7 +49,12 @@ async function terminerMission() {
 
   const { checkAndUnlock } = useBadge()
 
-  await checkAndUnlock(100 + mission.missionId, mission.missionId)
+  const LANG_BADGE: Record<number, number> = {
+    10: 101, 20: 102, 30: 103, 40: 104, 50: 105,
+    60: 106, 70: 107, 80: 108, 90: 109,
+  }
+  const langBadgeId = LANG_BADGE[mission.missionId]
+  if (langBadgeId) await checkAndUnlock(langBadgeId, mission.missionId)
   await checkAndUnlock(5, userStore.completeMissions.length)
   await checkAndUnlock(6, userStore.completeMissions.length)
 
