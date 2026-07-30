@@ -55,6 +55,7 @@ function AllerMission(id: number) {
           <option value="java">Java</option>
           <option value="csharp">C#</option>
           <option value="cpp">C++</option>
+          <option value="php">PHP</option>
         </select>
       </div>
     </div>

@@ -104,6 +104,12 @@ export const useUserStore = defineStore('user', {
             if (this.editorTheme) {
                 this.editorTheme = theme
                 localStorage.setItem('editorTheme', JSON.stringify(this.editorTheme))
+                fetch('/api/user/editorTheme', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ editorTheme: theme })
+                })
             }
         },
         saveAvatarCustomization(data: AvatarCustomization) {

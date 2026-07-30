@@ -4,7 +4,7 @@ import StreakCard            from '@/components/profile/StreakCard.vue'
 import CurrentLanguageCard  from '@/components/profile/CurrentLanguageCard.vue'
 import { useUserStore } from '@/stores/useUserStore'
 import { useXP } from '@/composables/useXP'
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { XP_PER_LEVEL } from '@/utils/constants'
 import { CURRICULUM_PYTHON }     from '@/data/curriculum'
 import { CURRICULUM_JAVASCRIPT } from '@/data/curriculum-javascript'
@@ -34,7 +34,10 @@ const LANG_META: Record<string, { icon: string; color: string; glow: string }> =
   csharp:     { icon: '/icons/csharp.png',     color: '#9B4FD0', glow: 'rgba(155, 79, 208, 0.4)'  },
 }
 
-const progressionLangages = computed(() => [
+const progressionLangages = ref<{ langage: string, completed: number, total: number }[]>([])
+
+function ChargeProgression() {
+  progressionLangages.value = [
   { langage: 'python',     curriculum: CURRICULUM_PYTHON },
   { langage: 'javascript', curriculum: CURRICULUM_JAVASCRIPT },
   { langage: 'typescript', curriculum: CURRICULUM_TYPESCRIPT },
@@ -44,12 +47,17 @@ const progressionLangages = computed(() => [
   { langage: 'cpp',        curriculum: CURRICULUM_CPP },
   { langage: 'rust',       curriculum: CURRICULUM_RUST },
   { langage: 'csharp',     curriculum: CURRICULUM_CSHARP },
-].map(({ langage, curriculum }) => {
-  const saved = localStorage.getItem(`codequest_${langage}_progress`)
-  const completedLessons: number[] = saved ? JSON.parse(saved).completedLessons ?? [] : []
-  const total = curriculum.reduce((acc, module) => acc + module.lessons.length, 0)
-  return { langage, completed: completedLessons.length, total }
-}))
+  ].map(({ langage, curriculum }) => {
+    const saved = localStorage.getItem(`codequest_${langage}_progress`)
+    const completedLessons: number[] = saved ? JSON.parse(saved).completedLessons ?? [] : []
+    const total = curriculum.reduce((acc, module) => acc + module.lessons.length, 0)
+    return { langage, completed: completedLessons.length, total }
+  })
+}
+
+onMounted(() => {
+  ChargeProgression()
+})
 
 const router = useRouter()
 
@@ -89,6 +97,7 @@ const CURRICULUM_MAP: Record<string, any[]> = {
 }
 
 const currentLanguage = computed(() => {
+  if (!progressionLangages.value.length) return null
   const best = progressionLangages.value.reduce((meilleur, actuel) => actuel.completed/actuel.total > meilleur.completed/meilleur.total ? actuel : meilleur)
   const saved = localStorage.getItem(`codequest_${best.langage}_progress`)
   const completedSet = new Set<string>(saved ? JSON.parse(saved).completedLessons ?? [] : [])
@@ -139,7 +148,7 @@ const currentLanguage = computed(() => {
       </div>
 
       <div class="profil-content">
-        <CurrentLanguageCard :language="currentLanguage" />
+        <CurrentLanguageCard v-if="currentLanguage" :language="currentLanguage" />
 
         <div class="profil-card">
           <div class="profil-fav-header">

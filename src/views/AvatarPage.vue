@@ -218,14 +218,19 @@ const socleRef = buildSocle()
 onMounted(() => anim.start())
 onUnmounted(() => anim.stop())
 
+let saveTimer: ReturnType<typeof setTimeout> | null = null
+
 function saveCurrentAvatar() {
-    userStore.saveAvatarCustomization({
-        corpsColor: currentCorpsColor.value,
-        accentColor: currentAccentColor.value,
-        casqueColor: currentCasqueColor.value,
-        pattern: currentPattern.value,
-        accessories: { ...accState.value }
-    })
+    if (saveTimer) clearTimeout(saveTimer)
+    saveTimer = setTimeout(() => {
+        userStore.saveAvatarCustomization({
+            corpsColor: currentCorpsColor.value,
+            accentColor: currentAccentColor.value,
+            casqueColor: currentCasqueColor.value,
+            pattern: currentPattern.value,
+            accessories: { ...accState.value }
+        })
+    }, 800)
 }
 
 function handleCorpsClick(color: { c: string, lvl: number }) {

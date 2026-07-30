@@ -162,8 +162,8 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
       for (let i = 0; i < 250; i++) {
         const f = i / 250
         const a = angleBase + f * Math.PI * 3
-        const r = 10 + f * 95
-        const dispersion = (Math.random() - 0.5) * 18 / r
+        const r = 10 + f * 130
+        const dispersion = (Math.random() - 0.5) * 22 / r
         pointsGalaxie.push({
           angle: a + dispersion,
           rayon: r + (Math.random() - 0.5) * 12,
@@ -189,7 +189,7 @@ export function useGalaxie(canvasRef: Ref<HTMLCanvasElement | null>) {
   function dessinerGalaxie() {
     rotationGalaxie += 0.0006
     const cx = W / 2, cy = H / 2
-    const echelle = Math.min(W, H) / 480
+    const echelle = Math.min(W, H) / 320
 
     const lueur = ctx!.createRadialGradient(cx, cy, 0, cx, cy, 180 * echelle)
     lueur.addColorStop(0, "rgba(50,70,200,0.08)")
