@@ -1,6 +1,6 @@
-# 🚀 CodeQuest - Version Réorganisée
+# 🚀 CodeQuest
 
-Application d'apprentissage de la programmation avec gamification et suivi de progression.
+Application d'apprentissage de la programmation avec gamification, éditeur de code intégré et suivi de progression.
 
 ## 📁 Structure du projet
 
@@ -8,41 +8,56 @@ Application d'apprentissage de la programmation avec gamification et suivi de pr
 codequest/
 ├── src/
 │   ├── assets/
+│   │   ├── editor-themes.ts        # Thèmes de l'éditeur CodeMirror
 │   │   └── styles/
-│   │       ├── base.css           # Variables CSS, reset, styles globaux
-│   │       ├── components.css     # Composants réutilisables
-│   │       └── utilities.css      # Classes utilitaires
+│   │       ├── base.css            # Variables CSS, reset, styles globaux
+│   │       ├── components.css      # Composants réutilisables
+│   │       ├── utilities.css       # Classes utilitaires
+│   │       ├── components/         # Styles par composant (Base, Galaxie_Profil, Code_Home, Cours...)
+│   │       └── pages/               # Styles par page (home, cours, lecon, galaxie, progression...)
 │   ├── components/
-│   │   ├── layout/                # Composants de layout (NavBar, etc.)
-│   │   ├── home/                  # Composants page d'accueil
-│   │   ├── profile/               # Composants profil utilisateur
-│   │   ├── language/              # Composants langages
-│   │   ├── progression/           # Composants progression
-│   │   └── news/                  # Composants actualités tech
-│   ├── composables/               # Logique réutilisable
-│   │   ├── useProfile.ts          # Gestion du profil
-│   │   ├── useLanguages.ts        # Gestion des langages
-│   │   └── useProgression.ts      # Gestion de la progression
-│   ├── stores/                    # Stores Pinia (état global)
-│   │   ├── profile.ts             # Store profil
-│   │   └── user.ts                # Store préférences utilisateur
-│   ├── types/
-│   │   └── index.ts               # Types TypeScript centralisés
+│   │   ├── base/                   # Composants de base (BaseButton, BaseCard, BaseBadge, XpBar...)
+│   │   ├── layout/                 # Composants de layout (NavBar, etc.)
+│   │   ├── home/                   # Composants page d'accueil
+│   │   ├── profile/                # Composants profil / galaxie
+│   │   ├── language/                # Composants langages
+│   │   ├── cours/                   # Composants cours et leçons
+│   │   ├── news/                    # Composants actualités tech
+│   │   └── Terminal/                 # Terminal / éditeur de code interactif
+│   ├── composables/                 # Logique réutilisable
+│   │   ├── useXP.ts                 # Gestion de l'XP
+│   │   ├── useBadge.ts              # Gestion des badges
+│   │   ├── useGalaxie.ts            # Gestion de la galaxie des succès
+│   │   ├── useMissionLock.ts        # Verrouillage des missions
+│   │   ├── useTimer.ts              # Minuteur
+│   │   └── Verification.ts          # Vérification du code soumis
+│   ├── stores/
+│   │   └── useUserStore.ts          # Store Pinia : utilisateur, auth, session
+│   ├── types/                       # Types TypeScript (achievement, cours, langage, missions, profil...)
 │   ├── utils/
-│   │   ├── animations.ts          # Utilitaires d'animation
-│   │   └── constants.ts           # Constantes globales
-│   ├── views/                     # Pages de l'application
+│   │   ├── animations.ts            # Utilitaires d'animation
+│   │   ├── avatarScene.ts           # Scène 3D de l'avatar (Three.js / TresJS)
+│   │   └── constants.ts             # Constantes globales
+│   ├── data/                        # Données statiques (curriculums par langage, missions, badges...)
+│   ├── views/                       # Pages de l'application
 │   │   ├── HomePage.vue
-│   │   ├── ProfilePage.vue
+│   │   ├── ProfilPage.vue
+│   │   ├── ProgressionPage.vue
 │   │   ├── LanguagePage.vue
-│   │   └── ProgressionPage.vue
+│   │   ├── CoursPage.vue
+│   │   ├── LeçonPage.vue
+│   │   ├── MissionPage.vue / MissionDetailPage.vue
+│   │   ├── GalaxyPage.vue
+│   │   ├── AvatarPage.vue
+│   │   └── LoginPage.vue
 │   ├── router/
-│   │   └── index.ts               # Configuration du router
-│   ├── data/                      # Données statiques
-│   │   ├── profil.ts
-│   │   └── langages.ts
+│   │   └── index.ts                 # Routes + garde d'authentification
 │   ├── App.vue
 │   └── main.ts
+├── server/                          # API TypeScript (endpoints, modèles Mongoose, plugin MongoDB)
+├── backend/                         # Serveur Node.js (auth JWT, users, scraper RSS, cron)
+├── config/                          # Fichiers de configuration / notes
+├── public/                          # Assets publics
 ├── index.html
 ├── package.json
 ├── vite.config.ts
@@ -50,19 +65,15 @@ codequest/
 └── README.md
 ```
 
-## 🎯 Changements principaux
+## 🎯 Stack technique
 
-### ✅ Corrections
-- **URL router** : `/languagege` → `/language` (CORRIGÉ)
-- **Imports** : Centralisés via `@/types`
-- **Structure** : Composants organisés par fonctionnalité
-
-### ✨ Nouveautés
-- **Pinia** : Gestion d'état globale
-- **Composables** : Logique métier réutilisable
-- **CSS consolidé** : 3 fichiers au lieu de 14+
-- **Types centralisés** : Import simplifié
-- **Utilitaires** : Animations et constantes
+- **Frontend** : Vue 3 + TypeScript + Vite
+- **State management** : Pinia
+- **Éditeur de code** : CodeMirror 6 (JS, Python, Java, C++, PHP, Rust...)
+- **Avatar 3D** : Three.js / TresJS
+- **Backend** : serveur Node.js natif (`backend/`) + API TypeScript (`server/`)
+- **Base de données** : MongoDB (Mongoose)
+- **Tests** : Vitest
 
 ## 🚀 Installation
 
@@ -70,55 +81,60 @@ codequest/
 # Installer les dépendances
 npm install
 
-# Lancer le serveur de développement
+# Lancer le frontend (Vite)
 npm run dev
+
+# Lancer le backend (sans MongoDB requis)
+npm run dev:backend
+
+# Lancer le backend (MongoDB obligatoire)
+npm run dev:backend:strict
 
 # Build pour la production
 npm run build
+
+# Prévisualiser le build
+npm run preview
+
+# Lancer les tests
+npm test
 ```
 
 ## 📚 Concepts clés
 
 ### Composables
-Les composables (fichiers `use*.ts`) encapsulent la logique métier avec réactivité Vue.
+Les composables (`use*.ts` dans `src/composables/`) encapsulent la logique métier avec réactivité Vue.
 
-**Exemple d'utilisation :**
 ```vue
 <script setup lang="ts">
-import { useProfile } from '@/composables/useProfile'
+import { useXP } from '@/composables/useXP'
 
-const { profile, loading, loadProfile } = useProfile()
-
-onMounted(() => {
-  loadProfile()
-})
+const { xp, addXp } = useXP()
 </script>
 ```
 
-### Stores Pinia
-Les stores gèrent l'état global partagé entre composants.
+### Store Pinia
+`useUserStore` centralise l'état de l'utilisateur (profil, session, authentification).
 
-**Exemple d'utilisation :**
 ```vue
 <script setup lang="ts">
-import { useProfileStore } from '@/stores/profile'
+import { useUserStore } from '@/stores/useUserStore'
 
-const profileStore = useProfileStore()
-profileStore.loadProfile()
+const userStore = useUserStore()
 </script>
 ```
 
 ### Types centralisés
-Tous les types sont exportés depuis `@/types`.
+Les types du domaine (profil, cours, missions, achievements, langages) vivent dans `src/types/`.
 
 ```typescript
-import type { UserProfile, Achievement, Language } from '@/types'
+import type { Profil, Mission, Achievement } from '@/types'
 ```
 
 ## 🎨 Styles
 
 ### Variables CSS
-Toutes les couleurs, espacements, et autres valeurs sont définies en variables CSS dans `base.css`.
+Couleurs, espacements et autres valeurs globales sont définis dans `src/assets/styles/base.css`.
 
 ```css
 :root {
@@ -128,23 +144,14 @@ Toutes les couleurs, espacements, et autres valeurs sont définies en variables 
 }
 ```
 
-### Composants réutilisables
-Classes prêtes à l'emploi dans `components.css` :
-- `.card`, `.btn`, `.badge`
-- `.progress-bar`, `.stat-card`
-- `.skeleton`, `.spinner`
+### Organisation
+- `styles/components/` — styles rattachés à un composant précis (Base, Galaxie_Profil, Code_Home, Cours...)
+- `styles/pages/` — styles rattachés à une vue précise (home, cours, lecon, galaxie, login...)
+- `components.css` / `utilities.css` — classes réutilisables et utilitaires transverses
 
-### Classes utilitaires
-Classes Tailwind-like dans `utilities.css` :
-- Flexbox : `.flex`, `.items-center`, `.justify-between`
-- Grid : `.grid`, `.grid-cols-3`
-- Spacing : `.mt-md`, `.p-lg`
-- Text : `.text-center`, `.font-bold`
+## 🔧 Alias de paths
 
-## 🔧 Configuration
-
-### Alias de paths
-Le projet utilise `@/` pour référencer le dossier `src/`.
+Le projet utilise `@/` pour référencer le dossier `src/` (configuré dans `vite.config.ts` et `tsconfig.json`).
 
 ```typescript
 // Au lieu de
@@ -154,51 +161,18 @@ import NavBar from '../../../components/layout/NavBar.vue'
 import NavBar from '@/components/layout/NavBar.vue'
 ```
 
-## 📖 Bonnes pratiques
-
-1. **Composants** : Un composant = une responsabilité
-2. **Composables** : Extraire la logique métier
-3. **Stores** : Pour l'état partagé entre plusieurs pages
-4. **Types** : Typer toutes les props et données
-5. **CSS** : Utiliser les variables et classes existantes
-
-## 🎓 Pour apprendre
-
-Chaque fichier contient des commentaires explicatifs. Commencez par :
-1. `composables/useProfile.ts` - Comprendre les composables
-2. `stores/profile.ts` - Comprendre Pinia
-3. `components/layout/NavBar.vue` - Structure d'un composant
-
 ## 🐛 Déboggage
 
-### Problèmes courants
+**Erreur d'import `Cannot find module '@/...'`**
+→ Vérifier que `vite.config.ts` (`resolve.alias`) et `tsconfig.json` (`paths`) sont corrects.
 
-**Erreur d'import** :
-```
-Cannot find module '@/...'
-```
-→ Vérifier que `vite.config.ts` et `tsconfig.json` sont corrects
+**Le backend refuse de démarrer sans MongoDB**
+→ Utiliser `npm run dev:backend` (MongoDB optionnel) plutôt que `dev:backend:strict`, ou démarrer Mongo via `docker compose -f docker-compose.mongo.yml up -d`.
 
-**Pinia non trouvé** :
-```
-Cannot find name 'defineStore'
-```
-→ Installer Pinia : `npm install pinia`
+## 🆘 Ressources
 
-## 📝 Prochaines étapes
-
-1. ✅ Tester que tout fonctionne (`npm run dev`)
-2. 📱 Implémenter le mode responsive
-3. 🎨 Ajouter le toggle dark/light mode
-4. 🔔 Ajouter les notifications toast
-5. 📊 Créer les graphiques de progression
-
-## 🆘 Besoin d'aide ?
-
-- Documentation Vue.js : https://vuejs.org
-- Documentation Pinia : https://pinia.vuejs.org
-- Documentation Vue Router : https://router.vuejs.org
-
----
-
-Bon courage dans votre apprentissage ! 🎉
+- Vue 3 : https://vuejs.org
+- Vite : https://vitejs.dev
+- Pinia : https://pinia.vuejs.org
+- TresJS : https://tresjs.org
+- CodeMirror : https://codemirror.net
