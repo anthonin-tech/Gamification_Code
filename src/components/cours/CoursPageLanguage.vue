@@ -177,4 +177,4 @@ const STATUS_LABEL = { done: 'TERMINÃ‰', active: 'EN COURS', locked: 'VERROUILLÃ
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Cours/CoursPageLanguage.css"></style>
+<style scoped src="./CoursPageLanguage.css"></style>

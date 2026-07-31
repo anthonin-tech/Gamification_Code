@@ -4,4 +4,4 @@
     </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Base/BaseCard.css" />
+<style scoped src="./BaseCard.css" />

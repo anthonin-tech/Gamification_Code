@@ -226,7 +226,7 @@ import { API_BASE_URL } from '@/utils/constants'
   </main>
 </template>
 
-<style scoped src="@/assets/styles/pages/home.css"></style>
+<style scoped src="./HomePage.css"></style>
 
 
 

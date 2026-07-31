@@ -10,12 +10,8 @@ codequest/
 │   ├── assets/
 │   │   ├── editor-themes.ts        # Thèmes de l'éditeur CodeMirror
 │   │   └── styles/
-│   │       ├── base.css            # Variables CSS, reset, styles globaux
-│   │       ├── components.css      # Composants réutilisables
-│   │       ├── utilities.css       # Classes utilitaires
-│   │       ├── components/         # Styles par composant (Base, Galaxie_Profil, Code_Home, Cours...)
-│   │       └── pages/               # Styles par page (home, cours, lecon, galaxie, progression...)
-│   ├── components/
+│   │       └── base.css            # Seul CSS global : variables, reset, polices
+│   ├── components/                 # Chaque composant a son .css juste à côté (ex: BaseButton.vue + BaseButton.css)
 │   │   ├── base/                   # Composants de base (BaseButton, BaseCard, BaseBadge, XpBar...)
 │   │   ├── layout/                 # Composants de layout (NavBar, etc.)
 │   │   ├── home/                   # Composants page d'accueil
@@ -39,7 +35,7 @@ codequest/
 │   │   ├── avatarScene.ts           # Scène 3D de l'avatar (Three.js / TresJS)
 │   │   └── constants.ts             # Constantes globales
 │   ├── data/                        # Données statiques (curriculums par langage, missions, badges...)
-│   ├── views/                       # Pages de l'application
+│   ├── views/                       # Pages de l'application, chaque .vue a son .css juste à côté
 │   │   ├── HomePage.vue
 │   │   ├── ProfilPage.vue
 │   │   ├── ProgressionPage.vue
@@ -133,8 +129,8 @@ import type { Profil, Mission, Achievement } from '@/types'
 
 ## 🎨 Styles
 
-### Variables CSS
-Couleurs, espacements et autres valeurs globales sont définis dans `src/assets/styles/base.css`.
+### Variables CSS globales
+Couleurs, espacements et autres valeurs globales sont définies dans `src/assets/styles/base.css` (seul CSS non colocalisé, importé une fois dans `main.ts`).
 
 ```css
 :root {
@@ -144,10 +140,24 @@ Couleurs, espacements et autres valeurs globales sont définis dans `src/assets/
 }
 ```
 
-### Organisation
-- `styles/components/` — styles rattachés à un composant précis (Base, Galaxie_Profil, Code_Home, Cours...)
-- `styles/pages/` — styles rattachés à une vue précise (home, cours, lecon, galaxie, login...)
-- `components.css` / `utilities.css` — classes réutilisables et utilitaires transverses
+### Organisation : un CSS par composant, colocalisé
+Chaque `.vue` a son fichier `.css` dans le même dossier, référencé via `<style scoped src="./NomDuComposant.css">`.
+
+```
+src/components/base/
+├── BaseButton.vue
+├── BaseButton.css
+├── BaseCard.vue
+└── BaseCard.css
+
+src/views/
+├── HomePage.vue
+├── HomePage.css
+├── ProfilPage.vue
+└── ProfilPage.css
+```
+
+Avantages : pas besoin de naviguer dans une arborescence parallèle pour retrouver le style d'un composant, et le CSS mort (fichier non importé) devient impossible à manquer.
 
 ## 🔧 Alias de paths
 

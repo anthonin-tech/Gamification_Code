@@ -11,4 +11,4 @@ const emit = defineEmits(['click'])
     <button :class="variant" @click="emit('click')">{{ label }}</button>
 </template>
 
-<style scoped src="@/assets/styles/components/Base/BaseButton.css" />
+<style scoped src="./BaseButton.css" />

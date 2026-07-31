@@ -45,4 +45,4 @@ const DAYS = [1, 2, 3, 4, 5, 6, 7]
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/StreakCard.css" />
+<style scoped src="./StreakCard.css" />

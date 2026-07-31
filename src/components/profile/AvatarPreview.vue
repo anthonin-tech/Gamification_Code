@@ -141,10 +141,4 @@ onUnmounted(() => cancelAnimationFrame(frameId))
     </div>
 </template>
 
-<style scoped>
-.avatar-preview {
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-}
-</style>
+<style scoped src="./AvatarPreview.css"></style>

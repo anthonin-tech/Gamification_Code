@@ -195,4 +195,4 @@ const currentLanguage = computed(() => {
   </div>
 </template>
 
-<style scoped src="@/assets/styles/pages/profil.css" />
+<style scoped src="./ProfilPage.css" />

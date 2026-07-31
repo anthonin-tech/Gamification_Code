@@ -26,5 +26,5 @@ const offset = computed(() => circumference - (props.percent / 100) * circumfere
     </svg>
 </template>
 
-<style scoped src="@/assets/styles/components/Base/ProgressRing.css" />
+<style scoped src="./ProgressRing.css" />
 

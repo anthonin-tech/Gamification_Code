@@ -56,4 +56,4 @@ onMounted(() => {
     <canvas ref="canvas" class="galaxy-canvas" aria-hidden="true" />
 </template>
 
-<style scoped src="@/assets/styles/components/Code_Home/GalaxyBackground.css"></style>
+<style scoped src="./GalaxyBackground.css"></style>

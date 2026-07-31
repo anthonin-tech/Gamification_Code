@@ -20,4 +20,4 @@ defineProps<{
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/FavoriteLanguages.css" />
+<style scoped src="./FavoriteLanguages.css" />

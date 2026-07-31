@@ -72,5 +72,5 @@ const ProgressionParLangue = computed(() => {
   </div>
 </template>
 
-<style scoped src="@/assets/styles/pages/progression.css"></style>
+<style scoped src="./ProgressionPage.css"></style>
 
