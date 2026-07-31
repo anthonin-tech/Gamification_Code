@@ -36,4 +36,4 @@ defineProps<{
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/CurrentLanguageCard.css" />
+<style scoped src="./CurrentLanguageCard.css" />

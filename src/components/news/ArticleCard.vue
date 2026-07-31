@@ -87,4 +87,4 @@
   </a>
 </template>
 
-<style src="@/assets/styles/components/articlecard.css"></style>
+<style src="./ArticleCard.css"></style>

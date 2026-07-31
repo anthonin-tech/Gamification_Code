@@ -44,4 +44,4 @@ const userStore = useUserStore()
   </nav>
 </template>
 
-<style scoped src="@/assets/styles/components/navbar.css"></style>
+<style scoped src="./NavBar.css"></style>

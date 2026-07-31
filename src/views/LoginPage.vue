@@ -130,4 +130,4 @@ async function handleRegister() {
     </div>
 </template>
 
-<style scoped src="@/assets/styles/pages/login.css" />
+<style scoped src="./LoginPage.css" />

@@ -48,4 +48,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/SpaceBackground.css" />
+<style scoped src="./SpaceBackground.css" />

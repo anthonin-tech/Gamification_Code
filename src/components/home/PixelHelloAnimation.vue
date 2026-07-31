@@ -65,4 +65,4 @@ onBeforeUnmount(() => {
   </section>
 </template>
 
-<style src="@/assets/styles/components/Code_Home/PixelHelloAnimation.css"></style>
+<style src="./PixelHelloAnimation.css"></style>

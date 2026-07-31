@@ -34,4 +34,4 @@ const props = defineProps({
     </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Base/BaseBadge.css"  />
+<style scoped src="./BaseBadge.css" />

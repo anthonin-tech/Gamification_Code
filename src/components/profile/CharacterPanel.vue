@@ -143,4 +143,4 @@ const props = defineProps<{
   </aside>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/CharacterPanel.css" />
+<style scoped src="./CharacterPanel.css" />

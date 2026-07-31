@@ -14,7 +14,7 @@ import { XP_PER_LEVEL }          from '@/utils/constants'
 import type { CourseModule }      from '@/types/cours'
 import { useBadge }               from '@/composables/useBadge'
 import { useUserStore }           from '@/stores/useUserStore'
-import '@/assets/styles/pages/lecon.css'
+import './LeçonPage.css'
 
 type LangConfig = {
   curriculum: CourseModule[]

@@ -187,5 +187,5 @@ onBeforeUnmount(() => {
   </section>
 </template>
 
-<style src="@/assets/styles/components/Code_Home/CodeTypingAnimation.css"></style>
+<style src="./CodeTypingAnimation.css"></style>
 

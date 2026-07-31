@@ -1,0 +1,86 @@
+.code-editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+}
+
+.code-editor-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.run-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 58, 237, 0.45);
+    background: rgba(124, 58, 237, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.run-btn:hover {
+    background: rgba(124, 58, 237, 0.3);
+    border-color: rgba(124, 58, 237, 0.7);
+}
+
+.run-btn kbd {
+    font-size: 10px;
+    opacity: 0.55;
+    font-family: inherit;
+}
+
+.theme-select {
+    padding: 7px 30px 7px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.theme-select:hover {
+    border-color: rgba(124, 58, 237, 0.4);
+    background-color: rgba(255, 255, 255, 0.07);
+}
+
+.theme-select:focus {
+    border-color: rgba(124, 58, 237, 0.6);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.theme-select option {
+    background: #0f1120;
+    color: #fff;
+}
+
+.code-editor-mount {
+    flex: 1;
+    min-height: 200px;
+}
+
+.code-editor-mount :deep(.cm-editor) {
+    height: 100%;
+}
+
+.code-editor-mount :deep(.cm-scroller) {
+    overflow: auto;
+}

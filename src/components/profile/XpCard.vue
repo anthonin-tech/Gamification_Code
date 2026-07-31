@@ -49,4 +49,4 @@ const formatXp = (n: number) => n.toLocaleString('fr-FR')
   </div>
 </template>
 
-<style scoped src="@/assets/styles/components/Galaxie_Profil/XpCard.css" />
+<style scoped src="./XpCard.css" />

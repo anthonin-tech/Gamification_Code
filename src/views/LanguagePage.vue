@@ -203,4 +203,4 @@ function orbitDur(li: number): string {
   </div>
 </template>
 
-<style scoped src="@/assets/styles/pages/galaxie.css"></style>
+<style scoped src="./LanguagePage.css"></style>
